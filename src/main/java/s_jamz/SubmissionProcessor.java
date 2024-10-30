@@ -7,15 +7,15 @@ import java.util.List;
  * Class requires reworking to implement the JavaSubmissionProcessor interface
  */
 
-public interface SubmissionProcessor {
+public abstract class SubmissionProcessor {
 
-    void processSubmission(File zipFile, File destDir, Student student);
+    void processSubmission(File zipFile, String destDir, Student student){}
 
-    void extractZip(File zipFile, File destDir);
+    void extractZip(File zipFile, File destDir){}
 
-    void evaluateCode(List<File> javaFiles);
+    void evaluateCode(List<File> destDir){}
 
-    void generateFeedback(List<TestResultComponent> testResults);
+    void generateFeedback(List<TestResultComponent> testResults){}
 
-    void calculateScore(List<TestResultComponent> testResults);
+    void calculateScore(List<TestResultComponent> testResults){}
 }
