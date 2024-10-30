@@ -1,5 +1,7 @@
 package s_jamz;
 
+import java.io.File;
+
 /**
  * Hello world!
  *
@@ -11,11 +13,12 @@ public class App
         System.out.println( "Hello World!" );
         System.out.println("This is a test");
         System.out.println("Please input the directory path of the zip file");
+        FileExtractor fileExtractor = new FileExtractor();
         
         //read in input from user for zip file path
         java.util.Scanner scanner = new java.util.Scanner(System.in);
         // String zipFilePath = scanner.nextLine();
-        String zipFilePath = "D:\\UWI\\Year 3\\Sem 1\\Comp3607\\Practice\\Project practice stuff\\compressed.zip";
+        File zipFilePath = new File("D:\\UWI\\Year 3\\Sem 1\\Comp3607\\Project\\Comp3607_Project\\src\\resources\\Maia_Neptune_816030520_A1.zip");
 
         //read in input from user for directory path to extract the zip file to
         System.out.println("Please input the directory path to extract the zip file to");
@@ -23,7 +26,7 @@ public class App
         String destDir = "Desktop";
 
         //unzip the file
-        Zipped.unzip(zipFilePath, destDir);
+        fileExtractor.extractZip(zipFilePath, destDir);
 
         scanner.close();
     }
