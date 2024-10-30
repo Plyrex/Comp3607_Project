@@ -23,7 +23,7 @@ public class App
         //read in input from user for directory path to extract the zip file to
         System.out.println("Please input the directory path to extract the zip file to");
         // String destDir = scanner.nextLine(); //need to get a better way to input the directory path
-        String destDir = "Desktop";
+        File destDir = new File("D:\\UWI\\Year 3\\Sem 1\\Comp3607\\Project\\Comp3607_Project\\src\\resources\\");
 
         //unzip the file
         fileExtractor.extractZip(zipFilePath, destDir);

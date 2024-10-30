@@ -8,8 +8,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class FileExtractor {
-    public void extractZip(File zipFile, String destDir) {
-        File dir = new File(destDir);
+    public void extractZip(File zipFile, File destDir) {
+        File dir = destDir;
         // create output directory if it doesn't exist
         if(!dir.exists()) dir.mkdirs();
         FileInputStream fis;
