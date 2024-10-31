@@ -1,5 +1,14 @@
 package s_jamz;
 
+// import java.io.File;
+// import java.io.FileInputStream;
+// import java.io.FileOutputStream;
+// import java.io.IOException;
+// import java.util.zip.ZipEntry;
+// import java.util.zip.ZipInputStream;
+// import net.lingala.zip4j.exception.ZipException;
+// import net.lingala.zip4j.core.ZipFile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,9 +16,10 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+
 public class FileExtractor {
-    public void extractZip(File zipFile, File destDir) {
-        File dir = destDir;
+    public void extractZip(File zipFile) {
+        File dir = new File(zipFile.getParent() + File.separator + zipFile.getName().substring(0, zipFile.getName().lastIndexOf(".")));
         // create output directory if it doesn't exist
         if(!dir.exists()) dir.mkdirs();
         FileInputStream fis;
@@ -21,7 +31,7 @@ public class FileExtractor {
             ZipEntry ze = zis.getNextEntry();
             while(ze != null){
                 String fileName = ze.getName();
-                File newFile = new File(destDir + File.separator + fileName);
+                File newFile = new File(dir + File.separator + fileName);
                 System.out.println("Unzipping to "+newFile.getAbsolutePath());
                 //create directories for sub directories in zip
                 new File(newFile.getParent()).mkdirs();
