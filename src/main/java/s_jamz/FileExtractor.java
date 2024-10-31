@@ -14,6 +14,8 @@ public class FileExtractor {
         if (!tempFile.exists()) {
             tempFile.mkdirs();
         }
+
+        //extract the main zip file
         try {
             ZipFile zip = new ZipFile(zipFile);
             zip.extractAll(destFolder);          
@@ -23,26 +25,29 @@ public class FileExtractor {
             System.out.println("Error unzipping file\n");
             e.printStackTrace();
         }
-        System.out.println(tempFile.listFiles().length);
 
         //iteratively extract all the zipFiles in the extracted folder and add student individual Folders to the extracted folder
-        try{
-            for (File file : tempFile.listFiles()) {
-                System.out.println(file.getName());
-                try{
-                    ZipFile zip = new ZipFile(file);
-                    zip.extractAll(newDestFolder);
-                    System.out.println("File unzipped successfully\n");
-                }
-                catch (ZipException e) {
-                    System.out.println("Error unzipping file\n");
-                    e.printStackTrace();
-                }
+        extractZipFiles(tempFile, newDestFolder);
+    }
+
+    public void extractZipFiles(File zipFile, String destFolder) throws IOException {
+    try{
+        for (File file : zipFile.listFiles()) {
+            try{
+                ZipFile zip = new ZipFile(file);
+                zip.extractAll(destFolder);
+                System.out.println("Student zipFile " + file.getName() + " unzipped successfully\n");
+            }
+            catch (ZipException e) {
+                System.out.println("Error unzipping file\n");
+                e.printStackTrace();
             }
         }
-        catch (Exception e) {
-            System.out.println("Error unzipping file\n");
-            e.printStackTrace();
-        }     
     }
+    catch (Exception e) {
+        System.out.println("Error unzipping file\n");
+        e.printStackTrace();
+    }
+    }
+
 }
