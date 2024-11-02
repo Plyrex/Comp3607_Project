@@ -32,6 +32,7 @@ public class FileExtractor {
 
     public void extractZipFiles() throws IOException {
         File zipFileFile = new File(newDestFolder);
+        zipFileFile.getParentFile().mkdirs();
         if (!zipFileFile.exists()) {
             zipFileFile.mkdirs();
             System.out.println("Student Folders created successfully\n");
@@ -39,7 +40,7 @@ public class FileExtractor {
      
         try{
             File zipFile = new File(destFolder);
-            System.out.println("Extracting student zipFile from " + zipFile.getName() + "folder...\n");
+            System.out.println("Extracting student zipFile from " + zipFile.getName() + " folder...\n");
             for (File file : zipFile.listFiles()) {
                 try{
                     ZipFile zip = new ZipFile(file);
