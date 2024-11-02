@@ -8,8 +8,8 @@ import net.lingala.zip4j.ZipFile;
 
 public class FileExtractor {
     public void extractZip(File zipFile) throws IOException {
-        String destFolder = System.getProperty("user.dir") + "\\src\\main\\java\\s_jamz\\resources\\Submissions";
-        String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\java\\s_jamz\\resources\\StudentFolders";
+        String destFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\Submissions";
+        String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\StudentFolders";
         File tempFile = new File(destFolder);
         if (!tempFile.exists()) {
             tempFile.mkdirs();
