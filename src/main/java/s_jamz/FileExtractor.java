@@ -39,7 +39,7 @@ public class FileExtractor {
      
         try{
             File zipFile = new File(destFolder);
-            System.out.println("Extracting student zipFile from " + zipFile.getName() + "...\n");
+            System.out.println("Extracting student zipFile from " + zipFile.getName() + "folder...\n");
             for (File file : zipFile.listFiles()) {
                 try{
                     ZipFile zip = new ZipFile(file);
