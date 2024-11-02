@@ -7,8 +7,8 @@ import net.lingala.zip4j.ZipFile;
 
 
 public class FileExtractor {
-    String destFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\Submissions";
-    String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\StudentFolders";
+    String destFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\Submissions";
+    String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\StudentFolders";
     public void extractZip(File zipFile) throws IOException {
         
         // String test = System.getProperty("user.dir");
