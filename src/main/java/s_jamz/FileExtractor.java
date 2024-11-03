@@ -1,62 +1,70 @@
 package s_jamz;
 
-import net.lingala.zip4j.exception.ZipException;
 import java.io.File;
 import java.io.IOException;
 import net.lingala.zip4j.ZipFile;
-
+import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
-    String destFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\Submissions";
-    String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\StudentFolders";
     public void extractZip(File zipFile) throws IOException {
+        String destFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\Submissions";
+        String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\StudentFolders";
         
-        // String test = System.getProperty("user.dir");
-        // System.out.println(test);
-        
+        // Create Submissions directory if it doesn't exist
+        File submissionsDir = new File(destFolder);
+        if (!submissionsDir.exists()) {
+            submissionsDir.mkdirs();
+        }
 
-        // extract the main zip file
+        // Create StudentFolders directory if it doesn't exist
+        File studentFoldersDir = new File(newDestFolder);
+        if (!studentFoldersDir.exists()) {
+            studentFoldersDir.mkdirs();
+        }
+
+        // Extract the main zip file
         try {
             ZipFile zip = new ZipFile(zipFile);
-            zip.extractAll(destFolder);          
-            System.out.println("Main zip file unzipped successfully\n");
-        } 
-        catch (ZipException e) {
-            System.out.println("Error unzipping file\n");
+            zip.extractAll(destFolder);
+            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully\n");
+        } catch (ZipException e) {
+            System.out.println("Error unzipping main file " + zipFile.getName() + "\n");
             e.printStackTrace();
         }
 
-    //     //iteratively extract all the zipFiles in the extracted folder and add student individual Folders to the extracted folder
-        extractZipFiles();
-    }
-
-    public void extractZipFiles() throws IOException {
-        File zipFileFile = new File(newDestFolder);
-        zipFileFile.getParentFile().mkdirs();
-        if (!zipFileFile.exists()) {
-            zipFileFile.mkdirs();
-            System.out.println("Student Folders created successfully\n");
+        // Verify the contents of the Submissions directory
+        File[] submissionFiles = submissionsDir.listFiles();
+        if (submissionFiles != null) {
+            System.out.println("Files in Submissions directory:");
+            for (File file : submissionFiles) {
+                System.out.println(file.getName());
+            }
+        } else {
+            System.out.println("Submissions directory is empty or not accessible.");
+            return;
         }
-     
-        try{
-            File zipFile = new File(destFolder);
-            System.out.println("Extracting student zipFile from " + zipFile.getName() + " folder...\n");
-            for (File file : zipFile.listFiles()) {
-                try{
-                    ZipFile zip = new ZipFile(file);
-                    zip.extractAll(newDestFolder + "\\" + file.getName().substring(0, file.getName().length() - 4));
-                    System.out.println("Student zipFile: " + file.getName() + " unzipped successfully\n");
-                }
-                catch (ZipException e) {
-                    System.out.println("Error unzipping file\n");
-                    e.printStackTrace();
+
+        // Check if the extracted content is a directory named "Submissions"
+        File nestedSubmissionsDir = new File(destFolder + "\\Submissions");
+        if (nestedSubmissionsDir.exists() && nestedSubmissionsDir.isDirectory()) {
+            submissionFiles = nestedSubmissionsDir.listFiles();
+        }
+
+        // Extract individual student submissions
+        if (submissionFiles != null) {
+            for (File submission : submissionFiles) {
+                if (submission.isFile() && submission.getName().endsWith(".zip")) {
+                    try {
+                        ZipFile studentZip = new ZipFile(submission);
+                        String studentFolder = newDestFolder + "\\" + submission.getName().replace(".zip", "");
+                        studentZip.extractAll(studentFolder);
+                        System.out.println("Student zip file " + submission.getName() + " unzipped successfully\n");
+                    } catch (ZipException e) {
+                        System.out.println("Error unzipping student file " + submission.getName() + "\n");
+                        e.printStackTrace();
+                    }
                 }
             }
         }
-        catch (Exception e) {
-            System.out.println("Error unzipping file\n");
-            e.printStackTrace();
-        }
     }
-
 }
