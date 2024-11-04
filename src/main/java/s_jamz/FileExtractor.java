@@ -7,8 +7,8 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
     public void extractZip(File zipFile) throws IOException {
-        String destFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\Submissions";
-        String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\StudentFolders";
+        String destFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\Submissions";
+        String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\StudentFolders";
         
         // Create Submissions directory if it doesn't exist
         File submissionsDir = new File(destFolder);
