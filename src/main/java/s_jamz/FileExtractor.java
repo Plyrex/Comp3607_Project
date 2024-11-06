@@ -4,20 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileExtractor {
     public void extractZip(File zipFile) throws IOException {
         String destFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\Submissions";
         String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\StudentFolders";
         
+        Path path = Paths.get(destFolder);
+        Path newPath = Paths.get(newDestFolder);
+
         // Create Submissions directory if it doesn't exist
-        File submissionsDir = new File(destFolder);
+        File submissionsDir = path.toFile();
         if (!submissionsDir.exists()) {
             submissionsDir.mkdirs();
         }
 
         // Create StudentFolders directory if it doesn't exist
-        File studentFoldersDir = new File(newDestFolder);
+        File studentFoldersDir = newPath.toFile();
         if (!studentFoldersDir.exists()) {
             studentFoldersDir.mkdirs();
         }
