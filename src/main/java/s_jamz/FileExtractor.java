@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 
 public class FileExtractor {
     public void extractZip(File zipFile) throws IOException {
-        String destFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\Submissions";
-        String newDestFolder = System.getProperty("user.dir") + "\\src\\main\\resources\\StudentFolders";
+        String destFolder = System.getProperty("user.dir") + "/src/main/resources/Submissions";
+        String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders";
         
         Path path = Paths.get(destFolder);
         Path newPath = Paths.get(newDestFolder);
