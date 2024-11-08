@@ -1,4 +1,4 @@
-package s_jamz;
+package s_jamz.StrategyPattern;
 
 import java.io.File;
 

@@ -10,12 +10,12 @@ import java.nio.file.Paths;
 public class FileExtractor {
     public void extractZip(File zipFile) throws IOException {
         String destFolder = System.getProperty("user.dir") + "/src/main/resources/Submissions";
-        String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders";
+        String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
         
         Path path = Paths.get(destFolder);
         Path newPath = Paths.get(newDestFolder);
 
-        // Create Submissions directory if it doesn't exist
+        // Create Submissions directory if it doesn't exis
         File submissionsDir = path.toFile();
         if (!submissionsDir.exists()) {
             submissionsDir.mkdirs();
