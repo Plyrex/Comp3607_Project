@@ -1,8 +1,8 @@
-package s_jamz;
+package s_jamz.StrategyPattern;
 
 import java.io.File;
 
-public class ChatbotClassStrategy implements EvaluationStrategy {
+public class NamingConvention implements EvaluationStrategy {
     @Override
     public void evaluate(File javaFile) {
         // TODO method stub

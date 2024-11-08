@@ -3,6 +3,8 @@ package s_jamz;
 import java.io.File;
 import java.util.List;
 
+import s_jamz.StrategyPattern.EvaluationStrategy;
+
 public class JavaSubmissionProcessor extends SubmissionProcessor {
     public FileExtractor fileExtractor;
     public List<EvaluationStrategy> Strategies;
