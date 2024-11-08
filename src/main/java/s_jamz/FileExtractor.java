@@ -32,6 +32,7 @@ public class FileExtractor {
             ZipFile zip = new ZipFile(zipFile);
             zip.extractAll(destFolder);
             System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully\n");
+            zip.close();
         } catch (ZipException e) {
             System.out.println("Error unzipping main file " + zipFile.getName() + "\n");
             e.printStackTrace();
@@ -64,6 +65,7 @@ public class FileExtractor {
                         String studentFolder = newDestFolder + "\\" + submission.getName().replace(".zip", "");
                         studentZip.extractAll(studentFolder);
                         System.out.println("Student zip file " + submission.getName() + " unzipped successfully\n");
+                        studentZip.close();
                     } catch (ZipException e) {
                         System.out.println("Error unzipping student file " + submission.getName() + "\n");
                         e.printStackTrace();
