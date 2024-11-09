@@ -1,9 +1,9 @@
 package s_jamz;
 
 import s_jamz.TemplatePattern.JavaFileProcessor;
+import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.StrategyPattern.NamingConvention;
 import s_jamz.StrategyPattern.TestContext;
-import s_jamz.TemplatePattern.FileProcessorTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +17,11 @@ public class App {
         scanner.close();
 
         File zipFile = new File(zipFilePath);
+        if (!zipFile.exists() || !zipFile.isFile()) {
+            System.out.println("Invalid zip file path: " + zipFilePath);
+            return;
+        }
+
         FileProcessorTemplate fileProcessor = new JavaFileProcessor();
         fileProcessor.processFile(zipFile);
 
