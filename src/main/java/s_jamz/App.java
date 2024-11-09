@@ -1,7 +1,8 @@
 package s_jamz;
 
-import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
+import s_jamz.TemplatePattern.FileProcessorTemplate;
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -23,12 +24,9 @@ public class App {
             System.out.println("Processing extracted directories in: " + newDestFolder);
             for (File studentDir : extractedDir.listFiles()) {
                 if (studentDir.isDirectory()) {
-                    System.out.println("Processing student directory: " + studentDir.getName());
-                    fileProcessor.processFile(studentDir);
+                    fileProcessor.compileDirectory(studentDir);
                 }
             }
-        } else {
-            System.out.println("Extraction directory not found: " + newDestFolder);
         }
     }
 }
