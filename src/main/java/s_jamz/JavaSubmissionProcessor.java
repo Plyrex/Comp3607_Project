@@ -12,7 +12,6 @@ public class JavaSubmissionProcessor extends SubmissionProcessor {
 
     @Override
     public void processSubmission(File zipFile, String destDir, Student student) {
-        // TODO method stub
         throw new UnsupportedOperationException("Unimplemented method 'processSubmission'");
         
         // fileExtractor.extractZip(zipFile, destDir);
