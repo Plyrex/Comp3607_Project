@@ -24,11 +24,17 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     @Override
     protected void compileFile(File file) {
         // Ensure the file is a directory
-        if (!file.isDirectory()) {
+        if (file == null || !file.isDirectory()) {
+            System.out.println("Invalid directory: " + file);
             return;
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if (compiler == null) {
+            System.out.println("Java compiler not available.");
+            return;
+        }
+
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 
@@ -66,6 +72,9 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
         if (!success) {
             System.out.println("Compilation failed for files in " + file.getName());
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+                System.out.println(diagnostic.getMessage(null));
+            }
         } else {
             System.out.println("Compilation successful for files in " + file.getName());
         }
@@ -73,6 +82,10 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     }
 
     private void collectJavaFiles(File dir, List<File> javaFiles) {
+        if (dir == null || javaFiles == null) {
+            return;
+        }
+
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
