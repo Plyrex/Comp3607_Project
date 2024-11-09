@@ -1,13 +1,16 @@
 package s_jamz;
 
 import s_jamz.TemplatePattern.JavaFileProcessor;
+import s_jamz.StrategyPattern.NamingConvention;
+import s_jamz.StrategyPattern.TestContext;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please input the directory path of the zip file");
         String zipFilePath = scanner.nextLine();
@@ -25,6 +28,14 @@ public class App {
             for (File studentDir : extractedDir.listFiles()) {
                 if (studentDir.isDirectory()) {
                     fileProcessor.compileDirectory(studentDir);
+
+                    // Run tests using the NamingConvention strategy
+                    TestContext testContext = new TestContext();
+                    testContext.setStrategy(new NamingConvention());
+                    for (File javaFile : studentDir.listFiles((dir, name) -> name.endsWith(".java"))) {
+                        testContext.evaluate(javaFile);
+                        testContext.runTests(javaFile);
+                    }
                 }
             }
         }
