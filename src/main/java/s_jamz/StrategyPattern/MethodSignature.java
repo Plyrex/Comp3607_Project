@@ -8,4 +8,10 @@ public class MethodSignature implements EvaluationStrategy{
     public void evaluate(File javaFile) {
         throw new UnsupportedOperationException("Unimplemented method 'evaluate'");
     }
+
+    @Override
+    public void runTests(File javaFile) {
+    
+        throw new UnsupportedOperationException("Unimplemented method 'runTests'");
+    }
 }

@@ -7,5 +7,11 @@ public class AttributeType implements EvaluationStrategy {
     public void evaluate(File javaFile) {
         throw new UnsupportedOperationException("Unimplemented method 'evaluate'");
     }
+
+    @Override
+    public void runTests(File javaFile) {
+        
+        throw new UnsupportedOperationException("Unimplemented method 'runTests'");
+    }
     
 }

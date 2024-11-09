@@ -2,16 +2,7 @@ package s_jamz;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.AclEntry;
-import java.nio.file.attribute.AclEntryPermission;
-import java.nio.file.attribute.AclEntryType;
-import java.nio.file.attribute.AclFileAttributeView;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.*;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -27,14 +18,12 @@ public class FileExtractor {
         File submissionsDir = path.toFile();
         if (!submissionsDir.exists()) {
             submissionsDir.mkdirs();
-            setFullControlPermissions(submissionsDir.toPath());
         }
 
         // Create StudentFolders directory if it doesn't exist
         File studentFoldersDir = newPath.toFile();
         if (!studentFoldersDir.exists()) {
             studentFoldersDir.mkdirs();
-            setFullControlPermissions(studentFoldersDir.toPath());
         }
 
         // Extract the main zip file
@@ -102,7 +91,6 @@ public class FileExtractor {
                         Path filePath = outputDir.resolve(file.getName());
                         Files.createDirectories(filePath.getParent());
                         Files.copy(file.toPath(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                        setFullControlPermissions(filePath);
                         System.out.println("Extracted Java file: " + file.getName());
                     } catch (IOException e) {
                         System.out.println("Error extracting Java file " + file.getName() + "\n");
@@ -110,28 +98,13 @@ public class FileExtractor {
                     }
                 } else {
                     // Delete non-Java files
-                    file.delete();
+                    if (file.delete()) {
+                        System.out.println("Deleted non-Java file: " + file.getName());
+                    } else {
+                        System.out.println("Failed to delete non-Java file: " + file.getName());
+                    }
                 }
             }
-        }
-    }
-
-    private void setFullControlPermissions(Path path) throws IOException {
-        AclFileAttributeView aclAttr = Files.getFileAttributeView(path, AclFileAttributeView.class);
-        if (aclAttr != null) {
-            List<AclEntry> aclEntries = new ArrayList<>(aclAttr.getAcl());
-            AclEntry.Builder builder = AclEntry.newBuilder();
-            builder.setType(AclEntryType.ALLOW);
-            builder.setPrincipal(Files.getOwner(path));
-            builder.setPermissions(AclEntryPermission.READ_DATA, AclEntryPermission.WRITE_DATA, AclEntryPermission.EXECUTE,
-                                   AclEntryPermission.READ_ACL, AclEntryPermission.WRITE_ACL, AclEntryPermission.APPEND_DATA,
-                                   AclEntryPermission.DELETE, AclEntryPermission.DELETE_CHILD, AclEntryPermission.READ_ATTRIBUTES,
-                                   AclEntryPermission.WRITE_ATTRIBUTES, AclEntryPermission.READ_NAMED_ATTRS, AclEntryPermission.WRITE_NAMED_ATTRS);
-            aclEntries.add(builder.build());
-            aclAttr.setAcl(aclEntries);
-            System.out.println("Set full control permissions for: " + path);
-        } else {
-            System.out.println("ACL attribute view is not supported for: " + path);
         }
     }
 }

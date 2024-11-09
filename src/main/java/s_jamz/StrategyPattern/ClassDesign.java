@@ -24,4 +24,9 @@ public class ClassDesign implements EvaluationStrategy {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void runTests(File javaFile) {
+        throw new UnsupportedOperationException("Unimplemented method 'runTests'");
+    }
 }
