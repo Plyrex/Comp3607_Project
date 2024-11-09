@@ -3,6 +3,8 @@ package s_jamz;
 import java.io.File;
 import java.util.List;
 
+import s_jamz.CompositePattern.TestResultComponent;
+
 /*
  * Class requires reworking to implement the JavaSubmissionProcessor interface
  */
