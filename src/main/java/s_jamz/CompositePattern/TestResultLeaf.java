@@ -1,5 +1,8 @@
 package s_jamz.CompositePattern;
 
+import java.util.Collections;
+import java.util.List;
+
 public class TestResultLeaf implements TestResultComponent {
     private int score;
     private String feedback;
@@ -21,24 +24,26 @@ public class TestResultLeaf implements TestResultComponent {
 
     @Override
     public void add(TestResultComponent component) {
-        // Leaf nodes do not support add operation
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void remove(TestResultComponent component) {
-        // Leaf nodes do not support remove operation
         throw new UnsupportedOperationException();
     }
 
     @Override
     public TestResultComponent getChild(int i) {
-        // Leaf nodes do not support getChild operation
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void print() {
-        System.out.println(feedback);
+        System.out.println("Score: " + score + ", Feedback: " + feedback);
+    }
+
+    @Override
+    public List<TestResultComponent> getResults() {
+        return Collections.emptyList();
     }
 }

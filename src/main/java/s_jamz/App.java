@@ -36,13 +36,19 @@ public class App {
 
                     // Run tests using the NamingConvention strategy
                     GradingContext gradingContext = new GradingContext();
-                    gradingContext.setStrategy(new NamingConvention(studentDir.getAbsolutePath()));
+                    NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(namingConvention);
+
                     for (File javaFile : studentDir.listFiles((dir, name) -> name.endsWith(".java"))) {
                         System.out.println("Marking for student class: " + javaFile.getName());
-                        gradingContext.evaluate(javaFile);
                         gradingContext.runTests(javaFile);
                     }
-                    gradingContext.printResults();
+
+                    // Print the results for the student
+                    System.out.println("Final Test Results for student in folder: " + studentDir.getName());
+                    namingConvention.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
+                    int totalScore = namingConvention.getResults().getScore();
+                    System.out.println("Total Score: " + totalScore + " points\n");
                 }
             }
         }

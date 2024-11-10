@@ -7,18 +7,25 @@ public class TestResultComposite implements TestResultComponent {
     private List<TestResultComponent> results = new ArrayList<>();
 
     @Override
-    public void add(TestResultComponent component) {
-        results.add(component);
+    public void add(TestResultComponent result) {
+        results.add(result);
     }
 
     @Override
-    public void remove(TestResultComponent component) {
-        results.remove(component);
+    public void remove(TestResultComponent result) {
+        results.remove(result);
     }
 
     @Override
     public TestResultComponent getChild(int i) {
         return results.get(i);
+    }
+
+    @Override
+    public void print() {
+        for (TestResultComponent result : results) {
+            result.print();
+        }
     }
 
     @Override
@@ -40,9 +47,7 @@ public class TestResultComposite implements TestResultComponent {
     }
 
     @Override
-    public void print() {
-        for (TestResultComponent result : results) {
-            result.print();
-        }
+    public List<TestResultComponent> getResults() {
+        return results;
     }
 }
