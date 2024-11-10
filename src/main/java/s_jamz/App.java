@@ -3,7 +3,7 @@ package s_jamz;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.StrategyPattern.NamingConvention;
-import s_jamz.StrategyPattern.TestContext;
+import s_jamz.StrategyPattern.GradingContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,11 +35,12 @@ public class App {
                     fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
-                    TestContext testContext = new TestContext();
-                    testContext.setStrategy(new NamingConvention());
+                    GradingContext gradingContext = new GradingContext();
+                    gradingContext.setStrategy(new NamingConvention(studentDir.getAbsolutePath()));
                     for (File javaFile : studentDir.listFiles((dir, name) -> name.endsWith(".java"))) {
-                        testContext.evaluate(javaFile);
-                        testContext.runTests(javaFile);
+                        System.out.println("Marking for student class: " + javaFile.getName());
+                        gradingContext.evaluate(javaFile);
+                        gradingContext.runTests(javaFile);
                     }
                 }
             }

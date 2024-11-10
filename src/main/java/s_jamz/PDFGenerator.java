@@ -6,6 +6,9 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 
+import s_jamz.CompositePattern.TestResultComponent;
+
+
 public class PDFGenerator {
     String Dest= System.getProperty("user.dir") + "\\src\\main\\java\\s_jamz\\resources\\test.pdf";
 
