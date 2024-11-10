@@ -1,5 +1,7 @@
 package s_jamz.CompositePattern;
 
+import java.util.List;
+
 public interface TestResultComponent {
     int getScore();
     String getFeedback();
@@ -7,4 +9,5 @@ public interface TestResultComponent {
     void remove(TestResultComponent component);
     TestResultComponent getChild(int i);
     void print();
+    List<TestResultComponent> getResults(); // Add this method to the interface
 }
