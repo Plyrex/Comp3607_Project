@@ -1,8 +1,10 @@
 package s_jamz.StrategyPattern;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
@@ -15,6 +17,7 @@ public class NamingConvention implements EvaluationStrategy {
 
     public NamingConvention(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
+        this.results = new TestResultComposite();
     }
 
     @Override
@@ -25,6 +28,12 @@ public class NamingConvention implements EvaluationStrategy {
     @Override
     public void runTests(File javaFile) {
         try {
+            // Use the studentFolderPath field if needed
+            File studentDir = new File(studentFolderPath);
+            if (!studentDir.exists() || !studentDir.isDirectory()) {
+                throw new IllegalArgumentException("Invalid student folder path: " + studentFolderPath);
+            }
+
             // Dynamically add the /target/test-classes directory to the classpath
             File testDir = new File(System.getProperty("user.dir") + "/target/test-classes");
             URL testURL = testDir.toURI().toURL();
@@ -34,11 +43,18 @@ public class NamingConvention implements EvaluationStrategy {
             // Print the class name
             System.out.println("Running tests for class: " + testClass.getName());
 
-            // Run JUnit tests for NamingConvention
-            results = runNamingConventionTests(testClass);
+            // Run JUnit tests for NamingConvention using the JUnitTestExecutor
+            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
+
+            // Calculate the score based on the test results
+            int score = calculateScore(listener);
+            results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
+
+            // Print the test summary
+            listener.getSummary().printTo(new PrintWriter(System.out));
         } catch (Exception e) {
             e.printStackTrace();
-            results = new TestResultLeaf(0, "Failed to load test class: " + e.getMessage());
+            results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
         }
     }
 
@@ -47,16 +63,9 @@ public class NamingConvention implements EvaluationStrategy {
         return results;
     }
 
-    private TestResultComponent runNamingConventionTests(Class<?> testClass) {
-        TestResultComposite composite = new TestResultComposite();
-        try {
-            // Execute JUnit tests for naming conventions
-            JUnitTestExecutor.executeTests(testClass);
-            composite.add(new TestResultLeaf(90, "Naming convention test passed")); // Placeholder result
-        } catch (Exception e) {
-            e.printStackTrace();
-            composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
-        }
-        return composite;
+    private int calculateScore(SummaryGeneratingListener listener) {
+        long testsSucceeded = listener.getSummary().getTestsSucceededCount();
+        long testsFailed = listener.getSummary().getTestsFailedCount();
+        return (int) (testsSucceeded * 10 - testsFailed * 5); // Example calculation
     }
 }

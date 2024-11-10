@@ -42,6 +42,7 @@ public class App {
                         gradingContext.evaluate(javaFile);
                         gradingContext.runTests(javaFile);
                     }
+                    gradingContext.printResults();
                 }
             }
         }
