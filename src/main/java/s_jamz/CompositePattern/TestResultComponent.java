@@ -6,4 +6,5 @@ public interface TestResultComponent {
     void add(TestResultComponent component);
     void remove(TestResultComponent component);
     TestResultComponent getChild(int i);
+    void print();
 }

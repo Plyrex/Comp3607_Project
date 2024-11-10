@@ -21,16 +21,24 @@ public class TestResultLeaf implements TestResultComponent {
 
     @Override
     public void add(TestResultComponent component) {
+        // Leaf nodes do not support add operation
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void remove(TestResultComponent component) {
+        // Leaf nodes do not support remove operation
         throw new UnsupportedOperationException();
     }
 
     @Override
     public TestResultComponent getChild(int i) {
+        // Leaf nodes do not support getChild operation
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void print() {
+        System.out.println(feedback);
     }
 }
