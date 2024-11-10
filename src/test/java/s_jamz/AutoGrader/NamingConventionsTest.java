@@ -1,102 +1,99 @@
 package s_jamz.AutoGrader;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NamingConventionsTest {
 
-    private static int totalScore;
-    private static int classNamesScore;
-    private static int attributeNamesScore;
-    private static int methodNamesScore;
+    private static final Set<String> EXPECTED_CLASS_NAMES = new HashSet<>(Arrays.asList(
+        "ChatBot", "ChatBotGenerator", "ChatBotPlatform", "ChatBotSimulation"
+    ));
 
-    @BeforeEach
-    public void setup() {
-        // Only reset individual scores for each test
-        classNamesScore = 0;
-        attributeNamesScore = 0;
-        methodNamesScore = 0;
+    private static final Set<String> EXPECTED_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(
+        "chatBotName", "numResponsesGenerated", "messageLimit", "messageNumber"
+    ));
+
+    private static final Set<String> EXPECTED_METHOD_NAMES = new HashSet<>(Arrays.asList(
+        "ChatBot", "ChatBot", "getChatBotName", "getNumResponsesGenerated", "getTotalNumResponsesGenerated",
+        "getTotalNumMessagesRemaining", "limitReached", "generateResponse", "prompt", "toString",
+        "ChatBotPlatform", "addChatBot", "getChatBotList", "interactWithBot", "generateChatBotLLM"
+    ));
+
+    private static int score;
+
+    @BeforeAll
+    public static void setUp() {
+        score = 0; // Initialize score once at the start of all tests
     }
 
     @Test
-    public void testClassNames() {
-        int score = 0;
-
-        // Class Names
-        String[] classNames = {"ChatBot", "ChatBotPlatform", "ChatBotGenerator", "ChatBotSimulation"};
-        for (String className : classNames) {
-            try {
-                assertTrue(className.matches("^[A-Z][a-zA-Z0-9]*$"), "Class name " + className + " does not follow CamelCase.");
-                score++;
-            } catch (AssertionError e) {
-                System.out.println(e.getMessage());
+    public void testClassNameConvention() throws IOException {
+        File studentDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
+        for (File studentFile : studentDir.listFiles((dir, name) -> name.endsWith(".java"))) {
+            List<String> lines = Files.readAllLines(studentFile.toPath());
+            for (String line : lines) {
+                if (line.startsWith("public class ")) {
+                    String className = line.split(" ")[2];
+                    System.out.println("Checking class name: " + className);
+                    assertTrue(EXPECTED_CLASS_NAMES.contains(className), "Unexpected class name: " + className);
+                    if (EXPECTED_CLASS_NAMES.contains(className)) {
+                        score += 5; // Assign 5 points for each correct class name
+                        System.out.println("Matched class name: " + className);
+                    }
+                }
             }
         }
-
-        classNamesScore = Math.min(score, 4); // Ensure score does not exceed 4
-        totalScore += classNamesScore;
-        System.out.println("Class Names Score: " + classNamesScore + "/4");
     }
 
     @Test
-    public void testAttributeNames() {
-        int score = 0;
-
-        // Attribute Names
-        String[] attributeNames = {"chatBotName", "numResponsesGenerated", "messageLimit", "messageNumber", "bots"};
-        for (String attributeName : attributeNames) {
-            try {
-                assertTrue(attributeName.matches("^[a-z][a-zA-Z0-9]*$"), "Attribute name " + attributeName + " does not follow camelCase.");
-                score++;
-            } catch (AssertionError e) {
-                System.out.println(e.getMessage());
+    public void testMethodNameConvention() throws IOException {
+        File studentDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
+        for (File studentFile : studentDir.listFiles((dir, name) -> name.endsWith(".java"))) {
+            List<String> lines = Files.readAllLines(studentFile.toPath());
+            for (String line : lines) {
+                if (line.contains("public ") && line.contains("(") && line.contains(")")) {
+                    String methodName = line.split(" ")[2].split("\\(")[0];
+                    System.out.println("Checking method name: " + methodName);
+                    assertTrue(EXPECTED_METHOD_NAMES.contains(methodName), "Unexpected method name: " + methodName);
+                    if (EXPECTED_METHOD_NAMES.contains(methodName)) {
+                        score += 3; // Assign 3 points for each correct method name
+                        System.out.println("Matched method name: " + methodName);
+                    }
+                }
             }
         }
-
-        // Additional marks for descriptiveness
-        if (score == attributeNames.length) {
-            score += 2;
-        }
-
-        attributeNamesScore = Math.min(score, 7); // Ensure score does not exceed 7
-        totalScore += attributeNamesScore;
-        System.out.println("Attribute Names Score: " + attributeNamesScore + "/7");
     }
 
     @Test
-    public void testMethodNames() {
-        int score = 0;
-
-        // Method Names
-        String[] methodNames = {
-            "getChatBotName", "getNumResponsesGenerated", "getTotalNumResponsesGenerated", 
-            "getTotalNumMessagesRemaining", "limitReached", "generateResponse", 
-            "prompt", "toString", "addChatBot", "getChatBotList", 
-            "interactWithBot", "generateChatBotLLM"
-        };
-        for (String methodName : methodNames) {
-            try {
-                assertTrue(methodName.matches("^[a-z][a-zA-Z0-9]*$"), "Method name " + methodName + " does not follow camelCase.");
-                score++;
-            } catch (AssertionError e) {
-                System.out.println(e.getMessage());
+    public void testAttributeNameConvention() throws IOException {
+        File studentDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
+        for (File studentFile : studentDir.listFiles((dir, name) -> name.endsWith(".java"))) {
+            List<String> lines = Files.readAllLines(studentFile.toPath());
+            for (String line : lines) {
+                if (line.contains("private ") && line.contains(";")) {
+                    String attributeName = line.split(" ")[2].replace(";", "");
+                    System.out.println("Checking attribute name: " + attributeName);
+                    assertTrue(EXPECTED_ATTRIBUTE_NAMES.contains(attributeName), "Unexpected attribute name: " + attributeName);
+                    if (EXPECTED_ATTRIBUTE_NAMES.contains(attributeName)) {
+                        score += 2; // Assign 2 points for each correct attribute name
+                        System.out.println("Matched attribute name: " + attributeName);
+                    }
+                }
             }
         }
-
-        // Additional marks for descriptiveness
-        if (score == methodNames.length) {
-            score += 2;
-        }
-
-        methodNamesScore = Math.min(score, 9); // Ensure score does not exceed 9
-        totalScore += methodNamesScore;
-        System.out.println("Method Names Score: " + methodNamesScore + "/9");
     }
 
     @AfterAll
-    public static void printTotalScore() {
-        System.out.println("Total Score: " + totalScore + "/20");
+    public static void printFinalScore() {
+        System.out.println("Final Naming Convention Score: " + score);
     }
 }
