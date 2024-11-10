@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+import s_jamz.CompositePattern.TestResultComponent;
+
+
 public class ClassDesign implements EvaluationStrategy {
     @Override
     public void evaluate(File javaFile) {
@@ -28,5 +31,11 @@ public class ClassDesign implements EvaluationStrategy {
     @Override
     public void runTests(File javaFile) {
         throw new UnsupportedOperationException("Unimplemented method 'runTests'");
+    }
+
+    @Override
+    public TestResultComponent getResults() {
+    
+        throw new UnsupportedOperationException("Unimplemented method 'getResults'");
     }
 }
