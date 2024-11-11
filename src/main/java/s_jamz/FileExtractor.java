@@ -7,29 +7,29 @@ import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
-    public void extractZip(File zipFile) throws IOException {
-        String destFolder = System.getProperty("user.dir") + "/src/main/resources/Submissions";
-        String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
-        
-        Path path = Paths.get(destFolder);
-        Path newPath = Paths.get(newDestFolder);
+    public void extractZip(File zipFile, String destFolder) throws IOException {
+        String submissionsFolder = destFolder;
+        String studentFoldersDir = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
+
+        Path submissionsPath = Paths.get(submissionsFolder);
+        Path studentFoldersPath = Paths.get(studentFoldersDir);
 
         // Create Submissions directory if it doesn't exist
-        File submissionsDir = path.toFile();
+        File submissionsDir = submissionsPath.toFile();
         if (!submissionsDir.exists()) {
             submissionsDir.mkdirs();
         }
 
         // Create StudentFolders directory if it doesn't exist
-        File studentFoldersDir = newPath.toFile();
-        if (!studentFoldersDir.exists()) {
-            studentFoldersDir.mkdirs();
+        File studentFoldersDirectory = studentFoldersPath.toFile();
+        if (!studentFoldersDirectory.exists()) {
+            studentFoldersDirectory.mkdirs();
         }
 
         // Extract the main zip file
         try (ZipFile zip = new ZipFile(zipFile)) {
-            zip.extractAll(destFolder);
-            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully\n");
+            zip.extractAll(submissionsFolder);
+            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully to " + submissionsFolder + "\n");
         } catch (ZipException e) {
             System.out.println("Error unzipping main file " + zipFile.getName() + "\n");
             e.printStackTrace();
@@ -47,17 +47,11 @@ public class FileExtractor {
             return;
         }
 
-        // Check if the extracted content is a directory named "Submissions"
-        File nestedSubmissionsDir = new File(destFolder + "\\Submissions");
-        if (nestedSubmissionsDir.exists() && nestedSubmissionsDir.isDirectory()) {
-            submissionFiles = nestedSubmissionsDir.listFiles();
-        }
-
         // Extract individual student submissions
         if (submissionFiles != null) {
             for (File submission : submissionFiles) {
                 if (submission.isFile() && submission.getName().endsWith(".zip")) {
-                    String studentFolder = newDestFolder + "\\" + submission.getName().replace(".zip", "");
+                    String studentFolder = studentFoldersDir + "/" + submission.getName().replace(".zip", "");
                     File studentFolderFile = new File(studentFolder);
                     if (studentFolderFile.exists()) {
                         System.out.println("Student folder already exists: " + studentFolder);
@@ -66,7 +60,7 @@ public class FileExtractor {
                     try {
                         try (ZipFile studentZip = new ZipFile(submission)) {
                             studentZip.extractAll(studentFolder);
-                            System.out.println("Student zip file " + submission.getName() + " unzipped successfully\n");
+                            System.out.println("Student zip file " + submission.getName() + " unzipped successfully to " + studentFolder + "\n");
                         }
                     } catch (ZipException e) {
                         System.out.println("Error unzipping student file " + submission.getName() + "\n");
@@ -78,6 +72,9 @@ public class FileExtractor {
                 }
             }
         }
+
+        // Delete the extracted master file directory if it is empty
+        deleteDirectoryIfEmpty(submissionsDir);
     }
 
     private void extractJavaFiles(File studentFolder, Path outputDir) {
@@ -91,7 +88,7 @@ public class FileExtractor {
                         Path filePath = outputDir.resolve(file.getName());
                         Files.createDirectories(filePath.getParent());
                         Files.copy(file.toPath(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Extracted Java file: " + file.getName());
+                        System.out.println("Extracted Java file: " + file.getName() + " to " + filePath.toString());
                     } catch (IOException e) {
                         System.out.println("Error extracting Java file " + file.getName() + "\n");
                         e.printStackTrace();
@@ -104,6 +101,16 @@ public class FileExtractor {
                         System.out.println("Failed to delete non-Java file: " + file.getName());
                     }
                 }
+            }
+        }
+    }
+
+    private void deleteDirectoryIfEmpty(File directory) {
+        if (directory.isDirectory() && directory.list().length == 0) {
+            if (directory.delete()) {
+                System.out.println("Deleted empty directory: " + directory.getAbsolutePath());
+            } else {
+                System.out.println("Failed to delete empty directory: " + directory.getAbsolutePath());
             }
         }
     }

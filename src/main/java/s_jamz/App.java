@@ -32,7 +32,7 @@ public class App {
         if (extractedDir.exists() && extractedDir.isDirectory()) {
             System.out.println("Processing extracted directories in: " + newDestFolder);
             for (File studentDir : extractedDir.listFiles()) {
-                if (studentDir.isDirectory()) {
+                if (studentDir.isDirectory() && !studentDir.getName().equalsIgnoreCase("StudentSubmissions2")) {
                     fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
