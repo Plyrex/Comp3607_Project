@@ -25,7 +25,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     protected void compileFile(File file) {
         // Ensure the file is a directory
         if (file == null || !file.isDirectory()) {
-            System.out.println("Invalid directory: " + file);
+            System.out.println("Trying to compile. Error...Invalid directory: " + file);
             return;
         }
 
@@ -38,54 +38,54 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 
+        // Collect Java files and compile them
         List<File> javaFiles = new ArrayList<>();
         collectJavaFiles(file, javaFiles);
 
         if (javaFiles.isEmpty()) {
-            System.out.println("No Java files found in directory: " + file.getName());
+            System.out.println("No Java files found in directory: " + file);
             return;
         }
 
-        // Create a bin directory for the student's assignment
-        Path binDir = Paths.get(file.getPath(), "bin");
+        // Set the output directory to the student's bin folder
+        Path outputDir = file.toPath().resolve("bin");
         try {
-            if (!Files.exists(binDir)) {
-                Files.createDirectories(binDir);
+            if (!Files.exists(outputDir)) {
+                Files.createDirectories(outputDir);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
-        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(javaFiles);
-        List<String> options = new ArrayList<>();
-        options.add("-d");
-        options.add(binDir.toString());
+        List<String> compileOptions = new ArrayList<>();
+        compileOptions.add("-d");
+        compileOptions.add(outputDir.toString());
 
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
+        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(javaFiles);
+        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, compileOptions, null, compilationUnits);
 
         boolean success = task.call();
+        if (success) {
+            System.out.println("Compilation successful for files in " + file.getName());
+        } else {
+            System.out.println("Compilation failed for files in " + file.getName());
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+                System.out.println(diagnostic.getMessage(null));
+            }
+        }
+
         try {
             fileManager.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (!success) {
-            System.out.println("Compilation failed for files in " + file.getName());
-            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-                System.out.println(diagnostic.getMessage(null));
-            }
-        } else {
-            System.out.println("Compilation successful for files in " + file.getName());
-        }
-        storeResults(file, diagnostics);
+        // Store the results
+        storeResults(file);
     }
 
     private void collectJavaFiles(File dir, List<File> javaFiles) {
-        if (dir == null || javaFiles == null) {
-            return;
-        }
-
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -99,23 +99,15 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     }
 
     @Override
-    protected void storeResults(File file, DiagnosticCollector<JavaFileObject> diagnostics) {
-        // Implement logic to store compilation results
-        // For example, you can log the results or save them to a file
-        Path resultDir = Paths.get(System.getProperty("user.dir"), "results");
+    protected void storeResults(File file) {
+        // Store compilation results in the bin folder within the student's directory
+        Path resultDir = file.toPath().resolve("bin");
         try {
             if (!Files.exists(resultDir)) {
                 Files.createDirectories(resultDir);
             }
             Path resultFile = resultDir.resolve(file.getName() + ".log");
-            List<String> log = new ArrayList<>();
-            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-                log.add(diagnostic.getMessage(null));
-            }
-            if (log.isEmpty()) {
-                log.add("Compilation successful for files in " + file.getName());
-            }
-            Files.write(resultFile, log, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.write(resultFile, ("Compilation results for " + file.getName()).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
