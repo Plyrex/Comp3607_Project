@@ -74,7 +74,6 @@ public class FileExtractor {
                     }
 
                     // Extract only .java files from the student folder
-                    extractJavaFiles(new File(studentFolder), Paths.get(studentFolder));
                 }
             }
         }
