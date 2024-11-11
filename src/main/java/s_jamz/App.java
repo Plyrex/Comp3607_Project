@@ -29,7 +29,6 @@ public class App {
         FileProcessorTemplate fileProcessor = new JavaFileProcessor();
         fileProcessor.processFile(zipFile);
 
-        // Assuming the extracted files are placed in the specified directory
         String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
         File extractedDir = new File(newDestFolder);
         if (extractedDir.exists() && extractedDir.isDirectory()) {
@@ -46,18 +45,19 @@ public class App {
                     StudentFolderProcessor processor = new StudentFolderProcessor(gradingContext);
                     processor.processStudentFolder(studentDir.getAbsolutePath());
 
-                    // Run tests using the MethodSignature strategy
-                    MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(methodSignature);
-                    processor.processStudentFolder(studentDir.getAbsolutePath());
-
-                    // Print the results for the student
+                    // Print the results for NamingConvention
                     System.out.println("Final Test Results for student in folder: " + studentDir.getName());
                     ResultPrinter printer = new ResultPrinter(namingConvention.getResults());
                     printer.printResults();
                     int totalScoreNaming = namingConvention.getResults().getScore();
                     System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
 
+                    // Run tests using the MethodSignature strategy
+                    MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(methodSignature);
+                    processor.processStudentFolder(studentDir.getAbsolutePath());
+
+                    // Print the results for MethodSignature
                     printer = new ResultPrinter(methodSignature.getResults());
                     printer.printResults();
                     int totalScoreMethod = methodSignature.getResults().getScore();
