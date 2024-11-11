@@ -55,6 +55,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
                 System.out.println("Created bin directory: " + outputDir.toString());
             }
         } catch (IOException e) {
+            System.err.println("Failed to create bin directory: " + outputDir.toString());
             e.printStackTrace();
             return;
         }
@@ -106,6 +107,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         try {
             if (!Files.exists(resultDir)) {
                 Files.createDirectories(resultDir);
+                System.out.println("Created bin directory for results: " + resultDir.toString());
             }
             Path resultFile = resultDir.resolve(file.getName() + ".log");
             List<String> logLines = new ArrayList<>();
@@ -114,7 +116,9 @@ public class JavaFileProcessor extends FileProcessorTemplate {
                 logLines.add(diagnostic.getMessage(null));
             }
             Files.write(resultFile, logLines);
+            System.out.println("Stored compilation results in: " + resultFile.toString());
         } catch (IOException e) {
+            System.err.println("Failed to store compilation results in: " + resultDir.toString());
             e.printStackTrace();
         }
     }
