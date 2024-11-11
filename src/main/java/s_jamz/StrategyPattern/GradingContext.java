@@ -1,9 +1,7 @@
 package s_jamz.StrategyPattern;
 
 import java.io.File;
-
 import s_jamz.CompositePattern.TestResultComponent;
-
 
 public class GradingContext {
     private EvaluationStrategy strategy;
@@ -13,26 +11,32 @@ public class GradingContext {
     }
 
     public void evaluate(File javaFile) {
-        if (strategy != null) {
-            strategy.evaluate(javaFile);
-        } else {
-            throw new IllegalStateException("Evaluation strategy not set");
-        }
+        strategy.evaluate(javaFile);
     }
 
     public void runTests(File javaFile) {
-        if (strategy != null) {
-            strategy.runTests(javaFile);
-        } else {
-            throw new IllegalStateException("Evaluation strategy not set");
-        }
+        strategy.runTests(javaFile);
     }
 
-    public TestResultComponent getResults() {
-        if (strategy != null) {
-            return strategy.getResults();
-        } else {
-            throw new IllegalStateException("Evaluation strategy not set");
+    public void processStudentFolder(String studentFolderPath) {
+        File studentDir = new File(studentFolderPath);
+        if (!studentDir.exists() || !studentDir.isDirectory()) {
+            throw new IllegalArgumentException("Invalid student folder path: " + studentFolderPath);
         }
+
+        File[] javaFiles = studentDir.listFiles((dir, name) -> name.endsWith(".java"));
+        if (javaFiles != null) {
+            for (File javaFile : javaFiles) {
+                runTests(javaFile);
+            }
+        }
+
+        printResults();
+    }
+
+    public void printResults() {
+        TestResultComponent results = strategy.getResults();
+        System.out.println("Final Test Results:");
+        results.print();
     }
 }
