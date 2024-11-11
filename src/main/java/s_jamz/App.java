@@ -7,6 +7,8 @@ import java.util.Scanner;
 import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
+import s_jamz.StrategyPattern.StudentFolderProcessor;
+import s_jamz.StrategyPattern.ResultPrinter;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
@@ -39,20 +41,24 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
-                    gradingContext.processStudentFolder(studentDir.getAbsolutePath());  // Pass as String
+
+                    StudentFolderProcessor processor = new StudentFolderProcessor(gradingContext);
+                    processor.processStudentFolder(studentDir.getAbsolutePath());
 
                     // Run tests using the MethodSignature strategy
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
-                    gradingContext.processStudentFolder(studentDir.getAbsolutePath());  // Pass as String
+                    processor.processStudentFolder(studentDir.getAbsolutePath());
 
                     // Print the results for the student
                     System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    namingConvention.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
+                    ResultPrinter printer = new ResultPrinter(namingConvention.getResults());
+                    printer.printResults();
                     int totalScoreNaming = namingConvention.getResults().getScore();
                     System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
 
-                    methodSignature.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
+                    printer = new ResultPrinter(methodSignature.getResults());
+                    printer.printResults();
                     int totalScoreMethod = methodSignature.getResults().getScore();
                     System.out.println("Total Score for MethodSignature: " + totalScoreMethod + " points\n");
 

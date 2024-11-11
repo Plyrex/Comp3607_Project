@@ -82,34 +82,6 @@ public class FileExtractor {
         deleteDirectoryIfEmpty(submissionsDir);
     }
 
-    private void extractJavaFiles(File studentFolder, Path outputDir) {
-        File[] files = studentFolder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    extractJavaFiles(file, outputDir);
-                } else if (file.getName().endsWith(".java")) {
-                    try {
-                        Path filePath = outputDir.resolve(file.getName());
-                        Files.createDirectories(filePath.getParent());
-                        Files.copy(file.toPath(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Extracted Java file: " + file.getName() + " to " + filePath.toString());
-                    } catch (IOException e) {
-                        System.out.println("Error extracting Java file " + file.getName() + "\n");
-                        e.printStackTrace();
-                    }
-                } else {
-                    // Delete non-Java files
-                    if (file.delete()) {
-                        System.out.println("Deleted non-Java file: " + file.getName());
-                    } else {
-                        System.out.println("Failed to delete non-Java file: " + file.getName());
-                    }
-                }
-            }
-        }
-    }
-
     private void deleteDirectoryIfEmpty(File directory) {
         if (directory.isDirectory() && directory.list().length == 0) {
             if (directory.delete()) {
