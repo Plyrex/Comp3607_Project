@@ -9,7 +9,6 @@ public abstract class FileProcessorTemplate {
 
     public void processFile(File file) {
         extractFile(file);
-        // Compilation will be handled separately
     }
 
     public void compileDirectory(File directory) {
