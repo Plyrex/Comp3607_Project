@@ -12,10 +12,10 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
     @Override
     protected void extractFile(File zipFile) {
-        // Use FileExtractor to extract only .java files
+        // Use FileExtractor to extract only .java files to the specified directory
         FileExtractor extractor = new FileExtractor();
         try {
-            extractor.extractZip(zipFile);
+            extractor.extractZip(zipFile, zipFile.getParentFile().getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,7 +109,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
                 Files.createDirectories(resultDir);
                 System.out.println("Created bin directory for results: " + resultDir.toString());
             }
-            Path resultFile = resultDir.resolve(file.getName() + ".log");
+            Path resultFile = resultDir.resolve("Test.log");
             List<String> logLines = new ArrayList<>();
             logLines.add("Compilation results for " + file.getName() + ":");
             for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
