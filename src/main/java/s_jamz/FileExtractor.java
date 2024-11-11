@@ -8,7 +8,7 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
     public void extractZip(File zipFile, String destFolder) throws IOException {
-        String submissionsFolder = destFolder;
+        String submissionsFolder = System.getProperty("user.dir") + "/src/main/resources/StudentSubmissions2/";
         String studentFoldersDir = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
 
         Path submissionsPath = Paths.get(submissionsFolder);
@@ -51,6 +51,12 @@ public class FileExtractor {
         if (submissionFiles != null) {
             for (File submission : submissionFiles) {
                 if (submission.isFile() && submission.getName().endsWith(".zip")) {
+                    // Skip unwanted zip files
+                    if (submission.getName().equalsIgnoreCase("compressed.zip")) {
+                        System.out.println("Skipping unwanted zip file: " + submission.getName());
+                        continue;
+                    }
+
                     String studentFolder = studentFoldersDir + "/" + submission.getName().replace(".zip", "");
                     File studentFolderFile = new File(studentFolder);
                     if (studentFolderFile.exists()) {
