@@ -9,5 +9,5 @@ public interface TestResultComponent {
     void remove(TestResultComponent component);
     TestResultComponent getChild(int i);
     void print();
-    List<TestResultComponent> getResults(); // Add this method to the interface
+    List<TestResultComponent> getResults();
 }
