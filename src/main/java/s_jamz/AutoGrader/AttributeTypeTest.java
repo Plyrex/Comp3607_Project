@@ -177,6 +177,8 @@ public class AttributeTypeTest {
      }
     }
 
+    
+
      @AfterAll
      public static void calculateTotal(){
   
@@ -184,3 +186,6 @@ public class AttributeTypeTest {
      }
 
 }
+
+
+
