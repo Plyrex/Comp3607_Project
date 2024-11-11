@@ -1,14 +1,14 @@
 package s_jamz;
 
-import s_jamz.TemplatePattern.JavaFileProcessor;
-import s_jamz.TemplatePattern.FileProcessorTemplate;
-import s_jamz.StrategyPattern.NamingConvention;
-import s_jamz.StrategyPattern.MethodSignature;
-import s_jamz.StrategyPattern.GradingContext;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+
+import s_jamz.StrategyPattern.GradingContext;
+import s_jamz.StrategyPattern.MethodSignature;
+import s_jamz.StrategyPattern.NamingConvention;
+import s_jamz.TemplatePattern.FileProcessorTemplate;
+import s_jamz.TemplatePattern.JavaFileProcessor;
 
 public class App {
     public static void main(String[] args) throws IOException {
@@ -39,12 +39,12 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
-                    namingConvention.processStudentFolder();
+                    gradingContext.processStudentFolder(studentDir.getAbsolutePath());  // Pass as String
 
                     // Run tests using the MethodSignature strategy
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
-                    methodSignature.processStudentFolder();
+                    gradingContext.processStudentFolder(studentDir.getAbsolutePath());  // Pass as String
 
                     // Print the results for the student
                     System.out.println("Final Test Results for student in folder: " + studentDir.getName());

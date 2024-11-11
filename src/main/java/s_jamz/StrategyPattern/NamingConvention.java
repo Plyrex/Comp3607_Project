@@ -23,39 +23,24 @@ public class NamingConvention implements EvaluationStrategy {
 
     @Override
     public void evaluate(File javaFile) {
-        // Implement evaluation logic if needed
+        // Implement naming convention checks or other related logic if needed
     }
 
     @Override
     public void runTests(File javaFile) {
         try {
-            // Use the studentFolderPath field if needed
-            File studentDir = new File(studentFolderPath);
-            if (!studentDir.exists() || !studentDir.isDirectory()) {
-                throw new IllegalArgumentException("Invalid student folder path: " + studentFolderPath);
-            }
-
-            // Dynamically add the student's directory to the classpath
-            URL studentURL = studentDir.toURI().toURL();
-            URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
+            URLClassLoader urlClassLoader = createClassLoader(javaFile);
             Class<?> testClass = Class.forName("s_jamz.AutoGrader.NamingConventionsTest", true, urlClassLoader);
 
-            // Print the class name
             System.out.println("Running tests for class: " + testClass.getName());
 
-            // Run JUnit tests for NamingConvention using the JUnitTestExecutor
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
-
-            // Calculate the score based on the test results
             TestExecutionSummary summary = listener.getSummary();
-            int score = calculateScore(javaFile.getName());
 
+            int score = calculateScore(javaFile.getName());
             results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
 
-            // Print the test summary
-            System.out.println("Test Results for " + javaFile.getName() + ":");
-            summary.getFailures().forEach(failure -> System.out.println("Failed: " + failure.getTestIdentifier().getDisplayName()));
-            System.out.println("Score: " + score + " points\n");
+            printTestSummary(javaFile, summary, score);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Class not found: " + e.getMessage()));
@@ -65,57 +50,24 @@ public class NamingConvention implements EvaluationStrategy {
         }
     }
 
+    private URLClassLoader createClassLoader(File javaFile) throws Exception {
+        File studentDir = javaFile.getParentFile();
+        URL studentURL = studentDir.toURI().toURL();
+        return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
+    }
+
+    private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
+        System.out.println("Test Results for " + javaFile.getName() + ":");
+        summary.getFailures().forEach(failure -> System.out.println("Failed: " + failure.getTestIdentifier().getDisplayName()));
+        System.out.println("Score: " + score + " points\n");
+    }
+
     private int calculateScore(String fileName) {
-        int score = 0;
-        switch (fileName) {
-            case "ChatBot.java":
-                score = NamingConventionsTest.scores.getOrDefault("ChatBot", 0);
-                System.out.println("Score for ChatBot class: " + score + " out of 36");
-                break;
-            case "ChatBotPlatform.java":
-                score = NamingConventionsTest.scores.getOrDefault("ChatBotPlatform", 0);
-                System.out.println("Score for ChatBotPlatform class: " + score + " out of 20");
-                break;
-            case "ChatBotGenerator.java":
-                score = NamingConventionsTest.scores.getOrDefault("ChatBotGenerator", 0);
-                System.out.println("Score for ChatBotGenerator class: " + score + " out of 7");
-                break;
-            default:
-                break;
-        }
-        return score;
+        return NamingConventionsTest.scores.getOrDefault(fileName.replace(".java", ""), 0);
     }
 
     @Override
     public TestResultComponent getResults() {
         return results;
-    }
-
-    public void processStudentFolder() {
-        File studentDir = new File(studentFolderPath);
-        if (!studentDir.exists() || !studentDir.isDirectory()) {
-            throw new IllegalArgumentException("Invalid student folder path: " + studentFolderPath);
-        }
-
-        File[] javaFiles = studentDir.listFiles((dir, name) -> name.endsWith(".java"));
-        if (javaFiles != null) {
-            for (File javaFile : javaFiles) {
-                runTests(javaFile);
-            }
-        }
-
-        // Print the final results for the student
-        System.out.println("Final Test Results for student in folder: " + studentFolderPath);
-        int totalScore = 0;
-        int chatBotScore = NamingConventionsTest.scores.getOrDefault("ChatBot", 0);
-        int chatBotPlatformScore = NamingConventionsTest.scores.getOrDefault("ChatBotPlatform", 0);
-        int chatBotGeneratorScore = NamingConventionsTest.scores.getOrDefault("ChatBotGenerator", 0);
-
-        // System.out.println("Score for ChatBot class: " + chatBotScore + " out of 36");
-        // System.out.println("Score for ChatBotPlatform class: " + chatBotPlatformScore + " out of 20");
-        // System.out.println("Score for ChatBotGenerator class: " + chatBotGeneratorScore + " out of 7");
-
-        totalScore = chatBotScore + chatBotPlatformScore + chatBotGeneratorScore;
-        System.out.println("Total Score: " + totalScore + " points\n");
     }
 }
