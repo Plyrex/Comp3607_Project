@@ -4,38 +4,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestResultComposite implements TestResultComponent {
-    private List<TestResultComponent> components = new ArrayList<>();
+    private List<TestResultComponent> results = new ArrayList<>();
+
+    @Override
+    public void add(TestResultComponent result) {
+        results.add(result);
+    }
+
+    @Override
+    public void remove(TestResultComponent result) {
+        results.remove(result);
+    }
+
+    @Override
+    public TestResultComponent getChild(int i) {
+        return results.get(i);
+    }
+
+    @Override
+    public void print() {
+        for (TestResultComponent result : results) {
+            result.print();
+        }
+    }
 
     @Override
     public int getScore() {
         int totalScore = 0;
-        for (TestResultComponent component : components) {
-            totalScore += component.getScore();
+        for (TestResultComponent result : results) {
+            totalScore += result.getScore();
         }
-        return components.isEmpty() ? 0 : totalScore / components.size(); // Average score
+        return totalScore;
     }
 
     @Override
     public String getFeedback() {
         StringBuilder feedback = new StringBuilder();
-        for (TestResultComponent component : components) {
-            feedback.append(component.getFeedback()).append("\n");
+        for (TestResultComponent result : results) {
+            feedback.append(result.getFeedback()).append("\n");
         }
         return feedback.toString();
     }
 
     @Override
-    public void add(TestResultComponent component) {
-        components.add(component);
-    }
-
-    @Override
-    public void remove(TestResultComponent component) {
-        components.remove(component);
-    }
-
-    @Override
-    public TestResultComponent getChild(int i) {
-        return components.get(i);
+    public List<TestResultComponent> getResults() {
+        return results;
     }
 }
