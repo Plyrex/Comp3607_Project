@@ -52,6 +52,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         try {
             if (!Files.exists(outputDir)) {
                 Files.createDirectories(outputDir);
+                System.out.println("Created bin directory: " + outputDir.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,7 +83,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         }
 
         // Store the results
-        storeResults(file);
+        storeResults(file, diagnostics);
     }
 
     private void collectJavaFiles(File dir, List<File> javaFiles) {
@@ -99,7 +100,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     }
 
     @Override
-    protected void storeResults(File file) {
+    protected void storeResults(File file, DiagnosticCollector<JavaFileObject> diagnostics) {
         // Store compilation results in the bin folder within the student's directory
         Path resultDir = file.toPath().resolve("bin");
         try {
@@ -107,7 +108,12 @@ public class JavaFileProcessor extends FileProcessorTemplate {
                 Files.createDirectories(resultDir);
             }
             Path resultFile = resultDir.resolve(file.getName() + ".log");
-            Files.write(resultFile, ("Compilation results for " + file.getName()).getBytes());
+            List<String> logLines = new ArrayList<>();
+            logLines.add("Compilation results for " + file.getName() + ":");
+            for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+                logLines.add(diagnostic.getMessage(null));
+            }
+            Files.write(resultFile, logLines);
         } catch (IOException e) {
             e.printStackTrace();
         }
