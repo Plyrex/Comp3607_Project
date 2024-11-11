@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import s_jamz.StrategyPattern.GradingContext;
+import s_jamz.CompositePattern.ResultPrinter;
+import s_jamz.StrategyPattern.DefaultGradingContext;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
 import s_jamz.StrategyPattern.StudentFolderProcessor;
-import s_jamz.StrategyPattern.ResultPrinter;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
@@ -38,7 +39,7 @@ public class App {
                     fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
-                    GradingContext gradingContext = new GradingContext();
+                    GradingContext gradingContext = new DefaultGradingContext();
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
 

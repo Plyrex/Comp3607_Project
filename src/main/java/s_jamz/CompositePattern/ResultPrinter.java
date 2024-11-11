@@ -1,6 +1,4 @@
-package s_jamz.StrategyPattern;
-
-import s_jamz.CompositePattern.TestResultComponent;
+package s_jamz.CompositePattern;
 
 public class ResultPrinter {
     private TestResultComponent results;
