@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MethodSignaturesTest {
 
-    public static Map<String, Integer> scores = new HashMap<>();
+    public static Map<String, Double> scores = new HashMap<>();
+    public static Map<String, List<String>> feedback = new HashMap<>();
 
     private Class<?> loadClass(String className) throws Exception {
         // Use the specified path for the student folders
@@ -58,19 +60,20 @@ public class MethodSignaturesTest {
 
     @Test
     public void testChatBotMethodSignatures() throws Exception {
-        int score = 0;
+        double score = 0;
+        List<String> feedbackMessages = new ArrayList<>();
         Class<?> chatBotClass = loadClass("ChatBot");
 
         // Expected method signatures for ChatBot class
         List<MethodSignature> expectedMethodSignatures = Arrays.asList(
-            new MethodSignature("java.lang.String", "getChatBotName", Arrays.asList()),
-            new MethodSignature("int", "getNumResponsesGenerated", Arrays.asList()),
-            new MethodSignature("int", "getTotalNumResponsesGenerated", Arrays.asList()),
-            new MethodSignature("int", "getTotalNumMessagesRemaining", Arrays.asList()),
-            new MethodSignature("boolean", "limitReached", Arrays.asList()),
-            new MethodSignature("java.lang.String", "generateResponse", Arrays.asList()),
-            new MethodSignature("java.lang.String", "prompt", Arrays.asList("java.lang.String")),
-            new MethodSignature("java.lang.String", "toString", Arrays.asList())
+            new MethodSignature("java.lang.String", "getChatBotName", Arrays.asList(), 0.5),
+            new MethodSignature("int", "getNumResponsesGenerated", Arrays.asList(), 0.5),
+            new MethodSignature("int", "getTotalNumResponsesGenerated", Arrays.asList(), 1),
+            new MethodSignature("int", "getTotalNumMessagesRemaining", Arrays.asList(), 1.5),
+            new MethodSignature("boolean", "limitReached", Arrays.asList(), 1.5),
+            new MethodSignature("java.lang.String", "generateResponse", Arrays.asList(), 2),
+            new MethodSignature("java.lang.String", "prompt", Arrays.asList("java.lang.String"), 1),
+            new MethodSignature("java.lang.String", "toString", Arrays.asList(), 2)
         );
 
         // Check each method in the loaded class
@@ -79,31 +82,34 @@ public class MethodSignaturesTest {
             for (MethodSignature expectedSignature : expectedMethodSignatures) {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
-                    score += 1;
+                    score += expectedSignature.weight;
+                    feedbackMessages.add("Method signature '" + method.toString() + "' matches expected signature.");
                     break;
                 }
             }
             if (!matched) {
-                System.err.println("Mismatched signature: found " + method.toString() 
+                feedbackMessages.add("Mismatched signature: found " + method.toString() 
                     + ", expected one of " + expectedMethodSignatures);
             }
         }
 
         scores.put("ChatBot", score);
-        assertEquals(expectedMethodSignatures.size(), score, 
+        feedback.put("ChatBot", feedbackMessages);
+        assertEquals(10.0, score, 
             "Not all method signatures matched for ChatBot");
     }
 
     @Test
     public void testChatBotPlatformMethodSignatures() throws Exception {
-        int score = 0;
+        double score = 0;
+        List<String> feedbackMessages = new ArrayList<>();
         Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
 
         // Expected method signatures for ChatBotPlatform class
         List<MethodSignature> expectedMethodSignatures = Arrays.asList(
-            new MethodSignature("boolean", "addChatBot", Arrays.asList("int")),
-            new MethodSignature("java.lang.String", "getChatBotList", Arrays.asList()),
-            new MethodSignature("java.lang.String", "interactWithBot", Arrays.asList("int", "java.lang.String"))
+            new MethodSignature("boolean", "addChatBot", Arrays.asList("int"), 2),
+            new MethodSignature("java.lang.String", "getChatBotList", Arrays.asList(), 3),
+            new MethodSignature("java.lang.String", "interactWithBot", Arrays.asList("int", "java.lang.String"), 2)
         );
 
         // Check each method in the loaded class
@@ -112,29 +118,32 @@ public class MethodSignaturesTest {
             for (MethodSignature expectedSignature : expectedMethodSignatures) {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
-                    score += 1;
+                    score += expectedSignature.weight;
+                    feedbackMessages.add("Method signature '" + method.toString() + "' matches expected signature.");
                     break;
                 }
             }
             if (!matched) {
-                System.err.println("Mismatched signature: found " + method.toString() 
+                feedbackMessages.add("Mismatched signature: found " + method.toString() 
                     + ", expected one of " + expectedMethodSignatures);
             }
         }
 
         scores.put("ChatBotPlatform", score);
-        assertEquals(expectedMethodSignatures.size(), score, 
+        feedback.put("ChatBotPlatform", feedbackMessages);
+        assertEquals(7, score, 
             "Not all method signatures matched for ChatBotPlatform");
     }
 
     @Test
     public void testChatBotGeneratorMethodSignatures() throws Exception {
-        int score = 0;
+        double score = 0;
+        List<String> feedbackMessages = new ArrayList<>();
         Class<?> chatBotGeneratorClass = loadClass("ChatBotGenerator");
 
         // Expected method signatures for ChatBotGenerator class
         List<MethodSignature> expectedMethodSignatures = Arrays.asList(
-            new MethodSignature("java.lang.String", "generateChatBotLLM", Arrays.asList("int"))
+            new MethodSignature("java.lang.String", "generateChatBotLLM", Arrays.asList("int"), 1)
         );
 
         // Check each method in the loaded class
@@ -143,18 +152,20 @@ public class MethodSignaturesTest {
             for (MethodSignature expectedSignature : expectedMethodSignatures) {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
-                    score += 1;
+                    score += expectedSignature.weight;
+                    feedbackMessages.add("Method signature '" + method.toString() + "' matches expected signature.");
                     break;
                 }
             }
             if (!matched) {
-                System.err.println("Mismatched signature: found " + method.toString() 
+                feedbackMessages.add("Mismatched signature: found " + method.toString() 
                     + ", expected one of " + expectedMethodSignatures);
             }
         }
 
         scores.put("ChatBotGenerator", score);
-        assertEquals(expectedMethodSignatures.size(), score, 
+        feedback.put("ChatBotGenerator", feedbackMessages);
+        assertEquals(1, score, 
             "Not all method signatures matched for ChatBotGenerator");
     }
 
@@ -163,11 +174,13 @@ public class MethodSignaturesTest {
         String returnType;
         String methodName;
         List<String> parameterTypes;
+        double weight;
 
-        MethodSignature(String returnType, String methodName, List<String> parameterTypes) {
+        MethodSignature(String returnType, String methodName, List<String> parameterTypes, double weight) {
             this.returnType = returnType;
             this.methodName = methodName;
             this.parameterTypes = parameterTypes;
+            this.weight = weight;
         }
 
         @Override
