@@ -47,8 +47,8 @@ public class App {
 
                     // Print the results for NamingConvention
                     System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    ResultPrinter printer = new ResultPrinter(namingConvention.getResults());
-                    printer.printResults();
+                    ResultPrinter printer = new ResultPrinter(namingConvention.getResults(), namingConvention.getFeedback());
+                    printer.printFormattedResults();
                     int totalScoreNaming = namingConvention.getResults().getScore();
                     System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
 
@@ -58,8 +58,8 @@ public class App {
                     processor.processStudentFolder(studentDir.getAbsolutePath());
 
                     // Print the results for MethodSignature
-                    printer = new ResultPrinter(methodSignature.getResults());
-                    printer.printResults();
+                    printer = new ResultPrinter(methodSignature.getResults(), methodSignature.getFeedback());
+                    printer.printFormattedResults();
                     int totalScoreMethod = methodSignature.getResults().getScore();
                     System.out.println("Total Score for MethodSignature: " + totalScoreMethod + " points\n");
 

@@ -3,6 +3,8 @@ package s_jamz.StrategyPattern;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import s_jamz.CompositePattern.TestResultComponent;
@@ -15,10 +17,12 @@ public class MethodSignature implements EvaluationStrategy {
 
     private TestResultComponent results;
     private String studentFolderPath;
+    private List<String> feedback;
 
     public MethodSignature(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
+        this.feedback = new ArrayList<>();
     }
 
     @Override
@@ -37,16 +41,18 @@ public class MethodSignature implements EvaluationStrategy {
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
             TestExecutionSummary summary = listener.getSummary();
 
-            int score = calculateScore(javaFile.getName());
-            results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
+            double score = calculateScore(javaFile.getName());
+            results.add(new TestResultLeaf((int) score, "Test Results: " + score + " points"));
 
             printTestSummary(javaFile, summary, score);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Class not found: " + e.getMessage()));
+            feedback.add("Class not found: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            feedback.add("Failed to load test class: " + e.getMessage());
         }
     }
 
@@ -56,38 +62,31 @@ public class MethodSignature implements EvaluationStrategy {
         return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
     }
 
-    private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
+    private void printTestSummary(File javaFile, TestExecutionSummary summary, double score) {
         System.out.println("Test Results for " + javaFile.getName() + ":");
-        summary.getFailures().forEach(failure -> System.out.println("Failed: " + failure.getTestIdentifier().getDisplayName()));
-        System.out.println("Score: " + score + " points\n");
+        summary.getFailures().forEach(failure -> {
+            String feedbackMessage = "Failed: " + failure.getTestIdentifier().getDisplayName() + " - " + failure.getException().getMessage();
+            System.out.println(feedbackMessage );
+            feedback.add(feedbackMessage);
+        });
+        feedback.add("Score: " + score + " points\n");
+
+        // Add detailed feedback from MethodSignaturesTest
+        String className = javaFile.getName().replace(".java", "");
+        List<String> classFeedback = MethodSignaturesTest.feedback.getOrDefault(className, new ArrayList<>());
+        feedback.addAll(classFeedback);
     }
 
-    private int calculateScore(String fileName) {
-        return MethodSignaturesTest.scores.getOrDefault(fileName.replace(".java", ""), 0);
-    }
-
-    public void processStudentFolder() {
-        File folder = new File(studentFolderPath);
-        File[] javaFiles = folder.listFiles((dir, name) -> name.endsWith(".java"));
-        if (javaFiles != null) {
-            for (File javaFile : javaFiles) {
-                runTests(javaFile);
-            }
-        }
-
-        // Print the final results for the student
-        System.out.println("Final Test Results for student in folder: " + studentFolderPath);
-        int totalScore = 0;
-        int chatBotScore = MethodSignaturesTest.scores.getOrDefault("ChatBot", 0);
-        int chatBotPlatformScore = MethodSignaturesTest.scores.getOrDefault("ChatBotPlatform", 0);
-        int chatBotGeneratorScore = MethodSignaturesTest.scores.getOrDefault("ChatBotGenerator", 0);
-
-        totalScore = chatBotScore + chatBotPlatformScore + chatBotGeneratorScore;
-        System.out.println("Total Score: " + totalScore + " points\n");
+    private double calculateScore(String fileName) {
+        return MethodSignaturesTest.scores.getOrDefault(fileName.replace(".java", ""), 0.0);
     }
 
     @Override
     public TestResultComponent getResults() {
         return results;
+    }
+
+    public List<String> getFeedback() {
+        return feedback;
     }
 }

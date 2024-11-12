@@ -3,6 +3,8 @@ package s_jamz.StrategyPattern;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import s_jamz.CompositePattern.TestResultComponent;
@@ -15,10 +17,12 @@ public class NamingConvention implements EvaluationStrategy {
 
     private TestResultComponent results;
     private String studentFolderPath;
+    private List<String> feedback;
 
     public NamingConvention(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
+        this.feedback = new ArrayList<>();
     }
 
     @Override
@@ -44,9 +48,11 @@ public class NamingConvention implements EvaluationStrategy {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Class not found: " + e.getMessage()));
+            feedback.add("Class not found: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            feedback.add("Failed to load test class: " + e.getMessage());
         }
     }
 
@@ -58,8 +64,18 @@ public class NamingConvention implements EvaluationStrategy {
 
     private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
         System.out.println("Test Results for " + javaFile.getName() + ":");
-        summary.getFailures().forEach(failure -> System.out.println("Failed: " + failure.getTestIdentifier().getDisplayName()));
+        summary.getFailures().forEach(failure -> {
+            String feedbackMessage = "Failed: " + failure.getTestIdentifier().getDisplayName() + " - " + failure.getException().getMessage();
+            System.out.println(feedbackMessage);
+            feedback.add(feedbackMessage);
+        });
         System.out.println("Score: " + score + " points\n");
+        feedback.add("Score: " + score + " points\n");
+
+        // Add detailed feedback from NamingConventionsTest
+        String className = javaFile.getName().replace(".java", "");
+        List<String> classFeedback = NamingConventionsTest.feedback.getOrDefault(className, new ArrayList<>());
+        feedback.addAll(classFeedback);
     }
 
     private int calculateScore(String fileName) {
@@ -69,5 +85,9 @@ public class NamingConvention implements EvaluationStrategy {
     @Override
     public TestResultComponent getResults() {
         return results;
+    }
+
+    public List<String> getFeedback() {
+        return feedback;
     }
 }
