@@ -18,7 +18,7 @@ public class StudentFolderProcessor {
         File[] javaFiles = studentDir.listFiles((dir, name) -> name.endsWith(".java"));
         if (javaFiles != null) {
             for (File javaFile : javaFiles) {
-                gradingContext.runTests(javaFile);
+                gradingContext.evaluate(javaFile);
             }
         }
     }

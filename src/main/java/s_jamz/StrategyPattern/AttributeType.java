@@ -11,12 +11,6 @@ public class AttributeType implements EvaluationStrategy {
     }
 
     @Override
-    public void runTests(File javaFile) {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'runTests'");
-    }
-
-    @Override
     public TestResultComponent getResults() {
     
         throw new UnsupportedOperationException("Unimplemented method 'getResults'");

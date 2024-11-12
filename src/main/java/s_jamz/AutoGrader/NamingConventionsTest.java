@@ -1,5 +1,6 @@
 package s_jamz.AutoGrader;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -16,6 +17,23 @@ public class NamingConventionsTest {
 
     public static Map<String, Integer> scores = new HashMap<>();
     public static Map<String, List<String>> feedback = new HashMap<>();
+    private HashMap<String, Field[]> attributeTest;
+
+    public NamingConventionsTest() {
+        attributeTest = new HashMap<>();
+    }
+
+    @BeforeEach
+    public void setup() {
+        attributeTest.clear();
+        try {
+            loadAttributeNames("ChatBot");
+            loadAttributeNames("ChatBotPlatform");
+            loadAttributeNames("ChatBotGenerator");
+        } catch (Exception e) {
+            System.err.println("Could not load attribute names for classes: " + e.getMessage());
+        }
+    }
 
     private Class<?> loadClass(String className) throws Exception {
         // Use the specified path for the student folders
@@ -24,7 +42,6 @@ public class NamingConventionsTest {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
         }
 
-        // Iterate through each student folder
         for (File studentDir : studentFoldersDir.listFiles()) {
             if (studentDir.isDirectory()) {
                 // Navigate to the bin directory
@@ -36,13 +53,26 @@ public class NamingConventionsTest {
                     try {
                         return Class.forName(className, true, urlClassLoader);
                     } catch (ClassNotFoundException e) {
-                        // Continue searching in other student folders
+                        // Continue to the next student folder
                     }
                 }
             }
         }
 
         throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
+    }
+
+    private void loadAttributeNames(String className) throws Exception {
+        Class<?> classObj = loadClass(className);
+        if (classObj != null) {
+            attributeTest.put(className, getFields(classObj));
+        } else {
+            System.out.println("Provided class is null.");
+        }
+    }
+
+    private Field[] getFields(Class<?> classObj) {
+        return classObj.getDeclaredFields();
     }
 
     @Test
@@ -61,7 +91,7 @@ public class NamingConventionsTest {
         }
 
         // Check attribute names
-        Field[] fields = chatBotClass.getDeclaredFields();
+        Field[] fields = attributeTest.get("ChatBot");
         ArrayList<String> expectedFieldNames = new ArrayList<>();
         expectedFieldNames.add("chatBotName");
         expectedFieldNames.add("numResponsesGenerated");
@@ -120,6 +150,24 @@ public class NamingConventionsTest {
             feedbackMessages.add("Class name should be 'ChatBotPlatform'.");
         }
 
+        // Check attribute names
+        Field[] fields = attributeTest.get("ChatBotPlatform");
+        ArrayList<String> expectedFieldNames = new ArrayList<>();
+        expectedFieldNames.add("chatBotName");
+        expectedFieldNames.add("numResponsesGenerated");
+        expectedFieldNames.add("messageLimit");
+        expectedFieldNames.add("messageNumber");
+
+        for (Field field : fields) {
+            try {
+                assertTrue(expectedFieldNames.contains(field.getName()), "Field name should follow naming conventions");
+                score += 1;
+                feedbackMessages.add("Field name '" + field.getName() + "' follows naming conventions.");
+            } catch (AssertionError e) {
+                feedbackMessages.add("Field name '" + field.getName() + "' does not follow naming conventions.");
+            }
+        }
+
         // Check method names
         Method[] methods = chatBotPlatformClass.getDeclaredMethods();
         ArrayList<String> expectedMethodNames = new ArrayList<>();
@@ -153,6 +201,24 @@ public class NamingConventionsTest {
             feedbackMessages.add("Class name 'ChatBotGenerator' is correct.");
         } catch (AssertionError e) {
             feedbackMessages.add("Class name should be 'ChatBotGenerator'.");
+        }
+
+        // Check attribute names
+        Field[] fields = attributeTest.get("ChatBotGenerator");
+        ArrayList<String> expectedFieldNames = new ArrayList<>();
+        expectedFieldNames.add("chatBotName");
+        expectedFieldNames.add("numResponsesGenerated");
+        expectedFieldNames.add("messageLimit");
+        expectedFieldNames.add("messageNumber");
+
+        for (Field field : fields) {
+            try {
+                assertTrue(expectedFieldNames.contains(field.getName()), "Field name should follow naming conventions");
+                score += 1;
+                feedbackMessages.add("Field name '" + field.getName() + "' follows naming conventions.");
+            } catch (AssertionError e) {
+                feedbackMessages.add("Field name '" + field.getName() + "' does not follow naming conventions.");
+            }
         }
 
         // Check method names

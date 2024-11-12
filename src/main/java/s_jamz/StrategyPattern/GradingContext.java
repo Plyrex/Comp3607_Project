@@ -9,17 +9,10 @@ public class GradingContext {
         this.strategy = strategy;
     }
 
+
     public void evaluate(File javaFile) {
         if (strategy != null) {
             strategy.evaluate(javaFile);
-        } else {
-            throw new IllegalStateException("Evaluation strategy not set");
-        }
-    }
-
-    public void runTests(File javaFile) {
-        if (strategy != null) {
-            strategy.runTests(javaFile);
         } else {
             throw new IllegalStateException("Test strategy not set");
         }
