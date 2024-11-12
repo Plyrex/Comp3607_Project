@@ -33,6 +33,10 @@ public class MethodSignature implements EvaluationStrategy {
     @Override
     public void runTests(File javaFile) {
         try {
+            // Clear the static maps before running the tests
+            MethodSignaturesTest.scores.clear();
+            MethodSignaturesTest.feedback.clear();
+
             URLClassLoader urlClassLoader = createClassLoader(javaFile);
             Class<?> testClass = Class.forName("s_jamz.AutoGrader.MethodSignaturesTest", true, urlClassLoader);
 
@@ -66,7 +70,7 @@ public class MethodSignature implements EvaluationStrategy {
         System.out.println("Test Results for " + javaFile.getName() + ":");
         summary.getFailures().forEach(failure -> {
             String feedbackMessage = "Failed: " + failure.getTestIdentifier().getDisplayName() + " - " + failure.getException().getMessage();
-            System.out.println(feedbackMessage );
+            System.out.println(feedbackMessage);
             feedback.add(feedbackMessage);
         });
         feedback.add("Score: " + score + " points\n");
