@@ -27,11 +27,6 @@ public class NamingConvention implements EvaluationStrategy {
 
     @Override
     public void evaluate(File javaFile) {
-        // Implement naming convention checks or other related logic if needed
-    }
-
-    @Override
-    public void runTests(File javaFile) {
         try {
             // Clear the static maps before running the tests
             NamingConventionsTest.scores.clear();

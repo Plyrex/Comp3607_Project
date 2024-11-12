@@ -27,11 +27,6 @@ public class MethodSignature implements EvaluationStrategy {
 
     @Override
     public void evaluate(File javaFile) {
-        // Implement method signature checks or other related logic if needed
-    }
-
-    @Override
-    public void runTests(File javaFile) {
         try {
             // Clear the static maps before running the tests
             MethodSignaturesTest.scores.clear();
@@ -45,8 +40,8 @@ public class MethodSignature implements EvaluationStrategy {
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
             TestExecutionSummary summary = listener.getSummary();
 
-            double score = calculateScore(javaFile.getName());
-            results.add(new TestResultLeaf((int) score, "Test Results: " + score + " points"));
+            int score = calculateScore(javaFile.getName());
+            results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
 
             printTestSummary(javaFile, summary, score);
         } catch (ClassNotFoundException e) {
@@ -66,7 +61,7 @@ public class MethodSignature implements EvaluationStrategy {
         return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
     }
 
-    private void printTestSummary(File javaFile, TestExecutionSummary summary, double score) {
+    private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
         System.out.println("Test Results for " + javaFile.getName() + ":");
         summary.getFailures().forEach(failure -> {
             String feedbackMessage = "Failed: " + failure.getTestIdentifier().getDisplayName() + " - " + failure.getException().getMessage();
@@ -81,8 +76,8 @@ public class MethodSignature implements EvaluationStrategy {
         feedback.addAll(classFeedback);
     }
 
-    private double calculateScore(String fileName) {
-        return MethodSignaturesTest.scores.getOrDefault(fileName.replace(".java", ""), 0.0);
+    private int calculateScore(String fileName) {
+        return MethodSignaturesTest.scores.getOrDefault(fileName.replace(".java", ""), 0);
     }
 
     @Override
