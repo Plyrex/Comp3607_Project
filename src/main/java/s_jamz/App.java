@@ -6,12 +6,13 @@ import java.util.Scanner;
 
 import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.CompositePattern.ResultPrinter;
-import s_jamz.StrategyPattern.DefaultGradingContext;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
 import s_jamz.StrategyPattern.StudentFolderProcessor;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
+import s_jamz.AutoGrader.NamingConventionsTest;
+import s_jamz.AutoGrader.MethodSignaturesTest;
 
 public class App {
     public static void main(String[] args) throws IOException {
@@ -38,7 +39,7 @@ public class App {
                     fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
-                    GradingContext gradingContext = new DefaultGradingContext();
+                    GradingContext gradingContext = new GradingContext();
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
 
@@ -51,6 +52,10 @@ public class App {
                     printer.printFormattedResults();
                     int totalScoreNaming = namingConvention.getResults().getScore();
                     System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
+
+                    // Clear the static maps after running the tests
+                    NamingConventionsTest.scores.clear();
+                    NamingConventionsTest.feedback.clear();
 
                     // Run tests using the MethodSignature strategy
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
@@ -65,6 +70,10 @@ public class App {
 
                     int totalScore = totalScoreNaming + totalScoreMethod;
                     System.out.println("Overall Total Score: " + totalScore + " points\n");
+
+                    // Clear the static maps after running the tests
+                    MethodSignaturesTest.scores.clear();
+                    MethodSignaturesTest.feedback.clear();
                 }
             }
         }

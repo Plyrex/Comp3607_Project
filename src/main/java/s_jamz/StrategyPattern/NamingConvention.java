@@ -33,6 +33,10 @@ public class NamingConvention implements EvaluationStrategy {
     @Override
     public void runTests(File javaFile) {
         try {
+            // Clear the static maps before running the tests
+            NamingConventionsTest.scores.clear();
+            NamingConventionsTest.feedback.clear();
+
             URLClassLoader urlClassLoader = createClassLoader(javaFile);
             Class<?> testClass = Class.forName("s_jamz.AutoGrader.NamingConventionsTest", true, urlClassLoader);
 
