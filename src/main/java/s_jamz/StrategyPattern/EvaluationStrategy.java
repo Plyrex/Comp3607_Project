@@ -7,6 +7,6 @@ import s_jamz.CompositePattern.TestResultComponent;
 
 public interface EvaluationStrategy {
     void evaluate(File javaFile);
-    void runTests(File javaFile);
+    void runTests();
     TestResultComponent getResults();
 }

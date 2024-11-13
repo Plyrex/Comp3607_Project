@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
@@ -39,25 +40,31 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
-                    gradingContext.processStudentFolder(studentDir.getAbsolutePath());  // Pass as String
+                    gradingContext.runTests();  // Pass as String
 
                     // Run tests using the MethodSignature strategy
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
-                    gradingContext.processStudentFolder(studentDir.getAbsolutePath());  // Pass as String
+                    gradingContext.runTests();  // Pass as String
+
+                    // Run tests using the AttributeType strategy
+                    AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(attributeType);
+                    gradingContext.runTests(); 
 
                     // Print the results for the student
-                    System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    namingConvention.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
-                    int totalScoreNaming = namingConvention.getResults().getScore();
-                    System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
 
-                    methodSignature.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
-                    int totalScoreMethod = methodSignature.getResults().getScore();
-                    System.out.println("Total Score for MethodSignature: " + totalScoreMethod + " points\n");
+                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
+                    // namingConvention.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
+                    // int totalScoreNaming = namingConvention.getResults().getScore();
+                    // System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
 
-                    int totalScore = totalScoreNaming + totalScoreMethod;
-                    System.out.println("Overall Total Score: " + totalScore + " points\n");
+                    // methodSignature.getResults().getResults().forEach(result -> System.out.println(result.getFeedback()));
+                    // int totalScoreMethod = methodSignature.getResults().getScore();
+                    // System.out.println("Total Score for MethodSignature: " + totalScoreMethod + " points\n");
+
+                    // int totalScore = totalScoreNaming + totalScoreMethod;
+                    // System.out.println("Overall Total Score: " + totalScore + " points\n\n");
                 }
             }
         }

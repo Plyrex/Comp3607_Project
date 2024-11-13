@@ -14,8 +14,8 @@ public class GradingContext {
         strategy.evaluate(javaFile);
     }
 
-    public void runTests(File javaFile) {
-        strategy.runTests(javaFile);
+    public void runTests() {
+        strategy.runTests();
     }
 
     public void processStudentFolder(String studentFolderPath) {
@@ -27,7 +27,7 @@ public class GradingContext {
         File[] javaFiles = studentDir.listFiles((dir, name) -> name.endsWith(".java"));
         if (javaFiles != null) {
             for (File javaFile : javaFiles) {
-                runTests(javaFile);
+                runTests();
             }
         }
 

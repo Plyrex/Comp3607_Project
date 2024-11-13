@@ -27,24 +27,20 @@ public class NamingConvention implements EvaluationStrategy {
     }
 
     @Override
-    public void runTests(File javaFile) {
+    public void runTests() {
         try {
-            URLClassLoader urlClassLoader = createClassLoader(javaFile);
-            Class<?> testClass = Class.forName("s_jamz.AutoGrader.NamingConventionsTest", true, urlClassLoader);
+            NamingConventionsTest testClass = new NamingConventionsTest();
 
-            System.out.println("Running tests for class: " + testClass.getName());
+            System.out.println("Running tests for class: " + testClass.getClass().getName());
 
-            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
+            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();
 
-            int score = calculateScore(javaFile.getName());
+            int score = calculateScore(testClass.getClass().getName());
             results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
 
-            printTestSummary(javaFile, summary, score);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            results.add(new TestResultLeaf(0, "Class not found: " + e.getMessage()));
-        } catch (Exception e) {
+            printTestSummary(testClass.getClass(), summary, score);
+        }  catch (Exception e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
         }
@@ -56,8 +52,8 @@ public class NamingConvention implements EvaluationStrategy {
         return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
     }
 
-    private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
-        System.out.println("Test Results for " + javaFile.getName() + ":");
+    private void printTestSummary(Class<?> class1, TestExecutionSummary summary, int score) {
+        System.out.println("Test Results for " + class1.getName() + ":");
         summary.getFailures().forEach(failure -> System.out.println("Failed: " + failure.getTestIdentifier().getDisplayName()));
         System.out.println("Score: " + score + " points\n");
     }

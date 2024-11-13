@@ -6,6 +6,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
+
 import s_jamz.JUnitTestExecutor;
 import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
@@ -27,22 +30,23 @@ public class AttributeType implements EvaluationStrategy {
     public void evaluate(File javaFile) {
          throw new UnsupportedOperationException("Unimplemented method 'evaluate'");
     }
+    
 
    
     @Override
-     public void runTests(File javaFile) {
+     public void runTests() {
         try {
-              // Dynamically add the /target/test-classes directory to the classpath
-              File testDir = new File(System.getProperty("user.dir") + "/target/test-classes");
-              URL testURL = testDir.toURI().toURL();
-              URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{testURL}, this.getClass().getClassLoader());
-              Class<?> testClass = Class.forName("s_jamz.AutoGrader.AttributeTypeTest", true, urlClassLoader);
-
+            AttributeTypeTest testClass = new AttributeTypeTest();
+        
             // Print the class name
-            System.out.println("Running tests for class: " + testClass.getSimpleName());
+            System.out.println("Running tests for class: " + testClass.getClass().getName());
+
+
+            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
+            TestExecutionSummary summary = listener.getSummary();
 
             // // Run JUnit tests for AttributeType
-            results = runAttributeTypeTests(testClass);
+            results = runAttributeTypeTests(testClass.getClass());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,11 +59,18 @@ public class AttributeType implements EvaluationStrategy {
         return results;
     }
 
+    private URLClassLoader createClassLoader(File javaFile) throws Exception {
+        File studentDir = javaFile.getParentFile();
+        URL studentURL = studentDir.toURI().toURL();
+        return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
+    }
+
     private TestResultComponent runAttributeTypeTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
             // Execute JUnit tests for naming conventions
-            JUnitTestExecutor.executeTests(testClass);
+            
+            // JUnitTestExecutor.executeTests(testClass);
             composite.add(new TestResultLeaf(90, "Attribute type test passed")); // Placeholder result
         } catch (Exception e) {
             e.printStackTrace();

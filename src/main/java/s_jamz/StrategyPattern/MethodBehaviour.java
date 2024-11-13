@@ -11,7 +11,7 @@ public class MethodBehaviour implements EvaluationStrategy {
     }
 
     @Override
-    public void runTests(File javaFile) {
+    public void runTests() {
         throw new UnsupportedOperationException("Unimplemented method 'runTests'");
     }
 

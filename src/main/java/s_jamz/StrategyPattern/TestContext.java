@@ -17,9 +17,9 @@ public class TestContext {
         }
     }
 
-    public void runTests(File javaFile) {
+    public void runTests() {
         if (strategy != null) {
-            strategy.runTests(javaFile);
+            strategy.runTests();
         } else {
             throw new IllegalStateException("Test strategy not set");
         }
