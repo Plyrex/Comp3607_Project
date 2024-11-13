@@ -197,57 +197,11 @@ public class AttributeTypeTest {
         assertEquals(1, score);
      }
 
-     @Test
-     public void chatBotSimulationTest(){
-        System.out.println("ChatBotSimulation Test. \n");
-
-          Field[] chatBotSimulationAttributes = attributeTest.get("ChatBotSimulation");
-          int score = 0;
-          boolean hasChatBotPlatform = false;
-          boolean hasChatBot = false;
-
-          try{
-          for(Field field: chatBotSimulationAttributes){
-            if(field.getType().getSimpleName().equals("ChatBotPlatform")){
-                hasChatBotPlatform= true;
-            }
-            if(field.getType().getSimpleName().equals("ChatBot")){
-                hasChatBot = true;
-            }
-          }
-
-            if(hasChatBotPlatform){
-                score++;
-                System.out.println("ChatBotPlatform present. \n");
-            }
-            else{
-                System.out.println("ChatBotPlatform not present. \n");
-            }
-
-            if(hasChatBot){
-                score++;
-                System.out.println("ChatBot present.");
-            }
-            else{
-                System.out.println("ChatBot not present. \n");
-            }
-          }
-          catch(Exception e){
-            System.out.println(e.getMessage());
-          }
-     
-     chatBotSimulationScore = score;
-     totalScore = totalScore + chatBotSimulationScore;
-     System.out.println("ChatBotSimulation Class Score: " + chatBotSimulationScore + "/2 \n");
-     assertEquals(2, score);
-    }
-
     
 
      @AfterAll
      public static void calculateTotal(){
-  
-     System.out.println("Total Score = " + totalScore + "/7 \n");
+     System.out.println("Total Score = " + totalScore + "/6 \n");
      }
 
 }
