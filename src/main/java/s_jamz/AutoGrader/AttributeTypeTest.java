@@ -201,7 +201,7 @@ public class AttributeTypeTest {
 
      @AfterAll
      public static void calculateTotal(){
-     System.out.println("Total Score = " + totalScore + "/6 \n");
+     System.out.println("Total Score = " + totalScore + "/5 \n");
      }
 
 }
