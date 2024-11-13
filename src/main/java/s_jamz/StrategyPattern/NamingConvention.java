@@ -1,8 +1,5 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
@@ -26,64 +23,48 @@ public class NamingConvention implements EvaluationStrategy {
     }
 
     @Override
-    public void evaluate(File javaFile) {
+    public void evaluate() {
         try {
-            // Clear the static maps before running the tests
-            NamingConventionsTest.scores.clear();
-            NamingConventionsTest.feedback.clear();
+            NamingConventionsTest testClass = new NamingConventionsTest();
 
-            URLClassLoader urlClassLoader = createClassLoader(javaFile);
-            Class<?> testClass = Class.forName("s_jamz.AutoGrader.NamingConventionsTest", true, urlClassLoader);
+            System.out.println("Running tests for class: " + testClass.getClass().getName());
 
-            System.out.println("Running tests for class: " + testClass.getName());
-
-            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
+            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();
 
-            int score = calculateScore(javaFile.getName());
-            results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
+            results = runNamingConventionsTests(testClass.getClass());
 
-            printTestSummary(javaFile, summary, score);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            results.add(new TestResultLeaf(0, "Class not found: " + e.getMessage()));
-            feedback.add("Class not found: " + e.getMessage());
+            // Process the summary to extract scores and feedback
+            summary.getFailures().forEach(failure -> {
+                feedback.add(failure.getException().getMessage());
+                results.add(new TestResultLeaf(0, failure.getException().getMessage()));
+            });
+
+
+
+            // results.add(new TestResultLeaf((int) successfulTests, "Number of successful tests"));
+            // results.add(new TestResultLeaf((int) failedTests, "Number of failed tests"));
+
         } catch (Exception e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
-            feedback.add("Failed to load test class: " + e.getMessage());
         }
-    }
-
-    private URLClassLoader createClassLoader(File javaFile) throws Exception {
-        File studentDir = javaFile.getParentFile();
-        URL studentURL = studentDir.toURI().toURL();
-        return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
-    }
-
-    private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
-        System.out.println("Test Results for " + javaFile.getName() + ":");
-        summary.getFailures().forEach(failure -> {
-            String feedbackMessage = "Failed: " + failure.getTestIdentifier().getDisplayName() + " - " + failure.getException().getMessage();
-            System.out.println(feedbackMessage);
-            feedback.add(feedbackMessage);
-        });
-        System.out.println("Score: " + score + " points\n");
-        feedback.add("Score: " + score + " points\n");
-
-        // Add detailed feedback from NamingConventionsTest
-        String className = javaFile.getName().replace(".java", "");
-        List<String> classFeedback = NamingConventionsTest.feedback.getOrDefault(className, new ArrayList<>());
-        feedback.addAll(classFeedback);
-    }
-
-    private int calculateScore(String fileName) {
-        return NamingConventionsTest.scores.getOrDefault(fileName.replace(".java", ""), 0);
     }
 
     @Override
     public TestResultComponent getResults() {
         return results;
+    }
+
+    private TestResultComponent runNamingConventionsTests(Class<?> testClass) {
+        TestResultComposite composite = new TestResultComposite();
+        try {
+            composite.add(new TestResultLeaf(0, "Attribute type test passed"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            composite.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+        }
+        return composite;
     }
 
     public List<String> getFeedback() {

@@ -1,12 +1,12 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
+// import java.io.File;
 
 import s_jamz.CompositePattern.TestResultComponent;
 
 public class MethodBehaviour implements EvaluationStrategy {
     @Override
-    public void evaluate(File javaFile) {
+    public void evaluate() {
         throw new UnsupportedOperationException("Unimplemented method 'evaluate'");
     }
 
