@@ -1,8 +1,8 @@
 package s_jamz.StrategyPattern;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+// import java.lang.reflect.Constructor;
+// import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -13,7 +13,7 @@ import s_jamz.JUnitTestExecutor;
 import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
-import s_jamz.JUnitTestExecutor;
+// import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.AttributeTypeTest;
 
 
