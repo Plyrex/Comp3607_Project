@@ -1,42 +1,73 @@
 package s_jamz.AutoGrader;
 
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
+// import java.util.Map;
 
 public class NamingConventionsTest {
 
-    public static Map<String, Integer> scores = new HashMap<>();
-    public static Map<String, List<String>> feedback = new HashMap<>();
+    private static int totalScore;
+    private int chatBotScore = 0;
+    private int chatBotPlatformScore = 0;
+    private int chatBotGeneratorScore = 0;
+
     private HashMap<String, Field[]> attributeTest;
+    private HashMap<String, Method[]> methodTest;
 
     public NamingConventionsTest() {
+        totalScore = 0;
         attributeTest = new HashMap<>();
+        methodTest = new HashMap<>();
     }
 
     @BeforeEach
     public void setup() {
         attributeTest.clear();
+        methodTest.clear();
         try {
-            loadAttributeNames("ChatBot");
-            loadAttributeNames("ChatBotPlatform");
-            loadAttributeNames("ChatBotGenerator");
+            loadClassDetails("ChatBot");
+            loadClassDetails("ChatBotPlatform");
+            loadClassDetails("ChatBotGenerator");
         } catch (Exception e) {
-            System.err.println("Could not load attribute names for classes: " + e.getMessage());
+            System.err.println("Could not load class details: " + e.getMessage());
+        }
+    }
+
+    public Field[] getFields(Class<?> class1) {
+        try {
+            if (class1 == null) {
+                System.err.println("Provided class is null.");
+                return new Field[0];
+            }
+            return class1.getDeclaredFields();
+        } catch (Exception e) {
+            System.err.println("An error occurred while retrieving fields: " + e.getMessage());
+            return new Field[0];
+        }
+    }
+
+    public Method[] getMethods(Class<?> class1) {
+        try {
+            if (class1 == null) {
+                System.err.println("Provided class is null.");
+                return new Method[0];
+            }
+            return class1.getDeclaredMethods();
+        } catch (Exception e) {
+            System.err.println("An error occurred while retrieving methods: " + e.getMessage());
+            return new Method[0];
         }
     }
 
     private Class<?> loadClass(String className) throws Exception {
-        // Use the specified path for the student folders
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
@@ -44,10 +75,8 @@ public class NamingConventionsTest {
 
         for (File studentDir : studentFoldersDir.listFiles()) {
             if (studentDir.isDirectory()) {
-                // Navigate to the bin directory
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    // Dynamically add the bin directory to the classpath
                     URL[] urls = {binDir.toURI().toURL()};
                     URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
                     try {
@@ -62,54 +91,62 @@ public class NamingConventionsTest {
         throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
     }
 
-    private void loadAttributeNames(String className) throws Exception {
-        Class<?> classObj = loadClass(className);
-        if (classObj != null) {
-            attributeTest.put(className, getFields(classObj));
-        } else {
-            System.out.println("Provided class is null.");
-        }
-    }
+    public void loadClassDetails(String className) throws Exception {
+        Class<?> class1 = loadClass(className);
 
-    private Field[] getFields(Class<?> classObj) {
-        return classObj.getDeclaredFields();
+        if (class1 == null) {
+            System.out.println("Provided class is null.");
+            return;
+        }
+
+        try {
+            attributeTest.put(className, getFields(class1));
+            methodTest.put(className, getMethods(class1));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     @Test
-    public void testChatBotClassNamingConventions() throws Exception {
+    public void chatBotNamingConventionsTest() {
+        System.out.println("ChatBot Naming Conventions Test. \n");
+        Field[] chatBotAttributes = attributeTest.get("ChatBot");
+        Method[] chatBotMethods = methodTest.get("ChatBot");
         int score = 0;
-        List<String> feedbackMessages = new ArrayList<>();
-        Class<?> chatBotClass = loadClass("ChatBot");
 
         // Check class name
         try {
-            assertEquals("ChatBot", chatBotClass.getSimpleName(), "Class name should be 'ChatBot'");
+            assertEquals("ChatBot", "ChatBot", "Class name should be 'ChatBot'");
             score += 1;
-            feedbackMessages.add("Class name 'ChatBot' is correct.");
+            System.out.println("Class name 'ChatBot' is correct.");
         } catch (AssertionError e) {
-            feedbackMessages.add("Class name should be 'ChatBot'.");
+            System.out.println("Class name should be 'ChatBot'.");
         }
 
         // Check attribute names
-        Field[] fields = attributeTest.get("ChatBot");
-        ArrayList<String> expectedFieldNames = new ArrayList<>();
-        expectedFieldNames.add("chatBotName");
-        expectedFieldNames.add("numResponsesGenerated");
-        expectedFieldNames.add("messageLimit");
-        expectedFieldNames.add("messageNumber");
+        HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
+        expectedAttributes.put("chatBotName", String.class);
+        expectedAttributes.put("numResponsesGenerated", int.class);
+        expectedAttributes.put("messageLimit", int.class);
+        expectedAttributes.put("messageNumber", int.class);
 
-        for (Field field : fields) {
+        for (Field field : chatBotAttributes) {
             try {
-                assertTrue(expectedFieldNames.contains(field.getName()), "Field name should follow naming conventions");
-                score += 1;
-                feedbackMessages.add("Field name '" + field.getName() + "' follows naming conventions.");
-            } catch (AssertionError e) {
-                feedbackMessages.add("Field name '" + field.getName() + "' does not follow naming conventions.");
+                if (expectedAttributes.containsKey(field.getName())) {
+                    System.out.print("Class contains: " + field.getName() + ". ");
+                }
+                if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
+                    System.out.print(field.getName() + " has correct type. \n");
+                    score++;
+                } else {
+                    System.out.println(field.getName() + " has incorrect type.\n");
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
 
         // Check method names
-        Method[] methods = chatBotClass.getDeclaredMethods();
         ArrayList<String> expectedMethodNames = new ArrayList<>();
         expectedMethodNames.add("getChatBotName");
         expectedMethodNames.add("getNumResponsesGenerated");
@@ -117,125 +154,154 @@ public class NamingConventionsTest {
         expectedMethodNames.add("getTotalNumMessagesRemaining");
         expectedMethodNames.add("limitReached");
         expectedMethodNames.add("ChatBot");
-        expectedMethodNames.add("ChatBot");
         expectedMethodNames.add("generateResponse");
         expectedMethodNames.add("prompt");
         expectedMethodNames.add("toString");
 
-        for (Method method : methods) {
+        for (Method method : chatBotMethods) {
             try {
-                assertTrue(expectedMethodNames.contains(method.getName()), "Method name should follow naming conventions");
-                score += 1;
-                feedbackMessages.add("Method name '" + method.getName() + "' follows naming conventions.");
-            } catch (AssertionError e) {
-                feedbackMessages.add("Method name '" + method.getName() + "' does not follow naming conventions.");
+                if (expectedMethodNames.contains(method.getName())) {
+                    System.out.print("Class contains: " + method.getName() + ". ");
+                    score++;
+                } else {
+                    System.out.println(method.getName() + " does not follow naming conventions.\n");
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
-        scores.put("ChatBot", score);
-        feedback.put("ChatBot", feedbackMessages);
+
+        chatBotScore = score;
+        totalScore += chatBotScore;
+        System.out.println("ChatBot Class Score: " + chatBotScore + "/36");
+        assertEquals(36, chatBotScore);
     }
 
     @Test
-    public void testChatBotPlatformClassNamingConventions() throws Exception {
+    public void chatBotPlatformNamingConventionsTest() {
+        System.out.println("ChatBotPlatform Naming Conventions Test. \n");
+        Field[] chatBotPlatformAttributes = attributeTest.get("ChatBotPlatform");
+        Method[] chatBotPlatformMethods = methodTest.get("ChatBotPlatform");
         int score = 0;
-        List<String> feedbackMessages = new ArrayList<>();
-        Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
 
         // Check class name
         try {
-            assertEquals("ChatBotPlatform", chatBotPlatformClass.getSimpleName(), "Class name should be 'ChatBotPlatform'");
+            assertEquals("ChatBotPlatform", "ChatBotPlatform", "Class name should be 'ChatBotPlatform'");
             score += 1;
-            feedbackMessages.add("Class name 'ChatBotPlatform' is correct.");
+            System.out.println("Class name 'ChatBotPlatform' is correct.");
         } catch (AssertionError e) {
-            feedbackMessages.add("Class name should be 'ChatBotPlatform'.");
+            System.out.println("Class name should be 'ChatBotPlatform'.");
         }
 
         // Check attribute names
-        Field[] fields = attributeTest.get("ChatBotPlatform");
-        ArrayList<String> expectedFieldNames = new ArrayList<>();
-        expectedFieldNames.add("chatBotName");
-        expectedFieldNames.add("numResponsesGenerated");
-        expectedFieldNames.add("messageLimit");
-        expectedFieldNames.add("messageNumber");
+        HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
+        expectedAttributes.put("bots", ArrayList.class);
 
-        for (Field field : fields) {
+        for (Field field : chatBotPlatformAttributes) {
             try {
-                assertTrue(expectedFieldNames.contains(field.getName()), "Field name should follow naming conventions");
-                score += 1;
-                feedbackMessages.add("Field name '" + field.getName() + "' follows naming conventions.");
-            } catch (AssertionError e) {
-                feedbackMessages.add("Field name '" + field.getName() + "' does not follow naming conventions.");
+                if (expectedAttributes.containsKey(field.getName())) {
+                    System.out.print("Class contains: " + field.getName() + ". ");
+                }
+                if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
+                    System.out.print(field.getName() + " has correct type. \n");
+                    score++;
+                } else {
+                    System.out.println(field.getName() + " has incorrect type.\n");
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
 
         // Check method names
-        Method[] methods = chatBotPlatformClass.getDeclaredMethods();
         ArrayList<String> expectedMethodNames = new ArrayList<>();
         expectedMethodNames.add("addChatBot");
         expectedMethodNames.add("getChatBotList");
         expectedMethodNames.add("interactWithBot");
 
-        for (Method method : methods) {
+        for (Method method : chatBotPlatformMethods) {
             try {
-                assertTrue(expectedMethodNames.contains(method.getName()), "Method name should follow naming conventions");
-                score += 1;
-                feedbackMessages.add("Method name '" + method.getName() + "' follows naming conventions.");
-            } catch (AssertionError e) {
-                feedbackMessages.add("Method name '" + method.getName() + "' does not follow naming conventions.");
+                if (expectedMethodNames.contains(method.getName())) {
+                    System.out.print("Class contains: " + method.getName() + ". ");
+                    score++;
+                } else {
+                    System.out.println(method.getName() + " does not follow naming conventions.\n");
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
-        scores.put("ChatBotPlatform", score);
-        feedback.put("ChatBotPlatform", feedbackMessages);
+
+        chatBotPlatformScore = score;
+        totalScore += chatBotPlatformScore;
+        System.out.println("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/20");
+        assertEquals(20, chatBotPlatformScore);
     }
 
     @Test
-    public void testChatBotGeneratorClassNamingConventions() throws Exception {
+    public void chatBotGeneratorNamingConventionsTest() {
+        System.out.println("ChatBotGenerator Naming Conventions Test. \n");
+        Field[] chatBotGeneratorAttributes = attributeTest.get("ChatBotGenerator");
+        Method[] chatBotGeneratorMethods = methodTest.get("ChatBotGenerator");
         int score = 0;
-        List<String> feedbackMessages = new ArrayList<>();
-        Class<?> chatBotGeneratorClass = loadClass("ChatBotGenerator");
 
         // Check class name
         try {
-            assertEquals("ChatBotGenerator", chatBotGeneratorClass.getSimpleName(), "Class name should be 'ChatBotGenerator'");
+            assertEquals("ChatBotGenerator", "ChatBotGenerator", "Class name should be 'ChatBotGenerator'");
             score += 1;
-            feedbackMessages.add("Class name 'ChatBotGenerator' is correct.");
+            System.out.println("Class name 'ChatBotGenerator' is correct.");
         } catch (AssertionError e) {
-            feedbackMessages.add("Class name should be 'ChatBotGenerator'.");
+            System.out.println("Class name should be 'ChatBotGenerator'.");
         }
 
         // Check attribute names
-        Field[] fields = attributeTest.get("ChatBotGenerator");
-        ArrayList<String> expectedFieldNames = new ArrayList<>();
-        expectedFieldNames.add("chatBotName");
-        expectedFieldNames.add("numResponsesGenerated");
-        expectedFieldNames.add("messageLimit");
-        expectedFieldNames.add("messageNumber");
+        HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
+        expectedAttributes.put("chatBotName", String.class);
+        expectedAttributes.put("numResponsesGenerated", int.class);
+        expectedAttributes.put("messageLimit", int.class);
+        expectedAttributes.put("messageNumber", int.class);
 
-        for (Field field : fields) {
+        for (Field field : chatBotGeneratorAttributes) {
             try {
-                assertTrue(expectedFieldNames.contains(field.getName()), "Field name should follow naming conventions");
-                score += 1;
-                feedbackMessages.add("Field name '" + field.getName() + "' follows naming conventions.");
-            } catch (AssertionError e) {
-                feedbackMessages.add("Field name '" + field.getName() + "' does not follow naming conventions.");
+                if (expectedAttributes.containsKey(field.getName())) {
+                    System.out.print("Class contains: " + field.getName() + ". ");
+                }
+                if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
+                    System.out.print(field.getName() + " has correct type. \n");
+                    score++;
+                } else {
+                    System.out.println(field.getName() + " has incorrect type.\n");
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
 
         // Check method names
-        Method[] methods = chatBotGeneratorClass.getDeclaredMethods();
         ArrayList<String> expectedMethodNames = new ArrayList<>();
         expectedMethodNames.add("generateChatBotLLM");
 
-        for (Method method : methods) {
+        for (Method method : chatBotGeneratorMethods) {
             try {
-                assertTrue(expectedMethodNames.contains(method.getName()), "Method name should follow naming conventions");
-                score += 1;
-                feedbackMessages.add("Method name '" + method.getName() + "' follows naming conventions.");
-            } catch (AssertionError e) {
-                feedbackMessages.add("Method name '" + method.getName() + "' does not follow naming conventions.");
+                if (expectedMethodNames.contains(method.getName())) {
+                    System.out.print("Class contains: " + method.getName() + ". ");
+                    score++;
+                } else {
+                    System.out.println(method.getName() + " does not follow naming conventions.\n");
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
-        scores.put("ChatBotGenerator", score);
-        feedback.put("ChatBotGenerator", feedbackMessages);
+
+        chatBotGeneratorScore = score;
+        totalScore += chatBotGeneratorScore;
+        System.out.println("ChatBotGenerator Class Score: " + chatBotGeneratorScore + "/7");
+        assertEquals(7, chatBotGeneratorScore);
+    }
+
+    @AfterAll
+    public static void calculateTotal() {
+        System.out.println("Total Score = " + totalScore + "/63 \n");
     }
 }
