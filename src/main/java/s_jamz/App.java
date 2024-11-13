@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
 // import s_jamz.CompositePattern.ResultPrinter;
 import s_jamz.StrategyPattern.MethodSignature;
@@ -46,6 +47,10 @@ public class App {
 
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
+                    gradingContext.evaluate();
+
+                    AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(attributeType);
                     gradingContext.evaluate();
 
                     // StudentFolderProcessor processor = new StudentFolderProcessor(gradingContext);
