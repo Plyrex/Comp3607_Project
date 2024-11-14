@@ -1,7 +1,5 @@
 package s_jamz.StrategyPattern;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import s_jamz.CompositePattern.TestResultComponent;
@@ -14,12 +12,10 @@ public class MethodSignature implements EvaluationStrategy {
 
     private TestResultComponent results;
     private String studentFolderPath;
-    private List<String> feedback;
 
     public MethodSignature(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
-        this.feedback = new ArrayList<>();
     }
 
     @Override
@@ -33,12 +29,6 @@ public class MethodSignature implements EvaluationStrategy {
             TestExecutionSummary summary = listener.getSummary();
 
             results = runMethodSignaturesTests(testClass.getClass());
-
-            // Process the summary to extract scores and feedback
-            summary.getFailures().forEach(failure -> {
-                feedback.add(failure.getException().getMessage());
-                results.add(new TestResultLeaf(0, failure.getException().getMessage()));
-            });
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +52,4 @@ public class MethodSignature implements EvaluationStrategy {
         return composite;
     }
 
-    public List<String> getFeedback() {
-        return feedback;
-    }
 }
