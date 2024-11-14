@@ -1,6 +1,7 @@
 package s_jamz.AutoGrader;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -151,20 +152,20 @@ public class MethodBehaviourTest {
             if(method.getName().equals("getChatBotName")){
                 method.setAccessible(true);
 
-                try{
-                    String test = (String) method.invoke(null);
-                    System.out.println("ChatBot Name: " + test);
-                    // System.out.println("ChatBot Name: " + method.invoke(null));
+                // try{
+                //     String test = (String) method.invoke(null);
+                //     System.out.println("ChatBot Name: " + test);
+                //     // System.out.println("ChatBot Name: " + method.invoke(null));
                     
-                }
-                catch(Exception e){
-                    System.err.println("Error in getChatBotName method: " + e.getMessage());
-                }
+                // }
+                // catch(Exception e){
+                //     System.err.println("Error in getChatBotName method: " + e.getMessage());
+                // }
             }
         }
     }
 
-    @AfterAll
+    @AfterEach
     public void printResults() {
         System.out.println("Method Behaviour Test Results: " + scores);
     }
