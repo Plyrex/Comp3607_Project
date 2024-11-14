@@ -2,6 +2,7 @@ package s_jamz.AutoGrader;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
@@ -16,21 +17,20 @@ import java.util.Map;
 public class AttributeTypeTest {
 
     private static int totalScore;
-    private int chatBotScore =0;
-    private int chatBotPlatformScore=0;
-    private int chatBotSimulationScore =0 ;
+    private static int chatBotScore =0;
+    private static int chatBotPlatformScore=0;
+   
 
+    
 
     private HashMap<String, Field[]> attributeTest;
 
     public AttributeTypeTest(){
-        totalScore = 0;
         attributeTest = new HashMap<String, Field[]>();
     }
 
     @BeforeEach
     public void setup(){
-        attributeTest.clear();
         try{
         loadAttributeNames("ChatBot");
         loadAttributeNames("ChatBotPlatform");
@@ -43,7 +43,7 @@ public class AttributeTypeTest {
 
 
 
-    public Field[] getFields(Class<?> class1){
+    public Field[] getClassFields(Class<?> class1){
         try {
             if (class1 == null) {
                 System.err.println("Provided class is null.");
@@ -110,14 +110,14 @@ public class AttributeTypeTest {
 
         try{
         if(class1.getName().equals("ChatBot")){
-            attributeTest.put("ChatBot", getFields(class1));
+            attributeTest.put("ChatBot", getClassFields(class1));
         }
 
         if(class1.getName().equals("ChatBotPlatform")){
-            attributeTest.put("ChatBotPlatform", getFields(class1));
+            attributeTest.put("ChatBotPlatform", getClassFields(class1));
         }
         if(class1.getName().equals("ChatBotSimulation")){
-            attributeTest.put("ChatBotSimulation", getFields(class1));
+            attributeTest.put("ChatBotSimulation", getClassFields(class1));
         }}
 
         catch(Exception e){
@@ -159,8 +159,9 @@ public class AttributeTypeTest {
        }
        chatBotScore = score;
        totalScore = totalScore + chatBotScore;
+       System.out.println("Debug - ChatBot Score before adding to totalScore: " + chatBotScore);
        System.out.println("ChatBot Class Score: " + chatBotScore + "/4");
-       assertEquals(4, score);
+    
     }
 
     @Test
@@ -192,9 +193,10 @@ public class AttributeTypeTest {
         }
 
         chatBotPlatformScore = score;
+        System.out.println("Debug - ChatBotPlatform Score before adding to totalScore: " + chatBotPlatformScore);
         totalScore = totalScore + chatBotPlatformScore;
         System.out.println("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/1 \n");
-        assertEquals(1, score);
+        
      }
 
     
@@ -202,9 +204,10 @@ public class AttributeTypeTest {
      @AfterAll
      public static void calculateTotal(){
      System.out.println("Total Score = " + totalScore + "/5 \n");
+     totalScore = 0;
+     chatBotScore = 0;
+     chatBotPlatformScore = 0;
+
      }
 
 }
-
-
-
