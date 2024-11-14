@@ -1,10 +1,5 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
-// import java.lang.reflect.Constructor;
-// import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
@@ -13,7 +8,6 @@ import s_jamz.JUnitTestExecutor;
 import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
-// import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.AttributeTypeTest;
 
 
@@ -53,18 +47,11 @@ public class AttributeType implements EvaluationStrategy {
         return results;
     }
 
-    private URLClassLoader createClassLoader(File javaFile) throws Exception {
-        File studentDir = javaFile.getParentFile();
-        URL studentURL = studentDir.toURI().toURL();
-        return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
-    }
 
     private TestResultComponent runAttributeTypeTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
-            // Execute JUnit tests for naming conventions
             
-            // JUnitTestExecutor.executeTests(testClass);
             composite.add(new TestResultLeaf(90, "Attribute type test passed")); // Placeholder result
         } catch (Exception e) {
             e.printStackTrace();
