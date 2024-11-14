@@ -1,6 +1,5 @@
 package s_jamz.AutoGrader;
 
-// import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +7,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-// import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,15 +15,14 @@ import java.util.Map;
 public class MethodSignaturesTest {
 
     private static int totalScore;
-    private int chatBotScore = 0;
-    private int chatBotPlatformScore = 0;
-    private int chatBotGeneratorScore = 0;
+    private static int chatBotScore = 0;
+    private static int chatBotPlatformScore = 0;
+    private static int chatBotGeneratorScore = 0;
 
     private HashMap<String, Method[]> methodTest;
     private Map<String, List<MethodSignature>> expectedMethodSignatures;
 
     public MethodSignaturesTest() {
-        totalScore = 0;
         methodTest = new HashMap<>();
         expectedMethodSignatures = new HashMap<>();
     }
@@ -219,6 +216,10 @@ public class MethodSignaturesTest {
     @AfterAll
     public static void calculateTotal() {
         System.out.println("Total Score = " + totalScore + "/63 \n");
+        totalScore = 0;
+        chatBotScore = 0;
+        chatBotPlatformScore = 0;
+        chatBotGeneratorScore = 0;
     }
 
     private static class MethodSignature {

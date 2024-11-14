@@ -15,15 +15,14 @@ import java.util.HashMap;
 public class NamingConventionsTest {
 
     private static int totalScore;
-    private int chatBotScore = 0;
-    private int chatBotPlatformScore = 0;
-    private int chatBotGeneratorScore = 0;
+    private static int chatBotScore = 0;
+    private static int chatBotPlatformScore = 0;
+    private static int chatBotGeneratorScore = 0;
 
     private HashMap<String, Field[]> attributeTest;
     private HashMap<String, Method[]> methodTest;
 
     public NamingConventionsTest() {
-        totalScore = 0;
         attributeTest = new HashMap<>();
         methodTest = new HashMap<>();
     }
@@ -303,5 +302,8 @@ public class NamingConventionsTest {
     @AfterAll
     public static void calculateTotal() {
         System.out.println("Total Score = " + totalScore + "/63 \n");
+        chatBotGeneratorScore = 0;
+        chatBotPlatformScore = 0;
+        chatBotScore = 0;
     }
 }
