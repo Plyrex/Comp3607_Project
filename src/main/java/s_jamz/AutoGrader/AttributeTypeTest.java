@@ -21,6 +21,7 @@ public class AttributeTypeTest {
     private static int chatBotPlatformScore=0;
    
 
+    
 
     private HashMap<String, Field[]> attributeTest;
 
