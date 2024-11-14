@@ -32,6 +32,7 @@ public class AttributeTypeTest {
     @BeforeEach
     public void setup(){
         try{
+        attributeTest.clear();
         loadAttributeNames("ChatBot");
         loadAttributeNames("ChatBotPlatform");
         loadAttributeNames("ChatBotSimulation");
@@ -159,7 +160,6 @@ public class AttributeTypeTest {
        }
        chatBotScore = score;
        totalScore = totalScore + chatBotScore;
-       System.out.println("Debug - ChatBot Score before adding to totalScore: " + chatBotScore);
        System.out.println("ChatBot Class Score: " + chatBotScore + "/4");
     
     }
@@ -193,7 +193,6 @@ public class AttributeTypeTest {
         }
 
         chatBotPlatformScore = score;
-        System.out.println("Debug - ChatBotPlatform Score before adding to totalScore: " + chatBotPlatformScore);
         totalScore = totalScore + chatBotPlatformScore;
         System.out.println("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/1 \n");
         
