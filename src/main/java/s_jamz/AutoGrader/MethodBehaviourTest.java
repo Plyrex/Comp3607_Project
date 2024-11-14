@@ -9,11 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -172,12 +174,12 @@ public class MethodBehaviourTest {
         }
     }
 
-    public Method getMethodByName(String methodName, Class<?> class1){
-        try{
+    public Method getMethodByName(String methodName, Class<?> class1) {
+        try {
             Method method = class1.getDeclaredMethod(methodName);
+            method.setAccessible(true); // Set method accessible
             return method;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.err.println("Error in getting method by name: " + e.getMessage());
         }
         return null;
@@ -221,12 +223,26 @@ public class MethodBehaviourTest {
         // Testing getChatBotName method
         String [] chatBotNames = {"ChatGpt3.5", "LLaMa", "Mistral", "Bard", "Claude", "Solar"};
         // System.out.println("Expected Methods: " + Arrays.toString(methodTest.get("ChatBot")));
+        
+        Field[] chatBotName = attributeTest.get("ChatBot");
+        // System.out.println("ChatBot Name: " + Arrays.toString(chatBotName));
+        Field chatBotNameField = null;
+        for (Field field : chatBotName) {
+            if (field.getName().equals("chatBotName")) {
+                chatBotNameField = field;
+                chatBotNameField.setAccessible(true); // Set field accessible
+                break;
+            }
+        }
+        if (chatBotNameField == null) {
+            throw new NoSuchFieldException("Field 'chatBotName' not found in ChatBot class.");
+        }
+        chatBotNameField.setAccessible(true);
+
         Method getChatBotName = getMethodByName("getChatBotName", methodTest.get("ChatBot")[0].getDeclaringClass());
-        getChatBotName.setAccessible(true);
-
-        Field chatBotName = attributeTest.get("ChatBot")[0];
-        chatBotName.setAccessible(true);
-
+        if (getChatBotName != null) {
+            getChatBotName.setAccessible(true); // Set method accessible
+        }
 
         try{
             getChatBotName.setAccessible(true);
