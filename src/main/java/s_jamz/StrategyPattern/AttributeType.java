@@ -1,11 +1,5 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
@@ -25,7 +19,6 @@ public class AttributeType implements EvaluationStrategy {
         this.studentFolderPath = studentFolderPath;
     }
 
-//path: /Users/maianeptune/Downloads/StudentSubmissions2.zip
     @Override
     public void evaluate() {
         try {
@@ -53,11 +46,11 @@ public class AttributeType implements EvaluationStrategy {
         return results;
     }
 
-    private URLClassLoader createClassLoader(File javaFile) throws Exception {
-        File studentDir = javaFile.getParentFile();
-        URL studentURL = studentDir.toURI().toURL();
-        return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
-    }
+    // private URLClassLoader createClassLoader(File javaFile) throws Exception {
+    //     File studentDir = javaFile.getParentFile();
+    //     URL studentURL = studentDir.toURI().toURL();
+    //     return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
+    // }
 
     private TestResultComponent runAttributeTypeTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();

@@ -62,7 +62,4 @@ public class MethodSignature implements EvaluationStrategy {
         return composite;
     }
 
-    public List<String> getFeedback() {
-        return feedback;
-    }
 }
