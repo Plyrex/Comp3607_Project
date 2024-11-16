@@ -140,7 +140,7 @@ public class AttributeTypeTest {
                 }
 
                 if (expectedAttributes.containsKey(field.getName()) && field.getName().equals("messageLimit")
-                 && java.lang.reflect.Modifier.isPublic(field.getModifiers())){
+                 && java.lang.reflect.Modifier.isFinal(field.getModifiers())){
 
                     feedback.append(field.getName()).append(" is final. ");
                     score++;
