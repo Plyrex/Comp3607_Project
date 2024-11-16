@@ -469,9 +469,10 @@ public class MethodBehaviourTest {
     public void printResults() {
         // System.out.println("Method Behaviour Test Results: " + testResults);
     }
-
+    
     public static HashMap<String, TestResultLeaf> getTestResults() {
         return testResults;
+
     }
 }
 
