@@ -185,7 +185,7 @@ public class MethodSignaturesTest {
 
         chatBotScore = score;
         totalScore += chatBotScore;
-        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/36\n");
+        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/8\n");
         testResults.put("ChatBot", new TestResultLeaf(chatBotScore, feedback.toString()));
     }
 
@@ -224,7 +224,7 @@ public class MethodSignaturesTest {
 
         chatBotPlatformScore = score;
         totalScore += chatBotPlatformScore;
-        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/20\n");
+        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/3\n");
         testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
 
@@ -261,7 +261,7 @@ public class MethodSignaturesTest {
 
         chatBotGeneratorScore = score;
         totalScore += chatBotGeneratorScore;
-        feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/7\n");
+        feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/1\n");
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }
 
@@ -271,6 +271,7 @@ public class MethodSignaturesTest {
         chatBotGeneratorScore = 0;
         chatBotPlatformScore = 0;
         chatBotScore = 0;
+        totalScore = 0;
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {
