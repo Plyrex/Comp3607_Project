@@ -1,6 +1,5 @@
 package s_jamz.AutoGrader;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,24 +7,24 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import s_jamz.CompositePattern.TestResultLeaf;
 
 public class MethodSignaturesTest {
 
     private static int totalScore;
-    private int chatBotScore = 0;
-    private int chatBotPlatformScore = 0;
-    private int chatBotGeneratorScore = 0;
+    private static int chatBotScore = 0;
+    private static int chatBotPlatformScore = 0;
+    private static int chatBotGeneratorScore = 0;
 
     private HashMap<String, Method[]> methodTest;
     private Map<String, List<MethodSignature>> expectedMethodSignatures;
+    private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
 
     public MethodSignaturesTest() {
-        totalScore = 0;
         methodTest = new HashMap<>();
         expectedMethodSignatures = new HashMap<>();
     }
@@ -134,6 +133,7 @@ public class MethodSignaturesTest {
         System.out.println("ChatBot Method Signatures Test. \n");
         Method[] chatBotMethods = methodTest.get("ChatBot");
         int score = 0;
+        StringBuilder feedback = new StringBuilder();
 
         List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBot");
 
@@ -143,19 +143,20 @@ public class MethodSignaturesTest {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
                     score += 1;
-                    System.out.println("Method signature '" + method.toString() + "' matches expected signature.");
+                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
                     break;
                 }
             }
             if (!matched) {
-                System.out.println("Mismatched signature: found " + method.toString() 
-                    + ", expected one of " + expectedSignatures);
+                feedback.append("Mismatched signature: found ").append(method.toString())
+                        .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
 
         chatBotScore = score;
         totalScore += chatBotScore;
-        System.out.println("ChatBot Class Score: " + chatBotScore + "/36");
+        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/36\n");
+        testResults.put("ChatBot", new TestResultLeaf(chatBotScore, feedback.toString()));
     }
 
     @Test
@@ -163,6 +164,7 @@ public class MethodSignaturesTest {
         System.out.println("ChatBotPlatform Method Signatures Test. \n");
         Method[] chatBotPlatformMethods = methodTest.get("ChatBotPlatform");
         int score = 0;
+        StringBuilder feedback = new StringBuilder();
 
         List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBotPlatform");
 
@@ -172,19 +174,20 @@ public class MethodSignaturesTest {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
                     score += 1;
-                    System.out.println("Method signature '" + method.toString() + "' matches expected signature.");
+                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
                     break;
                 }
             }
             if (!matched) {
-                System.out.println("Mismatched signature: found " + method.toString() 
-                    + ", expected one of " + expectedSignatures);
+                feedback.append("Mismatched signature: found ").append(method.toString())
+                        .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
 
         chatBotPlatformScore = score;
         totalScore += chatBotPlatformScore;
-        System.out.println("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/20");
+        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/20\n");
+        testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
 
     @Test
@@ -192,6 +195,7 @@ public class MethodSignaturesTest {
         System.out.println("ChatBotGenerator Method Signatures Test. \n");
         Method[] chatBotGeneratorMethods = methodTest.get("ChatBotGenerator");
         int score = 0;
+        StringBuilder feedback = new StringBuilder();
 
         List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBotGenerator");
 
@@ -201,24 +205,32 @@ public class MethodSignaturesTest {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
                     score += 1;
-                    System.out.println("Method signature '" + method.toString() + "' matches expected signature.");
+                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
                     break;
                 }
             }
             if (!matched) {
-                System.out.println("Mismatched signature: found " + method.toString() 
-                    + ", expected one of " + expectedSignatures);
+                feedback.append("Mismatched signature: found ").append(method.toString())
+                        .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
 
         chatBotGeneratorScore = score;
         totalScore += chatBotGeneratorScore;
-        System.out.println("ChatBotGenerator Class Score: " + chatBotGeneratorScore + "/7");
+        feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/7\n");
+        testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }
 
     @AfterAll
     public static void calculateTotal() {
         System.out.println("Total Score = " + totalScore + "/63 \n");
+        chatBotGeneratorScore = 0;
+        chatBotPlatformScore = 0;
+        chatBotScore = 0;
+    }
+
+    public static HashMap<String, TestResultLeaf> getTestResults() {
+        return testResults;
     }
 
     private static class MethodSignature {
