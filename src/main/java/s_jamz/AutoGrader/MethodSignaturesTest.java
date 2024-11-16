@@ -21,18 +21,15 @@ public class MethodSignaturesTest {
     private static int chatBotGeneratorScore = 0;
 
     private HashMap<String, Method[]> methodTest;
-    private Map<String, List<MethodSignature>> expectedMethodSignatures;
     private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
 
     public MethodSignaturesTest() {
         methodTest = new HashMap<>();
-        expectedMethodSignatures = new HashMap<>();
     }
 
     @BeforeEach
     public void setup() {
         methodTest.clear();
-        expectedMethodSignatures.clear();
         try {
             loadClassDetails("ChatBot");
             loadClassDetails("ChatBotPlatform");
@@ -89,41 +86,19 @@ public class MethodSignaturesTest {
 
         try {
             methodTest.put(className, getMethods(class1));
-            if (className.equals("ChatBot")) {
-                expectedMethodSignatures.put("ChatBot", Arrays.asList(
-                    new MethodSignature("java.lang.String", "getChatBotName", Arrays.asList()),
-                    new MethodSignature("int", "getNumResponsesGenerated", Arrays.asList()),
-                    new MethodSignature("int", "getTotalNumResponsesGenerated", Arrays.asList()),
-                    new MethodSignature("int", "getTotalNumMessagesRemaining", Arrays.asList()),
-                    new MethodSignature("boolean", "limitReached", Arrays.asList()),
-                    new MethodSignature("java.lang.String", "generateResponse", Arrays.asList()),
-                    new MethodSignature("java.lang.String", "prompt", Arrays.asList("java.lang.String")),
-                    new MethodSignature("java.lang.String", "toString", Arrays.asList())
-                ));
-            } else if (className.equals("ChatBotPlatform")) {
-                expectedMethodSignatures.put("ChatBotPlatform", Arrays.asList(
-                    new MethodSignature("boolean", "addChatBot", Arrays.asList("int")),
-                    new MethodSignature("java.lang.String", "getChatBotList", Arrays.asList()),
-                    new MethodSignature("java.lang.String", "interactWithBot", Arrays.asList("int", "java.lang.String"))
-                ));
-            } else if (className.equals("ChatBotGenerator")) {
-                expectedMethodSignatures.put("ChatBotGenerator", Arrays.asList(
-                    new MethodSignature("java.lang.String", "generateChatBotLLM", Arrays.asList("int"))
-                ));
-            }
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
 
     private boolean checkMethodSignature(Method method, String expectedReturnType, String expectedMethodName, List<String> expectedParameterTypes) {
-        if (!method.getReturnType().getName().equals(expectedReturnType)) return false;
+        if (!method.getReturnType().getSimpleName().equals(expectedReturnType)) return false;
         if (!method.getName().equals(expectedMethodName)) return false;
 
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != expectedParameterTypes.size()) return false;
         for (int i = 0; i < parameterTypes.length; i++) {
-            if (!parameterTypes[i].getName().equals(expectedParameterTypes.get(i))) return false;
+            if (!parameterTypes[i].getSimpleName().equals(expectedParameterTypes.get(i))) return false;
         }
         return true;
     }
@@ -135,20 +110,33 @@ public class MethodSignaturesTest {
         int score = 0;
         StringBuilder feedback = new StringBuilder();
 
-        List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBot");
+        List<String> expectedSignatures = Arrays.asList(
+            "String getChatBotName()",
+            "int getNumResponsesGenerated()",
+            "int getTotalNumResponsesGenerated()",
+            "int getTotalNumMessagesRemaining()",
+            "boolean limitReached()",
+            "String generateResponse()",
+            "String prompt(String)",
+            "String toString()"
+        );
 
         for (Method method : chatBotMethods) {
-            boolean matched = false;
-            for (MethodSignature expectedSignature : expectedSignatures) {
-                if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
-                    matched = true;
-                    score += 1;
-                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
-                    break;
+            String methodSignature = method.getReturnType().getSimpleName() + " " + method.getName() + "(";
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                methodSignature += parameterTypes[i].getSimpleName();
+                if (i < parameterTypes.length - 1) {
+                    methodSignature += ", ";
                 }
             }
-            if (!matched) {
-                feedback.append("Mismatched signature: found ").append(method.toString())
+            methodSignature += ")";
+
+            if (expectedSignatures.contains(methodSignature)) {
+                score += 1;
+                feedback.append("Method signature '").append(methodSignature).append("' matches expected signature.\n");
+            } else {
+                feedback.append("Mismatched signature: found ").append(methodSignature)
                         .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
@@ -166,20 +154,28 @@ public class MethodSignaturesTest {
         int score = 0;
         StringBuilder feedback = new StringBuilder();
 
-        List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBotPlatform");
+        List<String> expectedSignatures = Arrays.asList(
+            "boolean addChatBot(int)",
+            "String getChatBotList()",
+            "String interactWithBot(int, String)"
+        );
 
         for (Method method : chatBotPlatformMethods) {
-            boolean matched = false;
-            for (MethodSignature expectedSignature : expectedSignatures) {
-                if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
-                    matched = true;
-                    score += 1;
-                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
-                    break;
+            String methodSignature = method.getReturnType().getSimpleName() + " " + method.getName() + "(";
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                methodSignature += parameterTypes[i].getSimpleName();
+                if (i < parameterTypes.length - 1) {
+                    methodSignature += ", ";
                 }
             }
-            if (!matched) {
-                feedback.append("Mismatched signature: found ").append(method.toString())
+            methodSignature += ")";
+
+            if (expectedSignatures.contains(methodSignature)) {
+                score += 1;
+                feedback.append("Method signature '").append(methodSignature).append("' matches expected signature.\n");
+            } else {
+                feedback.append("Mismatched signature: found ").append(methodSignature)
                         .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
@@ -197,20 +193,26 @@ public class MethodSignaturesTest {
         int score = 0;
         StringBuilder feedback = new StringBuilder();
 
-        List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBotGenerator");
+        List<String> expectedSignatures = Arrays.asList(
+            "String generateChatBotLLM(int)"
+        );
 
         for (Method method : chatBotGeneratorMethods) {
-            boolean matched = false;
-            for (MethodSignature expectedSignature : expectedSignatures) {
-                if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
-                    matched = true;
-                    score += 1;
-                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
-                    break;
+            String methodSignature = method.getReturnType().getSimpleName() + " " + method.getName() + "(";
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                methodSignature += parameterTypes[i].getSimpleName();
+                if (i < parameterTypes.length - 1) {
+                    methodSignature += ", ";
                 }
             }
-            if (!matched) {
-                feedback.append("Mismatched signature: found ").append(method.toString())
+            methodSignature += ")";
+
+            if (expectedSignatures.contains(methodSignature)) {
+                score += 1;
+                feedback.append("Method signature '").append(methodSignature).append("' matches expected signature.\n");
+            } else {
+                feedback.append("Mismatched signature: found ").append(methodSignature)
                         .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
@@ -231,22 +233,5 @@ public class MethodSignaturesTest {
 
     public static HashMap<String, TestResultLeaf> getTestResults() {
         return testResults;
-    }
-
-    private static class MethodSignature {
-        String returnType;
-        String methodName;
-        List<String> parameterTypes;
-
-        MethodSignature(String returnType, String methodName, List<String> parameterTypes) {
-            this.returnType = returnType;
-            this.methodName = methodName;
-            this.parameterTypes = parameterTypes;
-        }
-
-        @Override
-        public String toString() {
-            return returnType + " " + methodName + parameterTypes.toString();
-        }
     }
 }
