@@ -1,6 +1,7 @@
 package s_jamz.StrategyPattern;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
@@ -9,6 +10,7 @@ import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.MethodBehaviourTest;
+import s_jamz.AutoGrader.NamingConventionsTest;
 
 public class MethodBehaviour implements EvaluationStrategy {
 
@@ -40,6 +42,12 @@ public class MethodBehaviour implements EvaluationStrategy {
                 results.add(new TestResultLeaf(0, failure.getException().getMessage()));
             });
 
+             // Retrieve and store the results from MethodBehaviourTest
+            HashMap<String, TestResultLeaf> testResults = MethodBehaviourTest.getTestResults();
+            testResults.forEach((testName, result) -> {
+                results.add(result);
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
@@ -62,7 +70,7 @@ public class MethodBehaviour implements EvaluationStrategy {
         return composite;
     }
 
-    public List<String> getFeedback() {
-        return feedback;
+    public static HashMap<String, TestResultLeaf> getTestResults() {
+        return MethodBehaviourTest.getTestResults();
     }
 }
