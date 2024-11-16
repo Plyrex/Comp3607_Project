@@ -9,7 +9,7 @@ public class TestResultLeaf implements TestResultComponent {
 
     public TestResultLeaf(int score, String feedback) {
         this.score = score;
-
+        this.feedback = feedback;
     }
 
     @Override
