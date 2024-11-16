@@ -12,6 +12,8 @@ import java.util.HashMap;
 public class AttributeType implements EvaluationStrategy {
     private TestResultComponent results;
     private String studentFolderPath;
+    private AttributeTypeTest attributeTypeTest;
+
 
     public AttributeType(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
@@ -54,12 +56,17 @@ public class AttributeType implements EvaluationStrategy {
 
     private TestResultComponent runAttributeTypeTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
+
+        final List<String> attributeTestResults = attributeTypeTest.getAttributeTypeTestResults();
+        int count = 0;
+        for(String result: attributeTestResults){
         try {
             composite.add(new TestResultLeaf(0, "Attribute type test passed"));
         } catch (Exception e) {
             e.printStackTrace();
-            composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
+            composite.add(new TestResultLeaf(studentFolderPath, 0, "Test execution failed: " + e.getMessage()));
         }
+    }
         return composite;
     }
 
