@@ -65,31 +65,9 @@ public class App {
                     // int totalScore = finalResults.getScore();
                     // System.out.println("Total Score: " + totalScore + " points\n");
 
-                    
-
-
-                    // StudentFolderProcessor processor = new StudentFolderProcessor(gradingContext);
-                    // processor.processStudentFolder(studentDir.getAbsolutePath());
-                    
-
-                    // Print the results for NamingConvention
                     // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    // ResultPrinter printer = new ResultPrinter(namingConvention.getResults(), namingConvention.getFeedback());
-                    // printer.printFormattedResults();
-                    // int totalScoreNaming = namingConvention.getResults().getScore();
-                    // System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
-
-                    // Clear the static maps after running the tests
-
-                    // Run tests using the MethodSignature strategy
-                    
-                    // processor.processStudentFolder(studentDir.getAbsolutePath());
-
-                    // Print the results for MethodSignature
-                    // printer = new ResultPrinter(methodSignature.getResults(), methodSignature.getFeedback());
-                    // printer.printFormattedResults();
-                    // int totalScoreMethod = methodSignature.getResults().getScore();
-                    // System.out.println("Total Score for MethodSignature: " + totalScoreMethod + " points\n");
+                    // int totalScore = finalResults.getScore();
+                    // System.out.println("Total Score: " + totalScore + " points\n");
 
                     // int totalScore = totalScoreNaming + totalScoreMethod;
                     // System.out.println("Overall Total Score: " + totalScore + " points\n");
