@@ -10,6 +10,7 @@ import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
+import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
@@ -60,6 +61,10 @@ public class App {
                     gradingContext.evaluate();
                     finalResults.add(attributeType.getResults());
                     printTestResults(AttributeType.getTestResults());
+
+                    MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(methodBehaviour);
+                    gradingContext.evaluate();
 
                     // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
                     // int totalScore = finalResults.getScore();
