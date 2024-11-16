@@ -1,5 +1,7 @@
 package s_jamz.AutoGrader;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -9,32 +11,66 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
+import s_jamz.CompositePattern.TestResultLeaf;
 
 public class MethodSignaturesTest {
 
-    public static Map<String, Integer> scores = new HashMap<>();
+    private static int totalScore;
+    private static int chatBotScore = 0;
+    private static int chatBotPlatformScore = 0;
+    private static int chatBotGeneratorScore = 0;
+
+    private HashMap<String, Method[]> methodTest;
+    private Map<String, List<MethodSignature>> expectedMethodSignatures;
+    private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
+
+    public MethodSignaturesTest() {
+        methodTest = new HashMap<>();
+        expectedMethodSignatures = new HashMap<>();
+    }
+
+    @BeforeEach
+    public void setup() {
+        methodTest.clear();
+        expectedMethodSignatures.clear();
+        try {
+            loadClassDetails("ChatBot");
+            loadClassDetails("ChatBotPlatform");
+            loadClassDetails("ChatBotGenerator");
+        } catch (Exception e) {
+            System.err.println("Could not load class details: " + e.getMessage());
+        }
+    }
+
+    public Method[] getMethods(Class<?> class1) {
+        try {
+            if (class1 == null) {
+                System.err.println("Provided class is null.");
+                return new Method[0];
+            }
+            return class1.getDeclaredMethods();
+        } catch (Exception e) {
+            System.err.println("An error occurred while retrieving methods: " + e.getMessage());
+            return new Method[0];
+        }
+    }
 
     private Class<?> loadClass(String className) throws Exception {
-        // Use the specified path for the student folders
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
         }
 
-        // Iterate through each student folder
         for (File studentDir : studentFoldersDir.listFiles()) {
             if (studentDir.isDirectory()) {
-                // Navigate to the bin directory
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    // Dynamically add the bin directory to the classpath
                     URL[] urls = {binDir.toURI().toURL()};
                     URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
                     try {
                         return Class.forName(className, true, urlClassLoader);
                     } catch (ClassNotFoundException e) {
-                        // Continue searching in other student folders
+                        // Continue to the next student folder
                     }
                 }
             }
@@ -43,7 +79,43 @@ public class MethodSignaturesTest {
         throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
     }
 
-    // Compares a method's signature with the expected signature details
+    public void loadClassDetails(String className) throws Exception {
+        Class<?> class1 = loadClass(className);
+
+        if (class1 == null) {
+            System.out.println("Provided class is null.");
+            return;
+        }
+
+        try {
+            methodTest.put(className, getMethods(class1));
+            if (className.equals("ChatBot")) {
+                expectedMethodSignatures.put("ChatBot", Arrays.asList(
+                    new MethodSignature("java.lang.String", "getChatBotName", Arrays.asList()),
+                    new MethodSignature("int", "getNumResponsesGenerated", Arrays.asList()),
+                    new MethodSignature("int", "getTotalNumResponsesGenerated", Arrays.asList()),
+                    new MethodSignature("int", "getTotalNumMessagesRemaining", Arrays.asList()),
+                    new MethodSignature("boolean", "limitReached", Arrays.asList()),
+                    new MethodSignature("java.lang.String", "generateResponse", Arrays.asList()),
+                    new MethodSignature("java.lang.String", "prompt", Arrays.asList("java.lang.String")),
+                    new MethodSignature("java.lang.String", "toString", Arrays.asList())
+                ));
+            } else if (className.equals("ChatBotPlatform")) {
+                expectedMethodSignatures.put("ChatBotPlatform", Arrays.asList(
+                    new MethodSignature("boolean", "addChatBot", Arrays.asList("int")),
+                    new MethodSignature("java.lang.String", "getChatBotList", Arrays.asList()),
+                    new MethodSignature("java.lang.String", "interactWithBot", Arrays.asList("int", "java.lang.String"))
+                ));
+            } else if (className.equals("ChatBotGenerator")) {
+                expectedMethodSignatures.put("ChatBotGenerator", Arrays.asList(
+                    new MethodSignature("java.lang.String", "generateChatBotLLM", Arrays.asList("int"))
+                ));
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     private boolean checkMethodSignature(Method method, String expectedReturnType, String expectedMethodName, List<String> expectedParameterTypes) {
         if (!method.getReturnType().getName().equals(expectedReturnType)) return false;
         if (!method.getName().equals(expectedMethodName)) return false;
@@ -57,108 +129,110 @@ public class MethodSignaturesTest {
     }
 
     @Test
-    public void testChatBotMethodSignatures() throws Exception {
+    public void chatBotMethodSignaturesTest() {
+        System.out.println("ChatBot Method Signatures Test. \n");
+        Method[] chatBotMethods = methodTest.get("ChatBot");
         int score = 0;
-        Class<?> chatBotClass = loadClass("ChatBot");
+        StringBuilder feedback = new StringBuilder();
 
-        // Expected method signatures for ChatBot class
-        List<MethodSignature> expectedMethodSignatures = Arrays.asList(
-            new MethodSignature("java.lang.String", "getChatBotName", Arrays.asList()),
-            new MethodSignature("int", "getNumResponsesGenerated", Arrays.asList()),
-            new MethodSignature("int", "getTotalNumResponsesGenerated", Arrays.asList()),
-            new MethodSignature("int", "getTotalNumMessagesRemaining", Arrays.asList()),
-            new MethodSignature("boolean", "limitReached", Arrays.asList()),
-            new MethodSignature("java.lang.String", "generateResponse", Arrays.asList()),
-            new MethodSignature("java.lang.String", "prompt", Arrays.asList("java.lang.String")),
-            new MethodSignature("java.lang.String", "toString", Arrays.asList())
-        );
+        List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBot");
 
-        // Check each method in the loaded class
-        for (Method method : chatBotClass.getDeclaredMethods()) {
+        for (Method method : chatBotMethods) {
             boolean matched = false;
-            for (MethodSignature expectedSignature : expectedMethodSignatures) {
+            for (MethodSignature expectedSignature : expectedSignatures) {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
                     score += 1;
+                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
                     break;
                 }
             }
             if (!matched) {
-                System.err.println("Mismatched signature: found " + method.toString() 
-                    + ", expected one of " + expectedMethodSignatures);
+                feedback.append("Mismatched signature: found ").append(method.toString())
+                        .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
 
-        scores.put("ChatBot", score);
-        assertEquals(expectedMethodSignatures.size(), score, 
-            "Not all method signatures matched for ChatBot");
+        chatBotScore = score;
+        totalScore += chatBotScore;
+        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/36\n");
+        testResults.put("ChatBot", new TestResultLeaf(chatBotScore, feedback.toString()));
     }
 
     @Test
-    public void testChatBotPlatformMethodSignatures() throws Exception {
+    public void chatBotPlatformMethodSignaturesTest() {
+        System.out.println("ChatBotPlatform Method Signatures Test. \n");
+        Method[] chatBotPlatformMethods = methodTest.get("ChatBotPlatform");
         int score = 0;
-        Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
+        StringBuilder feedback = new StringBuilder();
 
-        // Expected method signatures for ChatBotPlatform class
-        List<MethodSignature> expectedMethodSignatures = Arrays.asList(
-            new MethodSignature("boolean", "addChatBot", Arrays.asList("int")),
-            new MethodSignature("java.lang.String", "getChatBotList", Arrays.asList()),
-            new MethodSignature("java.lang.String", "interactWithBot", Arrays.asList("int", "java.lang.String"))
-        );
+        List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBotPlatform");
 
-        // Check each method in the loaded class
-        for (Method method : chatBotPlatformClass.getDeclaredMethods()) {
+        for (Method method : chatBotPlatformMethods) {
             boolean matched = false;
-            for (MethodSignature expectedSignature : expectedMethodSignatures) {
+            for (MethodSignature expectedSignature : expectedSignatures) {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
                     score += 1;
+                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
                     break;
                 }
             }
             if (!matched) {
-                System.err.println("Mismatched signature: found " + method.toString() 
-                    + ", expected one of " + expectedMethodSignatures);
+                feedback.append("Mismatched signature: found ").append(method.toString())
+                        .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
 
-        scores.put("ChatBotPlatform", score);
-        assertEquals(expectedMethodSignatures.size(), score, 
-            "Not all method signatures matched for ChatBotPlatform");
+        chatBotPlatformScore = score;
+        totalScore += chatBotPlatformScore;
+        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/20\n");
+        testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
 
     @Test
-    public void testChatBotGeneratorMethodSignatures() throws Exception {
+    public void chatBotGeneratorMethodSignaturesTest() {
+        System.out.println("ChatBotGenerator Method Signatures Test. \n");
+        Method[] chatBotGeneratorMethods = methodTest.get("ChatBotGenerator");
         int score = 0;
-        Class<?> chatBotGeneratorClass = loadClass("ChatBotGenerator");
+        StringBuilder feedback = new StringBuilder();
 
-        // Expected method signatures for ChatBotGenerator class
-        List<MethodSignature> expectedMethodSignatures = Arrays.asList(
-            new MethodSignature("java.lang.String", "generateChatBotLLM", Arrays.asList("int"))
-        );
+        List<MethodSignature> expectedSignatures = expectedMethodSignatures.get("ChatBotGenerator");
 
-        // Check each method in the loaded class
-        for (Method method : chatBotGeneratorClass.getDeclaredMethods()) {
+        for (Method method : chatBotGeneratorMethods) {
             boolean matched = false;
-            for (MethodSignature expectedSignature : expectedMethodSignatures) {
+            for (MethodSignature expectedSignature : expectedSignatures) {
                 if (checkMethodSignature(method, expectedSignature.returnType, expectedSignature.methodName, expectedSignature.parameterTypes)) {
                     matched = true;
                     score += 1;
+                    feedback.append("Method signature '").append(method.toString()).append("' matches expected signature.\n");
                     break;
                 }
             }
             if (!matched) {
-                System.err.println("Mismatched signature: found " + method.toString() 
-                    + ", expected one of " + expectedMethodSignatures);
+                feedback.append("Mismatched signature: found ").append(method.toString())
+                        .append(", expected one of ").append(expectedSignatures).append("\n");
             }
         }
 
-        scores.put("ChatBotGenerator", score);
-        assertEquals(expectedMethodSignatures.size(), score, 
-            "Not all method signatures matched for ChatBotGenerator");
+        chatBotGeneratorScore = score;
+        totalScore += chatBotGeneratorScore;
+        feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/7\n");
+        testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }
 
-    // Helper class to store method signature details
+    @AfterAll
+    public static void calculateTotal() {
+        System.out.println("Total Score = " + totalScore + "/63 \n");
+        chatBotGeneratorScore = 0;
+        chatBotPlatformScore = 0;
+        chatBotScore = 0;
+    }
+
+    public static HashMap<String, TestResultLeaf> getTestResults() {
+        return testResults;
+    }
+
     private static class MethodSignature {
         String returnType;
         String methodName;

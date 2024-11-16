@@ -2,13 +2,17 @@ package s_jamz;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 
+import s_jamz.AutoGrader.NamingConventionsTest;
+import s_jamz.CompositePattern.TestResultComposite;
+import s_jamz.CompositePattern.TestResultLeaf;
+import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
+import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
-import s_jamz.StrategyPattern.StudentFolderProcessor;
-import s_jamz.StrategyPattern.ResultPrinter;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
@@ -28,7 +32,6 @@ public class App {
         FileProcessorTemplate fileProcessor = new JavaFileProcessor();
         fileProcessor.processFile(zipFile);
 
-        // Assuming the extracted files are placed in the specified directory
         String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
         File extractedDir = new File(newDestFolder);
         if (extractedDir.exists() && extractedDir.isDirectory()) {
@@ -39,33 +42,62 @@ public class App {
 
                     // Run tests using the NamingConvention strategy
                     GradingContext gradingContext = new GradingContext();
+                    TestResultComposite finalResults = new TestResultComposite();
+
+                    MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(methodBehaviour);
+                    gradingContext.evaluate();
+                    finalResults.add(methodBehaviour.getResults());
+                    printTestResults(MethodBehaviour.getTestResults());
+
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
+                    gradingContext.evaluate();
+                    finalResults.add(namingConvention.getResults());
+                    printTestResults(NamingConvention.getTestResults());
 
-                    StudentFolderProcessor processor = new StudentFolderProcessor(gradingContext);
-                    processor.processStudentFolder(studentDir.getAbsolutePath());
-
-                    // Run tests using the MethodSignature strategy
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
-                    processor.processStudentFolder(studentDir.getAbsolutePath());
+                    gradingContext.evaluate();
+                    finalResults.add(methodSignature.getResults());
+                    printTestResults(MethodSignature.getTestResults());
 
-                    // Print the results for the student
-                    System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    ResultPrinter printer = new ResultPrinter(namingConvention.getResults());
-                    printer.printResults();
-                    int totalScoreNaming = namingConvention.getResults().getScore();
-                    System.out.println("Total Score for NamingConvention: " + totalScoreNaming + " points\n");
+                    AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(attributeType);
+                    gradingContext.evaluate();
+                    finalResults.add(attributeType.getResults());
+                    printTestResults(AttributeType.getTestResults());
 
-                    printer = new ResultPrinter(methodSignature.getResults());
-                    printer.printResults();
-                    int totalScoreMethod = methodSignature.getResults().getScore();
-                    System.out.println("Total Score for MethodSignature: " + totalScoreMethod + " points\n");
+                   
 
-                    int totalScore = totalScoreNaming + totalScoreMethod;
-                    System.out.println("Overall Total Score: " + totalScore + " points\n");
+                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
+                    // int totalScore = finalResults.getScore();
+                    // System.out.println("Total Score: " + totalScore + " points\n");
+
+                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
+                    // int totalScore = finalResults.getScore();
+                    // System.out.println("Total Score: " + totalScore + " points\n");
+
+                    // int totalScore = totalScoreNaming + totalScoreMethod;
+                    // System.out.println("Overall Total Score: " + totalScore + " points\n");
+
+                    // Clear the static maps after running the tests
+                    // MethodSignaturesTest.scores.clear();
+                    // MethodSignaturesTest.feedback.clear();
+                   
                 }
             }
         }
     }
+
+    //test method to print the contents of the map
+    private static void printTestResults(HashMap<String, TestResultLeaf> testResults) {
+        testResults.forEach((testName, result) -> {
+            System.out.println("Test Name: " + testName);
+            System.out.println("Score: " + result.getScore());
+            System.out.println("Feedback: " + result.getFeedback());
+            System.out.println();
+        });
+    }
+
 }

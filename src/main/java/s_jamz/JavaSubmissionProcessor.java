@@ -14,9 +14,5 @@ public class JavaSubmissionProcessor extends SubmissionProcessor {
     public void processSubmission(File zipFile, String destDir, Student student) {
         throw new UnsupportedOperationException("Unimplemented method 'processSubmission'");
         
-        // fileExtractor.extractZip(zipFile, destDir);
-        // TestResultComponent testResults = evaluateCode(zipFile);
-        // generateFeedback(testResults);
-        // calculateScore(testResults);
     }
 }

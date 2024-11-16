@@ -1,6 +1,6 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
+// import java.io.File;
 
 public class GradingContext {
     private EvaluationStrategy strategy;
@@ -9,12 +9,13 @@ public class GradingContext {
         this.strategy = strategy;
     }
 
-    public void evaluate(File javaFile) {
-        strategy.evaluate(javaFile);
-    }
 
-    public void runTests(File javaFile) {
-        strategy.runTests(javaFile);
+    public void evaluate(){
+        if (strategy != null) {
+            strategy.evaluate();
+        } else {
+            throw new IllegalStateException("Test strategy not set");
+        }
     }
 
     public EvaluationStrategy getStrategy() {

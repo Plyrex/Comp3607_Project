@@ -21,7 +21,7 @@ public class JUnitTestExecutor {
         launcher.execute(request);
 
         // Process and display results
-        System.out.println("Test Results: " + listener.getSummary().getTestsSucceededCount() + " tests passed");
+        // System.out.println("Test Results: " + listener.getSummary().getTestsSucceededCount() + " tests passed");
         return listener;
     }
 }
