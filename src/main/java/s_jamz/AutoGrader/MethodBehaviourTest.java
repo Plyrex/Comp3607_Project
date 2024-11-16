@@ -150,48 +150,6 @@ public class MethodBehaviourTest {
                 feedback.append("getChatBotName method passed.\n");
             } else {
                 feedback.append("getChatBotName method failed. Expected 'ChatGPT-3.5', but got '").append(chatBotName).append("'.\n");}
-          
-            /*This is only 1 mark just needs to work for the default name. Theres's no issue with testing but no marks should be allocated. */    
-
-            // Constructor<?> mistralConstructor = chatBotClass.getDeclaredConstructor(int.class);
-            // mistralConstructor.setAccessible(true);
-            // Object chatBotWith2 = mistralConstructor.newInstance(2);
-            // chatBotName = (String) getChatBotName.invoke(chatBotWith2);
-            // if (chatBotName.contains("Mistral7B")) {
-            //     chatBotScores.put("getChatBotName", 1);
-            //     feedback.append("getChatBotName method passed for Mistral7B.\n");
-            // } else {
-            //     feedback.append("getChatBotName method failed for Mistral7B. Expected 'Mistral7B', but got '").append(chatBotName).append("'.\n");}
-
-            // Constructor<?> claudeConstructor = chatBotClass.getDeclaredConstructor(int.class);
-            // claudeConstructor.setAccessible(true);
-            // Object chatBotWith4 = claudeConstructor.newInstance(4);
-            // chatBotName = (String) getChatBotName.invoke(chatBotWith4);
-            // if (chatBotName.contains("Claude")) {
-            //     chatBotScores.put("getChatBotName", 1);
-            //     feedback.append("getChatBotName method passed for Claude.\n");
-            // } else {
-            //     feedback.append("getChatBotName method failed for Claude. Expected 'Claude', but got '").append(chatBotName).append("'.\n");}
-
-            // Constructor<?> solarConstructor = chatBotClass.getDeclaredConstructor(int.class);
-            // solarConstructor.setAccessible(true);
-            // Object chatBotWith5 = solarConstructor.newInstance(5);
-            // chatBotName = (String) getChatBotName.invoke(chatBotWith5);
-            // if (chatBotName.contains("Solar")) {
-            //     chatBotScores.put("getChatBotName", 1);
-            //     feedback.append("getChatBotName method passed for Solar.\n");
-            // } else {
-            //     feedback.append("getChatBotName method failed for Solar. Expected 'Solar', but got '").append(chatBotName).append("'.\n");}
-            
-            // Constructor<?> newConstructor = chatBotClass.getDeclaredConstructor(int.class);
-            // newConstructor.setAccessible(true);
-            // Object chatBotWith6 = newConstructor.newInstance(6);
-            // chatBotName = (String) getChatBotName.invoke(chatBotWith6);
-            // if (chatBotName.contains("ChatGPT-3.5")) {
-            //     chatBotScores.put("getChatBotName", 1);
-            //     feedback.append("getChatBotName method passed for ChatGPT-3.5.\n");
-            // } else {
-            //     feedback.append("getChatBotName method failed for ChatGPT-3.5. Expected 'ChatGPT-3.5', but got '").append(chatBotName).append("'.\n");}
         } 
         catch(Exception e){
             feedback.append("Error in getChatBotName method: ").append(e.getMessage()).append("\n");
@@ -463,7 +421,8 @@ public class MethodBehaviourTest {
         feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/6\n");
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }
-
+    
+   
 
     @AfterEach
     public void printResults() {
