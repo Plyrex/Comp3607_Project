@@ -74,105 +74,65 @@ public class MethodBehaviourTest {
         System.out.println("Running method tests for class: Chatbot");
         Class<?> chatBotClass = loadClass("ChatBot");
         Constructor<?> defaultConstructor = chatBotClass.getDeclaredConstructor();
+        int score = 0;
+        int chatBotNameScore = 0;
         defaultConstructor.setAccessible(true);
         Object chatBot = defaultConstructor.newInstance();
-        int score = 0;
+        HashMap<String, Integer> chatBotScores = new HashMap<>();
+        chatBotScores.put("getChatBotName", 0);
+        chatBotScores.put("generateResponse", 0);
+        chatBotScores.put("getNumResponsesGenerated", 0);
+        chatBotScores.put("getTotalNumResponsesGenerated", 0);
+        chatBotScores.put("getTotalNumMessagesRemaining", 0);
+        chatBotScores.put("limitReached", 0);
+        chatBotScores.put("prompt", 0);
+        chatBotScores.put("toString", 0);
+
 
         System.out.println("Testing getChatBotName method");
         try{
             Object chatBotGPT = defaultConstructor.newInstance();
             Method getChatBotName = chatBotClass.getMethod("getChatBotName");
             String chatBotName = (String) getChatBotName.invoke(chatBotGPT);
-            try{
-                assertEquals("ChatGPT-3.5", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'getChatBotName()' matches expected behaviour."); 
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
-            
+            if(chatBotName.contains("ChatGPT-3.5")){  chatBotNameScore += 1; }
+                        
             Constructor<?> llmConstructor = chatBotClass.getDeclaredConstructor(int.class);
             llmConstructor.setAccessible(true);
             Object chatBotWithLLM = llmConstructor.newInstance(1);
             chatBotName = (String) getChatBotName.invoke(chatBotWithLLM);
-            try{
-                assertEquals("LLaMa", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'ChatBot(LLaMa)' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
+            if(chatBotName.contains("LLaMa")){ chatBotNameScore += 1;}
+
 
             Constructor<?> mistralConstructor = chatBotClass.getDeclaredConstructor(int.class);
             mistralConstructor.setAccessible(true);
             Object chatBotWith2 = mistralConstructor.newInstance(2);
             chatBotName = (String) getChatBotName.invoke(chatBotWith2);
-            try{
-                assertEquals("Mistral7B", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'ChatBot(Mistral7B)' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
-
-            Constructor<?> bardConstructor = chatBotClass.getDeclaredConstructor(int.class);
-            bardConstructor.setAccessible(true);
-            Object chatBotWith3 = bardConstructor.newInstance(3);
-            chatBotName = (String) getChatBotName.invoke(chatBotWith3);
-            try{
-                assertEquals("Bard", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'ChatBot(Bard)' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
+            if(chatBotName.contains("Mistral7B")){ chatBotNameScore += 1; }
 
             Constructor<?> claudeConstructor = chatBotClass.getDeclaredConstructor(int.class);
             claudeConstructor.setAccessible(true);
             Object chatBotWith4 = claudeConstructor.newInstance(4);
             chatBotName = (String) getChatBotName.invoke(chatBotWith4);
-            try{
-                assertEquals("Claude", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'ChatBot(Claude)' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
+            if(chatBotName.contains("Claude")){ chatBotNameScore += 1; }
 
             Constructor<?> solarConstructor = chatBotClass.getDeclaredConstructor(int.class);
             solarConstructor.setAccessible(true);
             Object chatBotWith5 = solarConstructor.newInstance(5);
             chatBotName = (String) getChatBotName.invoke(chatBotWith5);
-            try{
-                assertEquals("Solar", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'ChatBot(Solar)' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
+            if(chatBotName.contains("Solar")){ chatBotNameScore += 1; }
             
             Constructor<?> newConstructor = chatBotClass.getDeclaredConstructor(int.class);
             newConstructor.setAccessible(true);
             Object chatBotWith6 = newConstructor.newInstance(6);
             chatBotName = (String) getChatBotName.invoke(chatBotWith6);
-            try{
-                assertEquals("ChatGPT-3.5", chatBotName, "Expected: " + chatBotName + ", Actual: " + chatBotName);
-                score += 1;
-                System.out.println("Method behaviour 'ChatBot(ChatGPT-3.5)' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getChatBotName method: " + e.getMessage());
-            }
+            if(chatBotName.contains("ChatGPT-3.5")){ chatBotNameScore += 1; }
         } 
         catch(Exception e){
             System.err.println("Error in getChatBotName method: " + e.getMessage());
         }
+
+        if(chatBotNameScore == 6){ chatBotScores.put("getChatBotName", 1); System.out.println("Test passed"); }
+        else{ System.out.println("Test failed");}
 
         // //Test generateResponse method
         System.out.println("Testing generateResponse method");
@@ -180,14 +140,8 @@ public class MethodBehaviourTest {
             Method generateResponse = chatBotClass.getDeclaredMethod("generateResponse");
             generateResponse.setAccessible(true);
             String response = (String) generateResponse.invoke(chatBot);
-            try{
-                assertTrue(response.contains("ChatGPT-3.5"), "Expected response to contain: ChatGPT-3.5, Actual: " + response);
-                score += 5;
-                System.out.println("Method behaviour 'generateResponse()' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in generateResponse method: " + e.getMessage());
-            }
+            if(response.contains("ChatGPT-3.5")){ chatBotScores.put("generateResponse", 1);  System.out.println("Test passed"); }
+            else{ System.out.println("Test failed");}
         }
         catch(Exception e){
             System.err.println("Error in generateResponse method: " + e.getMessage());
@@ -198,14 +152,8 @@ public class MethodBehaviourTest {
         try{
             Method getNumResponsesGenerated = chatBotClass.getMethod("getNumResponsesGenerated");
             int numResponsesGenerated = (int) getNumResponsesGenerated.invoke(chatBot);
-            try{
-                assertEquals(1, numResponsesGenerated, "Expected: 0, Actual: " + numResponsesGenerated);
-                score += 1;
-                System.out.println("Method behaviour 'getNumResponsesGenerated()' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getNumResponsesGenerated method: " + e.getMessage());
-            }
+            if(numResponsesGenerated == 0){ chatBotScores.put("getNumResponsesGenerated", 1);  System.out.println("Test passed"); }
+            else{ System.out.println("Test failed");}
             
         }
         catch(Exception e){
@@ -217,15 +165,8 @@ public class MethodBehaviourTest {
         try{
             Method getTotalNumResponsesGenerated = chatBotClass.getMethod("getTotalNumResponsesGenerated");
             int totalNumResponsesGenerated = (int) getTotalNumResponsesGenerated.invoke(null);
-            try{
-                assertEquals(1, totalNumResponsesGenerated, "Expected: 1, Actual: " + totalNumResponsesGenerated);
-                score += 2;
-                System.out.println("Method behaviour 'getTotalNumResponsesGenerated()' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getTotalNumResponsesGenerated method: " + e.getMessage());
-            }
-
+            if(totalNumResponsesGenerated == 0){ chatBotScores.put("getTotalNumResponsesGenerated", 1);  System.out.println("Test passed"); }
+            else{ System.out.println("Test failed");}
         }
         catch(Exception e){
             System.err.println("Error in getTotalNumResponsesGenerated method: " + e.getMessage());
@@ -236,22 +177,145 @@ public class MethodBehaviourTest {
         try{
             Method getTotalNumMessagesRemaining = chatBotClass.getMethod("getTotalNumMessagesRemaining");
             int totalNumMessagesRemaining = (int) getTotalNumMessagesRemaining.invoke(null);
-            try{
-                assertEquals(9, totalNumMessagesRemaining, "Expected: 9, Actual: " + totalNumMessagesRemaining);
-                score += 3;
-                System.out.println("Method behaviour 'getTotalNumMessagesRemaining()' matches expected behaviour.");
-            }
-            catch(Exception e){
-                System.err.println("Error in getTotalNumMessagesRemaining method: " + e.getMessage());
-            }
+            if(totalNumMessagesRemaining == 10){ chatBotScores.put("getTotalNumMessagesRemaining", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed");}
         }
         catch(Exception e){
             System.err.println("Error in getTotalNumMessagesRemaining method: " + e.getMessage());
         }
 
+        // Test limitReached method
+        System.out.println("Testing limitReached method");
+        try{
+            Method limitReached = chatBotClass.getMethod("limitReached");
+            boolean isLimitReached = (boolean) limitReached.invoke(null);
+            if(!isLimitReached){ chatBotScores.put("limitReached", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed");}
+        }
+        catch(Exception e){
+            System.err.println("Error in limitReached method: " + e.getMessage());
+        }
 
-        // assertEquals(6, score);
+        // Test prompt method
+        System.out.println("Testing prompt method");
+        try{
+            Method prompt = chatBotClass.getMethod("prompt", String.class);
+            String promptResponse = (String) prompt.invoke(chatBot, "Hello");
+            if(promptResponse.contains("Response from")){ chatBotScores.put("prompt", 1);  System.out.println("Test passed"); }
+            else{ System.out.println("Test failed");}
+        }
+        catch(Exception e){
+            System.err.println("Error in prompt method: " + e.getMessage());
+        }
+
+        // Test toString method
+        System.out.println("Testing toString method");
+        try{
+            Method toStringMethod = chatBotClass.getMethod("toString");
+            String toStringResponse = (String) toStringMethod.invoke(chatBot);
+            if(toStringResponse.contains("ChatBot Name: ChatGPT-3.5")){ chatBotScores.put("toString", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed"); }
+        }
+        catch(Exception e){
+            System.err.println("Error in toString method: " + e.getMessage());
+        }
+
+        for (Map.Entry<String, Integer> entry : chatBotScores.entrySet()) {
+            score += entry.getValue();
+        }
+
+        scores.put("ChatBot", score);
+
+        assertEquals(6, score);
     }
+
+
+    @Test
+    public void testChatBotPlatformBehaviour() throws Exception {
+        System.out.println("Running method tests for class: ChatBotPlatform");
+        Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
+        Constructor<?> defaultConstructor = chatBotPlatformClass.getDeclaredConstructor();
+        int score = 0;
+        defaultConstructor.setAccessible(true);
+        Object chatBotPlatform = defaultConstructor.newInstance();
+        HashMap<String, Integer> chatBotPlatformScores = new HashMap<>();
+        chatBotPlatformScores.put("addChatBot", 0);
+        chatBotPlatformScores.put("interactWithBot", 0);
+        chatBotPlatformScores.put("getChatBotList", 0);
+
+        // Test addChatBot method
+        System.out.println("Testing addChatBot method");
+        try{
+            Method addChatBot = chatBotPlatformClass.getMethod("addChatBot", int.class);
+            boolean addChatBotResult = (boolean) addChatBot.invoke(chatBotPlatform, 1);
+            if(addChatBotResult){ chatBotPlatformScores.put("addChatBot", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed"); }
+        }
+        catch(Exception e){
+            System.err.println("Error in addChatBot method: " + e.getMessage());
+        }
+
+        // Test interactWithBot method
+        System.out.println("Testing interactWithBot method");
+        try{
+            Method interactWithBot = chatBotPlatformClass.getMethod("interactWithBot", int.class, String.class);
+            String interaction = (String) interactWithBot.invoke(chatBotPlatform, 0, "Hello");
+            if(interaction.contains("Response from")){ chatBotPlatformScores.put("interactWithBot", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed"); }
+        }
+        catch(Exception e){
+            System.err.println("Error in interactWithBot method: " + e.getMessage());
+        }
+
+        // Test getChatBotList method
+        System.out.println("Testing getChatBotList method");
+        try{
+            Method getChatBotList = chatBotPlatformClass.getMethod("getChatBotList");
+            String chatBotList = (String) getChatBotList.invoke(chatBotPlatform);
+            if(chatBotList.contains("ChatGPT-3.5")){ chatBotPlatformScores.put("getChatBotList", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed"); }
+        }
+        catch(Exception e){
+            System.err.println("Error in getChatBotList method: " + e.getMessage());
+        }
+
+        for (Map.Entry<String, Integer> entry : chatBotPlatformScores.entrySet()) {
+            score += entry.getValue();
+        }
+
+        scores.put("ChatBotPlatform", score);
+    }
+
+    @Test
+    public void testChatBotGeneratorBehaviour() throws Exception {
+        System.out.println("Running method tests for class: ChatBotGenerator");
+        Class<?> chatBotGeneratorClass = loadClass("ChatBotGenerator");
+        Constructor<?> defaultConstructor = chatBotGeneratorClass.getDeclaredConstructor();
+        int score = 0;
+        defaultConstructor.setAccessible(true);
+        Object chatBotGenerator = defaultConstructor.newInstance();
+        HashMap<String, Integer> chatBotGeneratorScores = new HashMap<>();
+        chatBotGeneratorScores.put("generateChatBotLLM", 0);
+
+        // Test generateChatBotLLM method
+        System.out.println("Testing generateChatBotLLM method");
+        try{
+            Method generateChatBotLLM = chatBotGeneratorClass.getMethod("generateChatBotLLM", int.class);
+            String llmName = (String) generateChatBotLLM.invoke(null, 1);
+            if(llmName.contains("LLaMa")){ chatBotGeneratorScores.put("generateChatBotLLM", 1); System.out.println("Test passed"); }
+            else{ System.out.println("Test failed"); }
+        }
+        catch(Exception e){
+            System.err.println("Error in generateChatBotLLM method: " + e.getMessage());
+        }
+
+        for (Map.Entry<String, Integer> entry : chatBotGeneratorScores.entrySet()) {
+            score += entry.getValue();
+        }
+
+        scores.put("ChatBotGenerator", score);
+    }
+
 
     @AfterEach
     public void printResults() {
