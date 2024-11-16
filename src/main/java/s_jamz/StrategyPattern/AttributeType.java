@@ -32,9 +32,8 @@ public class AttributeType implements EvaluationStrategy {
             System.out.println("Running tests for class: " + attributeTypeTest.getClass().getName());
 
             // Run JUnit tests for AttributeType
-            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(attributeTypeTest.getClass());
-            TestExecutionSummary summary = listener.getSummary();
-            
+            JUnitTestExecutor.executeTests(attributeTypeTest.getClass());
+    
             // Now handle results from the summary
             results = runAttributeTypeTests(attributeTypeTest.getClass());
 
@@ -50,15 +49,15 @@ public class AttributeType implements EvaluationStrategy {
         return results;
     }
 
-
     private TestResultComponent runAttributeTypeTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
 
         final List<String> attributeTestResults = attributeTypeTest.getAttributeTypeTestResults();
-        int count = 0;
+        int count = 1; //test statment
+
         for(String result: attributeTestResults){
         try {
-            System.out.println("Added " + count++);
+            System.out.println("Result " + count++); //test statement
             System.out.println(result);
             composite.add(new TestResultLeaf(studentFolderPath, 1, result)); //1 point per test passed which is also per line
         } catch (Exception e) {

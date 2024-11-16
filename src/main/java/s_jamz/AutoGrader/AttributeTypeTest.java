@@ -2,6 +2,7 @@ package s_jamz.AutoGrader;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,8 @@ public class AttributeTypeTest {
     private static int totalScore;
     private static int chatBotScore =0;
     private static int chatBotPlatformScore=0;
-    private String chatBotTestString = "";
-    private String chatBotPlatformTestString = "";
+    private String chatBotTestString;
+    private String chatBotPlatformTestString;
     
     private static List<String> results;
 
@@ -39,10 +40,11 @@ public class AttributeTypeTest {
     @BeforeEach
     public void setup(){
         try{
+            chatBotTestString = ""; 
+            chatBotPlatformTestString = "";
         attributeTest.clear();
         loadAttributeNames("ChatBot");
         loadAttributeNames("ChatBotPlatform");
-        loadAttributeNames("ChatBotSimulation");
         }
         catch(Exception e){
             System.err.println("Could not load attribute names for class: " + e.getMessage());
@@ -161,9 +163,10 @@ public class AttributeTypeTest {
        chatBotScore = score;
        totalScore = totalScore + chatBotScore;
        chatBotTestString = chatBotTestString + ("ChatBot Class Score: " + chatBotScore + "/4");
-       results.add(chatBotTestString);
-       results.add(chatBotTestString);
-       System.out.println("End of ChatBotTest");
+
+       
+      
+       System.out.println("End of ChatBotTest"); //test statement
 
     
     }
@@ -202,7 +205,7 @@ public class AttributeTypeTest {
         chatBotPlatformTestString = chatBotPlatformTestString + ("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/1 \n");
         results.add(chatBotPlatformTestString);
 
-        System.out.println("End of ChatBotPlatformTest");
+        System.out.println("End of ChatBotPlatformTest"); //test statement
 
         
      }
