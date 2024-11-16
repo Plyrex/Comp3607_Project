@@ -135,9 +135,16 @@ public class AttributeTypeTest {
                     (field.getName().equals("messageLimit") || field.getName().equals("messageNumber"))
                      && java.lang.reflect.Modifier.isStatic(field.getModifiers())){
 
-                    feedback.append(field.getName()).append(" is static. \n");
+                    feedback.append(field.getName()).append(" is static. ");
                     score++;
                 }
+
+                if (expectedAttributes.containsKey(field.getName()) && field.getName().equals("messageLimit")
+                 && java.lang.reflect.Modifier.isPublic(field.getModifiers())){
+
+                    feedback.append(field.getName()).append(" is final. ");
+                    score++;
+            }
             } catch (Exception e) {
                 feedback.append(e.getMessage()).append("\n");
             }
@@ -187,6 +194,7 @@ public class AttributeTypeTest {
         System.out.println("Total Score = " + totalScore + "/9 \n");
         chatBotScore = 0;
         chatBotPlatformScore = 0;
+        totalScore = 0;
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {
