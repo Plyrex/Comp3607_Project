@@ -128,6 +128,16 @@ public class MethodBehaviourTest {
             Method getChatBotName = chatBotClass.getMethod("getChatBotName");
             String chatBotName = (String) getChatBotName.invoke(chatBotGPT);
 
+
+            Constructor<?> llmConstructor = chatBotClass.getDeclaredConstructor(int.class);
+            llmConstructor.setAccessible(true);
+             Object chatBotWith2 = llmConstructor.newInstance(2);
+            if (chatBotWith2 != null) {
+                chatBotScores.put("ChatBot()", 3);
+                feedback.append("Overloaded COnstructor passed. ");
+            } else {
+                feedback.append("Overloaded Constructor not passed. ");}
+
             if(chatBotGPT !=null){
                 chatBotScores.put("ChatBot", 3);
                 feedback.append("Constructor passed. \n");
@@ -142,16 +152,6 @@ public class MethodBehaviourTest {
                 feedback.append("getChatBotName method failed. Expected 'ChatGPT-3.5', but got '").append(chatBotName).append("'.\n");}
           
             /*This is only 1 mark just needs to work for the default name. Theres's no issue with testing but no marks should be allocated. */    
-
-            Constructor<?> llmConstructor = chatBotClass.getDeclaredConstructor(int.class);
-            llmConstructor.setAccessible(true);
-             Object chatBotWith2 = llmConstructor.newInstance(2);
-            if (chatBotWith2 != null) {
-                chatBotScores.put("ChatBot()", 3);
-                feedback.append("Overloaded COnstructor passed. ");
-            } else {
-                feedback.append("Overloaded Constructor not passed. ");}
-
 
             // Constructor<?> mistralConstructor = chatBotClass.getDeclaredConstructor(int.class);
             // mistralConstructor.setAccessible(true);
