@@ -44,6 +44,12 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     TestResultComposite finalResults = new TestResultComposite();
 
+                    MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(methodBehaviour);
+                    gradingContext.evaluate();
+                    finalResults.add(methodBehaviour.getResults());
+                    printTestResults(MethodBehaviour.getTestResults());
+
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
                     gradingContext.evaluate();
@@ -62,9 +68,7 @@ public class App {
                     finalResults.add(attributeType.getResults());
                     printTestResults(AttributeType.getTestResults());
 
-                    MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(methodBehaviour);
-                    gradingContext.evaluate();
+                   
 
                     // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
                     // int totalScore = finalResults.getScore();
@@ -95,7 +99,5 @@ public class App {
             System.out.println();
         });
     }
-
-    
 
 }
