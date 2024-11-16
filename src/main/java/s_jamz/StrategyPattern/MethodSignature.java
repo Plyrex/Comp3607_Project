@@ -1,7 +1,5 @@
 package s_jamz.StrategyPattern;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import s_jamz.CompositePattern.TestResultComponent;
@@ -9,17 +7,16 @@ import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.MethodSignaturesTest;
+import java.util.HashMap;
 
 public class MethodSignature implements EvaluationStrategy {
 
     private TestResultComponent results;
     private String studentFolderPath;
-    private List<String> feedback;
 
     public MethodSignature(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
-        this.feedback = new ArrayList<>();
     }
 
     @Override
@@ -36,8 +33,13 @@ public class MethodSignature implements EvaluationStrategy {
 
             // Process the summary to extract scores and feedback
             summary.getFailures().forEach(failure -> {
-                feedback.add(failure.getException().getMessage());
                 results.add(new TestResultLeaf(0, failure.getException().getMessage()));
+            });
+
+            // Retrieve and store the results from MethodSignaturesTest
+            HashMap<String, TestResultLeaf> testResults = MethodSignaturesTest.getTestResults();
+            testResults.forEach((testName, result) -> {
+                results.add(result);
             });
 
         } catch (Exception e) {
@@ -57,9 +59,12 @@ public class MethodSignature implements EvaluationStrategy {
             composite.add(new TestResultLeaf(0, "Method signature test passed"));
         } catch (Exception e) {
             e.printStackTrace();
-            composite.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
         }
         return composite;
     }
 
+    public static HashMap<String, TestResultLeaf> getTestResults() {
+        return MethodSignaturesTest.getTestResults();
+    }
 }

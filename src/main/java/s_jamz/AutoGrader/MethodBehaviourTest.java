@@ -322,3 +322,7 @@ public class MethodBehaviourTest {
         System.out.println("Method Behaviour Test Results: " + scores);
     }
 }
+
+public class MethodBehaviourTest {
+
+}
