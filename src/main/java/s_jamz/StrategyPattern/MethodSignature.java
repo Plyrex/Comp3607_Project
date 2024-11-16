@@ -7,6 +7,7 @@ import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.MethodSignaturesTest;
+import java.util.HashMap;
 
 public class MethodSignature implements EvaluationStrategy {
 
@@ -30,9 +31,20 @@ public class MethodSignature implements EvaluationStrategy {
 
             results = runMethodSignaturesTests(testClass.getClass());
 
+            // Process the summary to extract scores and feedback
+            summary.getFailures().forEach(failure -> {
+                results.add(new TestResultLeaf(0, failure.getException().getMessage()));
+            });
+
+            // Retrieve and store the results from MethodSignaturesTest
+            HashMap<String, TestResultLeaf> testResults = MethodSignaturesTest.getTestResults();
+            testResults.forEach((testName, result) -> {
+                results.add(result);
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
-            results.add(new TestResultLeaf(studentFolderPath, 0, "Failed to load test class: " + e.getMessage()));
+            results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
         }
     }
 
@@ -44,12 +56,15 @@ public class MethodSignature implements EvaluationStrategy {
     private TestResultComponent runMethodSignaturesTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
-            composite.add(new TestResultLeaf(studentFolderPath, 0, "Method signature test passed"));
+            composite.add(new TestResultLeaf(0, "Method signature test passed"));
         } catch (Exception e) {
             e.printStackTrace();
-            composite.add(new TestResultLeaf(studentFolderPath, 0, "Failed to load test class: " + e.getMessage()));
+            composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
         }
         return composite;
     }
 
+    public static HashMap<String, TestResultLeaf> getTestResults() {
+        return MethodSignaturesTest.getTestResults();
+    }
 }
