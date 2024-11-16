@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -131,6 +132,47 @@ public class MethodSignaturesTest {
                 }
             }
             methodSignature += ")";
+
+            if(methodSignature.equals("int getTotalNumResponsesGenerated()")){
+                if(Modifier.isStatic(method.getModifiers())){
+                    feedback.append(methodSignature).append(" is static. ");
+                }
+                else{
+                    feedback.append(methodSignature).append(" is not static. ");
+                    score--;
+                }
+            }
+
+            if(methodSignature.equals("int getTotalNumMessagesRemaining()")){
+                if(Modifier.isStatic(method.getModifiers())){
+                    feedback.append(methodSignature).append(" is static. ");
+                }
+                else{
+                    feedback.append(methodSignature).append(" is not static. ");
+                    score--;
+                }
+            }
+
+            if(methodSignature.equals("boolean limitReached()")){
+                if(Modifier.isStatic(method.getModifiers())){
+                    feedback.append(methodSignature).append(" is static. ");
+                }
+                else{
+                    feedback.append(methodSignature).append(" is not static. ");
+                    score--;
+                }
+            }
+
+            if(methodSignature.equals("String generateResponse()")){
+                if(Modifier.isPrivate(method.getModifiers())){
+                    feedback.append(methodSignature).append(" is private. ");
+                }
+                else{
+                    feedback.append(methodSignature).append(" is not private. ");
+                    score--;
+                }
+            }
+
 
             if (expectedSignatures.contains(methodSignature)) {
                 score += 1;
