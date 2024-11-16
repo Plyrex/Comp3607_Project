@@ -3,46 +3,49 @@ package s_jamz.StrategyPattern;
 
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.w3c.dom.Attr;
 
 import s_jamz.JUnitTestExecutor;
 import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.AutoGrader.AttributeTypeTest;
+import java.util.List;
 
 
 public class AttributeType implements EvaluationStrategy {
     private TestResultComponent results;
     private String studentFolderPath;
+    private AttributeTypeTest attributeTypeTest;
+
 
     public AttributeType(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
+        this.attributeTypeTest = new AttributeTypeTest();
     }
 
-//path: /Users/maianeptune/Downloads/StudentSubmissions2.zip
+
     @Override
     public void evaluate() {
         try {
-            AttributeTypeTest testClass = new AttributeTypeTest();
-        
-            // Print the class name
-            System.out.println("Running tests for class: " + testClass.getClass().getName());
+            // Print the class name to debug
+            System.out.println("Running tests for class: " + attributeTypeTest.getClass().getName());
 
-
-            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
+            // Run JUnit tests for AttributeType
+            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(attributeTypeTest.getClass());
             TestExecutionSummary summary = listener.getSummary();
-
-            // // Run JUnit tests for AttributeType
-            results = runAttributeTypeTests(testClass.getClass());
+            
+            // Now handle results from the summary
+            results = runAttributeTypeTests(attributeTypeTest.getClass());
 
         } catch (Exception e) {
             e.printStackTrace();
-            results = new TestResultLeaf(0, "Failed to load test class: " + e.getMessage());
+            results = new TestResultLeaf(studentFolderPath, 0, "Failed to load test class: " + e.getMessage());
         }
     }
 
 
-      @Override
+    @Override
     public TestResultComponent getResults() {
         return results;
     }
@@ -50,13 +53,19 @@ public class AttributeType implements EvaluationStrategy {
 
     private TestResultComponent runAttributeTypeTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
+
+        final List<String> attributeTestResults = attributeTypeTest.getAttributeTypeTestResults();
+        int count = 0;
+        for(String result: attributeTestResults){
         try {
-            
-            composite.add(new TestResultLeaf(90, "Attribute type test passed")); // Placeholder result
+            System.out.println("Added " + count++);
+            System.out.println(result);
+            composite.add(new TestResultLeaf(studentFolderPath, 1, result)); //1 point per test passed which is also per line
         } catch (Exception e) {
             e.printStackTrace();
-            composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
+            composite.add(new TestResultLeaf(studentFolderPath, 0, "Test execution failed: " + e.getMessage()));
         }
+    }
         return composite;
     }
     

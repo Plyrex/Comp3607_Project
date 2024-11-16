@@ -37,7 +37,7 @@ public class NamingConvention implements EvaluationStrategy {
             // Process the summary to extract scores and feedback
             summary.getFailures().forEach(failure -> {
                 feedback.add(failure.getException().getMessage());
-                results.add(new TestResultLeaf(0, failure.getException().getMessage()));
+                results.add(new TestResultLeaf(studentFolderPath, 0, failure.getException().getMessage()));
             });
 
 
@@ -47,7 +47,7 @@ public class NamingConvention implements EvaluationStrategy {
 
         } catch (Exception e) {
             e.printStackTrace();
-            results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            results.add(new TestResultLeaf(studentFolderPath, 0, "Failed to load test class: " + e.getMessage()));
         }
     }
 
@@ -59,10 +59,10 @@ public class NamingConvention implements EvaluationStrategy {
     private TestResultComponent runNamingConventionsTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
-            composite.add(new TestResultLeaf(0, "Attribute type test passed"));
+            composite.add(new TestResultLeaf(studentFolderPath, 0, "Attribute type test passed"));
         } catch (Exception e) {
             e.printStackTrace();
-            composite.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            composite.add(new TestResultLeaf(studentFolderPath,0, "Failed to load test class: " + e.getMessage()));
         }
         return composite;
     }
