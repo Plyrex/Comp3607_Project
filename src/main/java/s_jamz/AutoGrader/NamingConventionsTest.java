@@ -136,6 +136,12 @@ public class NamingConventionsTest {
                 if (expectedAttributes.containsKey(field.getName())) {
                     feedback.append("Class contains: ").append(field.getName()).append(". ");
                 }
+                if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
+                    feedback.append(field.getName()).append(" has correct type. \n");
+                    score++;
+                } else {
+                    feedback.append(field.getName()).append(" has incorrect type.\n");
+                }
             } catch (Exception e) {
                 feedback.append(e.getMessage()).append("\n");
             }
@@ -198,7 +204,12 @@ public class NamingConventionsTest {
                 if (expectedAttributes.containsKey(field.getName())) {
                     feedback.append("Class contains: ").append(field.getName()).append(". ");
                 }
-
+                if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
+                    feedback.append(field.getName()).append(" has correct type. \n");
+                    score++;
+                } else {
+                    feedback.append(field.getName()).append(" has incorrect type.\n");
+                }
             } catch (Exception e) {
                 feedback.append(e.getMessage()).append("\n");
             }
@@ -257,6 +268,12 @@ public class NamingConventionsTest {
             try {
                 if (expectedAttributes.containsKey(field.getName())) {
                     feedback.append("Class contains: ").append(field.getName()).append(". ");
+                }
+                if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
+                    feedback.append(field.getName()).append(" has correct type. \n");
+                    score++;
+                } else {
+                    feedback.append(field.getName()).append(" has incorrect type.\n");
                 }
             } catch (Exception e) {
                 feedback.append(e.getMessage()).append("\n");

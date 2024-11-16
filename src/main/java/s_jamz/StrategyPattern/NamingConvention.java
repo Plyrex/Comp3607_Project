@@ -55,7 +55,7 @@ public class NamingConvention implements EvaluationStrategy {
     private TestResultComponent runNamingConventionsTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
-            composite.add(new TestResultLeaf(0, "Attribute type test passed"));
+            composite.add(new TestResultLeaf(0, "Naming Convention test passed"));
         } catch (Exception e) {
             e.printStackTrace();
             composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
