@@ -50,11 +50,11 @@ public class App {
                     // finalResults.add(methodBehaviour.getResults());
                     printTestResults(MethodBehaviour.getTestResults());
 
-                    NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(namingConvention);
-                    gradingContext.evaluate();
-                    // finalResults.add(namingConvention.getResults());
-                    printTestResults(NamingConvention.getTestResults());
+                    // NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
+                    // gradingContext.setStrategy(namingConvention);
+                    // gradingContext.evaluate();
+                    // // finalResults.add(namingConvention.getResults());
+                    // printTestResults(NamingConvention.getTestResults());
 
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
