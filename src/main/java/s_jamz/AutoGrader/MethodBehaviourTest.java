@@ -34,18 +34,42 @@ public class MethodBehaviourTest {
     private static int chatBotGeneratorScore = 0;
 
     private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
+    private static int chatBotScores = 0;
+    private static int chatBotPlatformScores = 0;
+    private static int chatBotGeneratorScores = 0;
+    public static Map<String, Integer> scores = new HashMap<>();
     private static Map<String, Method[]> methodTest = new HashMap<String, Method[]>();
     private HashMap<String, Field[]> attributeTest = new HashMap<String, Field[]>();
 
     public MethodBehaviourTest() {
-        methodTest.clear();
-        attributeTest.clear();       
+        scores.put("ChatBot", 0);
+        scores.put("ChatBotPlatform", 0);
+        scores.put("ChatBotGenerator", 0);        
+    }
+
+    @BeforeAll
+    public static void init() {
+        System.out.println("Running Method Behaviour Tests");
+        chatBotGeneratorScores = 0;
+        chatBotPlatformScores = 0;
+        chatBotScores = 0;
     }
 
     @BeforeEach
-    public void initialize(){
-        methodTest.clear();
-        attributeTest.clear();
+    public void resetState() {
+        try {
+            Class<?> chatBotClass = loadClass("ChatBot");
+            Method resetMethod = chatBotClass.getMethod("resetState");
+            resetMethod.invoke(null);
+
+            Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
+            resetMethod = chatBotPlatformClass.getMethod("resetState");
+            resetMethod.invoke(null);
+        } catch (NoSuchMethodException e) {
+            // If the resetState method does not exist, ignore the exception
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
     }
 
     private Class<?> loadClass(String className) throws Exception {
