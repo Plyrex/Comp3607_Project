@@ -1,8 +1,5 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import s_jamz.CompositePattern.TestResultComponent;
@@ -10,6 +7,7 @@ import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.MethodSignaturesTest;
+import java.util.HashMap;
 
 public class MethodSignature implements EvaluationStrategy {
 
@@ -22,72 +20,51 @@ public class MethodSignature implements EvaluationStrategy {
     }
 
     @Override
-    public void evaluate(File javaFile) {
-        // Implement method signature checks or other related logic if needed
-    }
-
-    @Override
-    public void runTests(File javaFile) {
+    public void evaluate() {
         try {
-            URLClassLoader urlClassLoader = createClassLoader(javaFile);
-            Class<?> testClass = Class.forName("s_jamz.AutoGrader.MethodSignaturesTest", true, urlClassLoader);
+            MethodSignaturesTest testClass = new MethodSignaturesTest();
 
-            System.out.println("Running tests for class: " + testClass.getName());
+            System.out.println("Running tests for class: " + testClass.getClass().getName());
 
-            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass);
+            SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();
 
-            int score = calculateScore(javaFile.getName());
-            results.add(new TestResultLeaf(score, "Test Results: " + score + " points"));
+            results = runMethodSignaturesTests(testClass.getClass());
 
-            printTestSummary(javaFile, summary, score);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            results.add(new TestResultLeaf(0, "Class not found: " + e.getMessage()));
+            // Process the summary to extract scores and feedback
+            summary.getFailures().forEach(failure -> {
+                results.add(new TestResultLeaf(0, failure.getException().getMessage()));
+            });
+
+            // Retrieve and store the results from MethodSignaturesTest
+            HashMap<String, TestResultLeaf> testResults = MethodSignaturesTest.getTestResults();
+            testResults.forEach((testName, result) -> {
+                results.add(result);
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
             results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
         }
     }
 
-    private URLClassLoader createClassLoader(File javaFile) throws Exception {
-        File studentDir = javaFile.getParentFile();
-        URL studentURL = studentDir.toURI().toURL();
-        return new URLClassLoader(new URL[]{studentURL}, this.getClass().getClassLoader());
-    }
-
-    private void printTestSummary(File javaFile, TestExecutionSummary summary, int score) {
-        System.out.println("Test Results for " + javaFile.getName() + ":");
-        summary.getFailures().forEach(failure -> System.out.println("Failed: " + failure.getTestIdentifier().getDisplayName()));
-        System.out.println("Score: " + score + " points\n");
-    }
-
-    private int calculateScore(String fileName) {
-        return MethodSignaturesTest.scores.getOrDefault(fileName.replace(".java", ""), 0);
-    }
-
-    public void processStudentFolder() {
-        File folder = new File(studentFolderPath);
-        File[] javaFiles = folder.listFiles((dir, name) -> name.endsWith(".java"));
-        if (javaFiles != null) {
-            for (File javaFile : javaFiles) {
-                runTests(javaFile);
-            }
-        }
-
-        // Print the final results for the student
-        System.out.println("Final Test Results for student in folder: " + studentFolderPath);
-        int totalScore = 0;
-        int chatBotScore = MethodSignaturesTest.scores.getOrDefault("ChatBot", 0);
-        int chatBotPlatformScore = MethodSignaturesTest.scores.getOrDefault("ChatBotPlatform", 0);
-        int chatBotGeneratorScore = MethodSignaturesTest.scores.getOrDefault("ChatBotGenerator", 0);
-
-        totalScore = chatBotScore + chatBotPlatformScore + chatBotGeneratorScore;
-        System.out.println("Total Score: " + totalScore + " points\n");
-    }
-
     @Override
     public TestResultComponent getResults() {
         return results;
+    }
+
+    private TestResultComponent runMethodSignaturesTests(Class<?> testClass) {
+        TestResultComposite composite = new TestResultComposite();
+        try {
+            composite.add(new TestResultLeaf(0, "Method signature test passed"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            composite.add(new TestResultLeaf(0, "Test execution failed: " + e.getMessage()));
+        }
+        return composite;
+    }
+
+    public static HashMap<String, TestResultLeaf> getTestResults() {
+        return MethodSignaturesTest.getTestResults();
     }
 }
