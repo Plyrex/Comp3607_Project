@@ -32,7 +32,7 @@ public class MethodSignature implements EvaluationStrategy {
 
         } catch (Exception e) {
             e.printStackTrace();
-            results.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            results.add(new TestResultLeaf(studentFolderPath, 0, "Failed to load test class: " + e.getMessage()));
         }
     }
 
@@ -44,10 +44,10 @@ public class MethodSignature implements EvaluationStrategy {
     private TestResultComponent runMethodSignaturesTests(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
-            composite.add(new TestResultLeaf(0, "Method signature test passed"));
+            composite.add(new TestResultLeaf(studentFolderPath, 0, "Method signature test passed"));
         } catch (Exception e) {
             e.printStackTrace();
-            composite.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
+            composite.add(new TestResultLeaf(studentFolderPath, 0, "Failed to load test class: " + e.getMessage()));
         }
         return composite;
     }

@@ -2,7 +2,7 @@ package s_jamz.AutoGrader;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.File;
@@ -11,15 +11,21 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AttributeTypeTest {
 
     private static int totalScore;
     private static int chatBotScore =0;
     private static int chatBotPlatformScore=0;
-   
+    private String chatBotTestString = "";
+    private String chatBotPlatformTestString = "";
+    
+    private static List<String> results;
 
     
 
@@ -27,6 +33,7 @@ public class AttributeTypeTest {
 
     public AttributeTypeTest(){
         attributeTest = new HashMap<String, Field[]>();
+        results = new ArrayList<String>();
     }
 
     @BeforeEach
@@ -38,7 +45,7 @@ public class AttributeTypeTest {
         loadAttributeNames("ChatBotSimulation");
         }
         catch(Exception e){
-            System.err.println("Could not load attribute names for classes" + e.getMessage());
+            System.err.println("Could not load attribute names for class: " + e.getMessage());
         }
     }
 
@@ -57,17 +64,6 @@ public class AttributeTypeTest {
         }
     }
 
-    public void printMap() {
-    for (Map.Entry<String, Field[]> entry : attributeTest.entrySet()) {
-        System.out.println("Class: " + entry.getKey());
-        Field[] fields = entry.getValue();
-        
-        // Print each field in the Field[]
-        for (Field field : fields) {
-            System.out.println("  Field: " + field.getName() + ", Type: " + field.getType().getSimpleName());
-        }
-    }
-}
 
        private Class<?> loadClass(String className) throws Exception {
         // Use the specified path for the student folders
@@ -117,9 +113,7 @@ public class AttributeTypeTest {
         if(class1.getName().equals("ChatBotPlatform")){
             attributeTest.put("ChatBotPlatform", getClassFields(class1));
         }
-        if(class1.getName().equals("ChatBotSimulation")){
-            attributeTest.put("ChatBotSimulation", getClassFields(class1));
-        }}
+       }
 
         catch(Exception e){
             System.err.println(e.getMessage());
@@ -131,8 +125,10 @@ public class AttributeTypeTest {
     }
 
     @Test
+    @Order(1)
     public void chatBotAttributeTest(){
-        System.out.println("ChatBot Test. \n");
+        
+
        Field[] chatBotAttributes = attributeTest.get("ChatBot");
        int score = 0;
        HashMap<String, Class<?>> expectedAttributes = new HashMap<String, Class<?>>();
@@ -142,17 +138,21 @@ public class AttributeTypeTest {
        expectedAttributes.put("messageLimit", int.class);
        expectedAttributes.put("messageNumber", int.class);
 
+       chatBotTestString = chatBotTestString + ("ChatBot Test. \n"); 
+
        for(Field field: chatBotAttributes){
         try{
         if(expectedAttributes.containsKey(field.getName())){
-            System.out.print("Class contains: " + field.getName() + ". ");
+
+            chatBotTestString = chatBotTestString + ("Class contains: " + field.getName() + ". ");
         }
         if(expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())){
-            System.out.print(field.getName()+ " has correct type. \n");
+
+            chatBotTestString = chatBotTestString + (field.getName()+ " has correct type. \n");
             score++;
         }
         else{
-            System.out.println(field.getName() + " has incorrect type.\n");
+           chatBotTestString = chatBotTestString + (field.getName() + " has incorrect type.\n");
         }}
         catch(Exception e){
             System.err.println(e.getMessage());
@@ -160,31 +160,36 @@ public class AttributeTypeTest {
        }
        chatBotScore = score;
        totalScore = totalScore + chatBotScore;
-       System.out.println("ChatBot Class Score: " + chatBotScore + "/4");
+       chatBotTestString = chatBotTestString + ("ChatBot Class Score: " + chatBotScore + "/4");
+       results.add(chatBotTestString);
+       results.add(chatBotTestString);
+       System.out.println("End of ChatBotTest");
+
     
     }
 
     @Test
+    @Order(2)
     public void chatBotPlatformAttributeTest(){
-        System.out.println("ChatBotPlatform Test. \n");
         Field[] chatBotPlatformAttributes = attributeTest.get("ChatBotPlatform");
         int score = 0;
         HashMap<String, Class<?>> expectedAttributes = new HashMap<String, Class<?>>();
  
         expectedAttributes.put("bots", ArrayList.class);
     
- 
+        chatBotPlatformTestString = chatBotPlatformTestString + ("ChatBotPlatform Test. \n");
+
         for(Field field: chatBotPlatformAttributes){
         try{
          if(expectedAttributes.containsKey(field.getName())){
-             System.out.print("Class contains: " + field.getName() + ". ");
+             chatBotPlatformTestString = chatBotPlatformTestString + ("Class contains: " + field.getName() + ". ");
          }
          if(expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())){
-             System.out.print(field.getName()+ " has correct type. \n");
+            chatBotPlatformTestString = chatBotPlatformTestString + (field.getName()+ " has correct type. \n");
              score++;
          }
          else{
-             System.out.println(field.getName() + " has incorrect type. \n\n");
+            chatBotPlatformTestString = chatBotPlatformTestString + (field.getName() + " has incorrect type. \n\n");
          }
         }
         catch(Exception e){
@@ -194,18 +199,34 @@ public class AttributeTypeTest {
 
         chatBotPlatformScore = score;
         totalScore = totalScore + chatBotPlatformScore;
-        System.out.println("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/1 \n");
+        chatBotPlatformTestString = chatBotPlatformTestString + ("ChatBotPlatform Class Score: " + chatBotPlatformScore + "/1 \n");
+        results.add(chatBotPlatformTestString);
+
+        System.out.println("End of ChatBotPlatformTest");
+
         
      }
 
+     public static void removeResults(){
+        results.clear();
+     }
+
+     public static List<String> getAttributeTypeTestResults(){
+        return results;
+     }
+
+     public static int getTotalScore(){
+        return totalScore;
+     }
     
 
      @AfterAll
      public static void calculateTotal(){
-     System.out.println("Total Score = " + totalScore + "/5 \n");
+     results.add("Total Score = " + totalScore + "/5 \n");
      totalScore = 0;
      chatBotScore = 0;
      chatBotPlatformScore = 0;
+
 
      }
 
