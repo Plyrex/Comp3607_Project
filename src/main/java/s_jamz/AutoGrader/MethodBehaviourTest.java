@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -38,22 +39,6 @@ public class MethodBehaviourTest {
     public void initialize(){
         methodTest.clear();
         attributeTest.clear();
-        // try{
-        //     loadMethodNames("ChatBot");
-        //     loadMethodNames("ChatBotPlatform");
-        //     loadMethodNames("ChatBotGenerator");
-        // }
-        // catch(Exception e){
-        //     System.err.println("Could not load method names for classes" + e.getMessage());
-        // }
-        // try{
-        //     loadAttributeNames("ChatBot");
-        //     loadAttributeNames("ChatBotPlatform");
-        //     loadAttributeNames("ChatBotGenerator");
-        // }
-        // catch(Exception e){
-        //     System.err.println("Could not load attribute names for classes" + e.getMessage());
-        // }
     }
 
     private Class<?> loadClass(String className) throws Exception {
@@ -84,147 +69,17 @@ public class MethodBehaviourTest {
         throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
     }
 
-    // public void loadMethodNames(String className) throws Exception{
-    //     Class<?> class1 = loadClass(className);
-    //     // setAllMethodsAccessible(class1);
-    //     boolean hasMethods = true;
-
-    //     if(class1 == null){
-    //         System.out.println("Provided class is null.");
-    //         hasMethods = false;
-    //         return;
-    //     }
-
-    //     try{
-    //         if(class1.getName().equals("ChatBot")){
-    //             //actually places the right methods in the hashmap
-    //             methodTest.put("ChatBot", getMethods(class1));
-    //         }
-
-    //         if(class1.getName().equals("ChatBotPlatform")){
-    //             methodTest.put("ChatBotPlatform", getMethods(class1));
-    //         }
-    //         if(class1.getName().equals("ChatBotGenerator")){
-    //             methodTest.put("ChatBotGenerator", getMethods(class1));
-    //         }
-    //     }
-
-    //     catch(Exception e){
-    //         System.err.println(e.getMessage());
-    //     }
-    // }
-
-    // public void loadAttributeNames(String className) throws Exception{
-
-    //     Class<?> class1 = loadClass(className);
-    //     // setAllAttributesAccessible(class1);
-    //     boolean hasAttributes = true;
-
-    //     if(class1==null){
-    //     System.out.println("Provided class is null.");
-    //     hasAttributes = false;
-    //     return;
-    //     }
-
-    //     try{
-    //     if(class1.getName().equals("ChatBot")){
-    //         attributeTest.put("ChatBot", getFields(class1));
-    //     }
-
-    //     if(class1.getName().equals("ChatBotPlatform")){
-    //         attributeTest.put("ChatBotPlatform", getFields(class1));
-    //     }
-    //     if(class1.getName().equals("ChatBotSimulation")){
-    //         attributeTest.put("ChatBotSimulation", getFields(class1));
-    //     }}
-
-    //     catch(Exception e){
-    //         System.err.println(e.getMessage());
-    //     }
-
-    //     assertEquals(true, hasAttributes);
-
-
-    // }
-
-
-    // public Method[] getMethods(Class<?> class1){
-    //     try{
-    //         if(class1 == null){
-    //             System.err.println("Class not found");
-    //             return new Method[0];
-    //         }
-    //         return class1.getDeclaredMethods();
-    //     }
-    //     catch(Exception e){
-    //         System.err.println("Error in getting methods" + e.getMessage());
-    //         return new Method[0];
-    //     }
-    // }
-
-    // public Field[] getFields(Class<?> class1){
-    //     try {
-    //         if (class1 == null) {
-    //             System.err.println("Provided class is null.");
-    //             return new Field[0]; 
-    //         }
-    //         return class1.getDeclaredFields();
-    //     } catch (Exception e) {
-    //         System.err.println("An error occurred while retrieving fields: " + e.getMessage());
-    //         return new Field[0]; 
-    //     }
-    // }
-
-    // public Method getMethodByName(String methodName, Class<?> class1) {
-    //     try {
-    //         Method method = class1.getDeclaredMethod(methodName);
-    //         method.setAccessible(true); // Set method accessible
-    //         return method;
-    //     } catch (Exception e) {
-    //         System.err.println("Error in getting method by name: " + e.getMessage());
-    //     }
-    //     return null;
-    // }
-
-    
-
-    // public void setAllAttributesAccessible(Class<?> class1) {
-    //     try {
-    //         Arrays.stream(class1.getDeclaredFields()).forEach(field -> field.setAccessible(true));
-    //     } catch (Exception e) {
-    //         System.err.println("Error in setting attributes accessible: " + e.getMessage());
-    //     }
-    // }
-
-    // public void setAllMethodsAccessible(Class<?> class1) {
-    //     try {
-    //         Arrays.stream(class1.getDeclaredMethods()).forEach(method -> method.setAccessible(true));
-    //     } catch (Exception e) {
-    //         System.err.println("Error in setting methods accessible: " + e.getMessage());
-    //     }
-    // }
-
-    // public void setAllConstructorsAccessible(Class<?> class1){
-    //     //set all constructors to be accessible
-    //     try{
-    //         Arrays.stream(class1.getDeclaredConstructors()).forEach(constructor -> constructor.setAccessible(true));
-    //     }
-    //     catch(Exception e){
-    //         System.err.println("Error in setting constructors accessible: " + e.getMessage());
-    //     }
-    // }
-
     @Test
     public void testChatBotBehaviour() throws Exception {
         System.out.println("Running method tests for class: Chatbot");
         Class<?> chatBotClass = loadClass("ChatBot");
+        Constructor<?> defaultConstructor = chatBotClass.getDeclaredConstructor();
+        defaultConstructor.setAccessible(true);
+        Object chatBot = defaultConstructor.newInstance();
         int score = 0;
-        // boolean flag = true;
 
         System.out.println("Testing getChatBotName method");
         try{
-            Constructor<?> defaultConstructor = chatBotClass.getDeclaredConstructor();
-            defaultConstructor.setAccessible(true);
             Object chatBotGPT = defaultConstructor.newInstance();
             Method getChatBotName = chatBotClass.getMethod("getChatBotName");
             String chatBotName = (String) getChatBotName.invoke(chatBotGPT);
@@ -319,23 +174,80 @@ public class MethodBehaviourTest {
             System.err.println("Error in getChatBotName method: " + e.getMessage());
         }
 
+        // //Test generateResponse method
         System.out.println("Testing generateResponse method");
+        try{
+            Method generateResponse = chatBotClass.getDeclaredMethod("generateResponse");
+            generateResponse.setAccessible(true);
+            String response = (String) generateResponse.invoke(chatBot);
+            try{
+                assertTrue(response.contains("ChatGPT-3.5"), "Expected response to contain: ChatGPT-3.5, Actual: " + response);
+                score += 5;
+                System.out.println("Method behaviour 'generateResponse()' matches expected behaviour.");
+            }
+            catch(Exception e){
+                System.err.println("Error in generateResponse method: " + e.getMessage());
+            }
+        }
+        catch(Exception e){
+            System.err.println("Error in generateResponse method: " + e.getMessage());
+        }
 
-        scores.put("ChatBot", score);
+        // Test getNumResponsesGenerated method
+        System.out.println("Testing getNumResponsesGenerated method");
+        try{
+            Method getNumResponsesGenerated = chatBotClass.getMethod("getNumResponsesGenerated");
+            int numResponsesGenerated = (int) getNumResponsesGenerated.invoke(chatBot);
+            try{
+                assertEquals(1, numResponsesGenerated, "Expected: 0, Actual: " + numResponsesGenerated);
+                score += 1;
+                System.out.println("Method behaviour 'getNumResponsesGenerated()' matches expected behaviour.");
+            }
+            catch(Exception e){
+                System.err.println("Error in getNumResponsesGenerated method: " + e.getMessage());
+            }
+            
+        }
+        catch(Exception e){
+            System.err.println("Error in getNumResponsesGenerated method: " + e.getMessage());
+        } 
 
-        //Test generateResponse method
-        // try{
-        //     Method generateResponse = chatBotClass.getDeclaredMethod("generateResponse");
-        //     generateResponse.setAccessible(true);
-        //     String response = (String) generateResponse.invoke(chatBot);
-        //     assertTrue(response.contains("ChatGPT-3.5"), "Expected response to contain: ChatGPT-3.5, Actual: " + response);
-        //     score += 5;
-        //     System.out.println("Method behaviour 'generateResponse()' matches expected behaviour.");
-        // }
-        // catch(Exception e){
-        //     System.err.println("Error in generateResponse method: " + e.getMessage());
-        // }
+        // Test getTotalNumResponsesGenerated method
+        System.out.println("Testing getTotalNumResponsesGenerated method");
+        try{
+            Method getTotalNumResponsesGenerated = chatBotClass.getMethod("getTotalNumResponsesGenerated");
+            int totalNumResponsesGenerated = (int) getTotalNumResponsesGenerated.invoke(null);
+            try{
+                assertEquals(1, totalNumResponsesGenerated, "Expected: 1, Actual: " + totalNumResponsesGenerated);
+                score += 2;
+                System.out.println("Method behaviour 'getTotalNumResponsesGenerated()' matches expected behaviour.");
+            }
+            catch(Exception e){
+                System.err.println("Error in getTotalNumResponsesGenerated method: " + e.getMessage());
+            }
 
+        }
+        catch(Exception e){
+            System.err.println("Error in getTotalNumResponsesGenerated method: " + e.getMessage());
+        }
+
+        // Test getTotalNumMessagesRemaining method
+        System.out.println("Testing getTotalNumMessagesRemaining method");
+        try{
+            Method getTotalNumMessagesRemaining = chatBotClass.getMethod("getTotalNumMessagesRemaining");
+            int totalNumMessagesRemaining = (int) getTotalNumMessagesRemaining.invoke(null);
+            try{
+                assertEquals(9, totalNumMessagesRemaining, "Expected: 9, Actual: " + totalNumMessagesRemaining);
+                score += 3;
+                System.out.println("Method behaviour 'getTotalNumMessagesRemaining()' matches expected behaviour.");
+            }
+            catch(Exception e){
+                System.err.println("Error in getTotalNumMessagesRemaining method: " + e.getMessage());
+            }
+        }
+        catch(Exception e){
+            System.err.println("Error in getTotalNumMessagesRemaining method: " + e.getMessage());
+        }
 
 
         // assertEquals(6, score);
