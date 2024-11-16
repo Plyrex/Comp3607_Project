@@ -135,7 +135,7 @@ public class AttributeTypeTest {
 
         chatBotScore = score;
         totalScore += chatBotScore;
-        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/4\n");
+        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/7\n");
         testResults.put("ChatBot", new TestResultLeaf(chatBotScore, feedback.toString()));
     }
 
@@ -157,7 +157,7 @@ public class AttributeTypeTest {
                 }
                 if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
                     feedback.append(field.getName()).append(" has correct type. \n");
-                    score++;
+                    score= score+ 2;
                 } else {
                     feedback.append(field.getName()).append(" has incorrect type.\n");
                 }
@@ -168,13 +168,13 @@ public class AttributeTypeTest {
 
         chatBotPlatformScore = score;
         totalScore += chatBotPlatformScore;
-        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/1\n");
+        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/2\n");
         testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
 
     @AfterAll
     public static void calculateTotal() {
-        System.out.println("Total Score = " + totalScore + "/5 \n");
+        System.out.println("Total Score = " + totalScore + "/9 \n");
         chatBotScore = 0;
         chatBotPlatformScore = 0;
     }
