@@ -6,10 +6,8 @@ import java.util.List;
 public class TestResultLeaf implements TestResultComponent {
     private int score;
     private String feedback;
-    private String studentFolderPath;
 
-    public TestResultLeaf(String studentFolderPath, int score, String feedback) {
-        this.studentFolderPath = studentFolderPath;
+    public TestResultLeaf(int score, String feedback) {
         this.score = score;
         this.feedback = feedback;
     }
@@ -41,7 +39,7 @@ public class TestResultLeaf implements TestResultComponent {
 
     @Override
     public void print() {
-        System.out.println(studentFolderPath + " Score: " + score + ", Feedback: " + feedback);
+        System.out.println("Score: " + score + ", Feedback: " + feedback);
     }
 
     @Override

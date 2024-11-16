@@ -31,7 +31,6 @@ public class App {
         FileProcessorTemplate fileProcessor = new JavaFileProcessor();
         fileProcessor.processFile(zipFile);
 
-
         String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
         File extractedDir = new File(newDestFolder);
         if (extractedDir.exists() && extractedDir.isDirectory()) {
