@@ -58,7 +58,8 @@ public class AttributeType implements EvaluationStrategy {
         TestResultComposite composite = new TestResultComposite();
 
         final List<String> attributeTestResults = attributeTypeTest.getAttributeTypeTestResults();
-        int count = 0;
+        int count = 1; //test statment
+
         for(String result: attributeTestResults){
         try {
             composite.add(new TestResultLeaf(0, "Attribute type test passed"));
