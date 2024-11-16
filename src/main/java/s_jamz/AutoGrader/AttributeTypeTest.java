@@ -22,6 +22,7 @@ public class AttributeTypeTest {
     private static int totalScore;
     private static int chatBotScore = 0;
     private static int chatBotPlatformScore = 0;
+    private static StringBuilder feedback = new StringBuilder();
 
     private HashMap<String, Field[]> attributeTest;
     private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
@@ -109,7 +110,6 @@ public class AttributeTypeTest {
         System.out.println("ChatBot Test. \n");
         Field[] chatBotAttributes = attributeTest.get("ChatBot");
         int score = 0;
-        StringBuilder feedback = new StringBuilder();
         HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
 
         expectedAttributes.put("chatBotName", String.class);
@@ -162,7 +162,6 @@ public class AttributeTypeTest {
         System.out.println("ChatBotPlatform Test. \n");
         Field[] chatBotPlatformAttributes = attributeTest.get("ChatBotPlatform");
         int score = 0;
-        StringBuilder feedback = new StringBuilder();
         HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
 
         expectedAttributes.put("bots", ArrayList.class);
@@ -191,10 +190,11 @@ public class AttributeTypeTest {
 
     @AfterAll
     public static void calculateTotal() {
-        System.out.println("Total Score = " + totalScore + "/9 \n");
+        feedback.append("Total Score = " + totalScore + "/9 \n");
         chatBotScore = 0;
         chatBotPlatformScore = 0;
         totalScore = 0;
+        feedback.delete(0, feedback.length());
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {
