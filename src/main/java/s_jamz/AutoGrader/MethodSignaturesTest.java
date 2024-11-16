@@ -225,7 +225,7 @@ public class MethodSignaturesTest {
 
     @AfterAll
     public static void calculateTotal() {
-        System.out.println("Total Score = " + totalScore + "/63 \n");
+        System.out.println("Total Score = " + totalScore + "/12 \n");
         chatBotGeneratorScore = 0;
         chatBotPlatformScore = 0;
         chatBotScore = 0;
