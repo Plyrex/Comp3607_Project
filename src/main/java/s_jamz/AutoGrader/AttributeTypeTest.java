@@ -35,7 +35,6 @@ public class AttributeTypeTest {
         try{
         loadAttributeNames("ChatBot");
         loadAttributeNames("ChatBotPlatform");
-        loadAttributeNames("ChatBotSimulation");
         }
         catch(Exception e){
             System.err.println("Could not load attribute names for class: " + e.getMessage());
