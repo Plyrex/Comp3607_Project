@@ -310,7 +310,7 @@ public class MethodBehaviourTest {
             Method toStringMethod = chatBotClass.getMethod("toString");
             String toStringResponse = (String) toStringMethod.invoke(chatBot);
             if (toStringResponse.contains("ChatBot Name: ChatGPT-3.5")) {
-                chatBotScores.put("toString", 4);
+                chatBotScores.put("toString", 3);
                 feedback.append("toString method passed.\n");
             } else {
                 feedback.append("toString method failed. Expected 'ChatBot Name: ChatGPT-3.5', but got '").append(toStringResponse).append("'.\n");}
@@ -347,10 +347,23 @@ public class MethodBehaviourTest {
         // Test addChatBot method
         // System.out.println("Testing addChatBot method");
         try{
+            if(chatBotPlatform!=null){
+                chatBotPlatformScores.put("ChatBotPlatform", 2);
+                feedback.append("ChatBotPlatform constructor passed. \n");
+            }
+            else{
+                feedback.append("ChatBotPlatform constructor failed. \n");
+            }
+        }
+        catch(Exception e){
+            feedback.append("Error in ChatBotPlatform constructor: ").append(e.getMessage()).append("\n");
+        }
+
+        try{
             Method addChatBot = chatBotPlatformClass.getMethod("addChatBot", int.class);
             boolean addChatBotResult = (boolean) addChatBot.invoke(chatBotPlatform, 1);
             if (addChatBotResult) {
-                chatBotPlatformScores.put("addChatBot", 1);
+                chatBotPlatformScores.put("addChatBot", 4);
                 feedback.append("addChatBot method passed.\n");
             } else {
                 feedback.append("addChatBot method failed. Expected true, but got false.\n");}
@@ -362,11 +375,25 @@ public class MethodBehaviourTest {
         // Test interactWithBot method
         // System.out.println("Testing interactWithBot method");
         try{
+            int interactWithBotScore= 0;
             Method interactWithBot = chatBotPlatformClass.getMethod("interactWithBot", int.class, String.class);
-            String interaction = (String) interactWithBot.invoke(chatBotPlatform, 0, "Hello");
+
+            String interaction = (String) interactWithBot.invoke(chatBotPlatform, 7, "Hello");
+
+            if (interaction.contains("Incorrect")) {
+                interactWithBotScore = interactWithBotScore + 2;
+                feedback.append("interactWithBot method passed for incorrect parameter.\n");
+            } else {
+                feedback.append("interactWithBot method failed. Expected response containing 'Incorrect Bot Number', but got '").append(interaction).append("'.\n");}
+
+            interaction = (String) interactWithBot.invoke(chatBotPlatform, 0, "Hello");
+        
             if (interaction.contains("Response from")) {
-                chatBotPlatformScores.put("interactWithBot", 1);
-                feedback.append("interactWithBot method passed.\n");
+                interactWithBotScore = interactWithBotScore + 2;
+
+                chatBotPlatformScores.put("interactWithBot", interactWithBotScore);
+
+                feedback.append("interactWithBot method passed for correct parameter.\n");
             } else {
                 feedback.append("interactWithBot method failed. Expected response containing 'Response from', but got '").append(interaction).append("'.\n");}
         }
@@ -379,11 +406,11 @@ public class MethodBehaviourTest {
         try{
             Method getChatBotList = chatBotPlatformClass.getMethod("getChatBotList");
             String chatBotList = (String) getChatBotList.invoke(chatBotPlatform);
-            if (chatBotList.contains("ChatGPT-3.5")) {
-                chatBotPlatformScores.put("getChatBotList", 1);
+            if (chatBotList.contains("ChatBot Name") || chatBotList.contains("Messages Used")) {
+                chatBotPlatformScores.put("getChatBotList", 5);
                 feedback.append("getChatBotList method passed.\n");
             } else {
-                feedback.append("getChatBotList method failed. Expected list containing 'ChatGPT-3.5', but got '").append(chatBotList).append("'.\n");}
+                feedback.append("getChatBotList method failed. Expected list containing ChatBot Names and Messages Used, but got '").append(chatBotList).append("'.\n");}
         }
         catch(Exception e){
             feedback.append("Error in getChatBotList method: ").append(e.getMessage()).append("\n");
@@ -395,7 +422,7 @@ public class MethodBehaviourTest {
 
         chatBotPlatformScore = score;
         totalScore += chatBotPlatformScore;
-        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/20\n");
+        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/15\n");
         testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
 
@@ -418,7 +445,7 @@ public class MethodBehaviourTest {
             Method generateChatBotLLM = chatBotGeneratorClass.getMethod("generateChatBotLLM", int.class);
             String llmName = (String) generateChatBotLLM.invoke(null, 1);
             if (llmName.contains("LLaMa")) {
-                chatBotGeneratorScores.put("generateChatBotLLM", 1);
+                chatBotGeneratorScores.put("generateChatBotLLM", 6);
                 feedback.append("generateChatBotLLM method passed.\n");
             } else {
                 feedback.append("generateChatBotLLM method failed. Expected 'LLaMa', but got '").append(llmName).append("'.\n");}
@@ -433,14 +460,14 @@ public class MethodBehaviourTest {
 
         chatBotGeneratorScore = score;
         totalScore += chatBotGeneratorScore;
-        feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/7\n");
+        feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/6\n");
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }
 
 
     @AfterEach
     public void printResults() {
-        System.out.println("Method Behaviour Test Results: " + testResults);
+        // System.out.println("Method Behaviour Test Results: " + testResults);
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {
