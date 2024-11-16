@@ -122,11 +122,21 @@ public class AttributeTypeTest {
                 if (expectedAttributes.containsKey(field.getName())) {
                     feedback.append("Class contains: ").append(field.getName()).append(". ");
                 }
+                else{
+                    feedback.append("Class contains: ").append(". Required one of: ").append(expectedAttributes.keySet());
+                }
                 if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
                     feedback.append(field.getName()).append(" has correct type. \n");
                     score++;
                 } else {
                     feedback.append(field.getName()).append(" has incorrect type.\n");
+                }
+                if (expectedAttributes.containsKey(field.getName()) && 
+                    (field.getName().equals("messageLimit") || field.getName().equals("messageNumber"))
+                     && java.lang.reflect.Modifier.isStatic(field.getModifiers())){
+
+                    feedback.append(field.getName()).append(" is static. \n");
+                    score++;
                 }
             } catch (Exception e) {
                 feedback.append(e.getMessage()).append("\n");
