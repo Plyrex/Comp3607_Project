@@ -17,17 +17,18 @@ public class ExtractionTest {
     private static final String testZipFile = "test.zip";
     private static final String destinationDirectory = System.getProperty("user.dir") + "/src/test/resources/StudentSubmissions2/";
     private static final String studentFoldersDirectory = System.getProperty("user.dir") + "/src/test/resources/StudentFolders/";
+    private static final String testResourcesDirectory = System.getProperty("user.dir") + "/src/test/resources/";
+    private static final String mainResourcesDirectory = System.getProperty("user.dir") + "/src/main/resources/";
 
     @BeforeEach
     public void setUp() throws IOException {
         Path testZipPath = Paths.get(testZipFile);
-        if(!Files.exists(testZipPath)){
+        if (!Files.exists(testZipPath)) {
             Files.createFile(testZipPath);
         }
 
         Files.createDirectories(Paths.get(destinationDirectory));
         Files.createDirectories(Paths.get(studentFoldersDirectory));
-        
     }
 
     @Test
@@ -66,5 +67,7 @@ public class ExtractionTest {
         Files.deleteIfExists(Paths.get(testZipFile));
         deleteDirectory(Paths.get(destinationDirectory));
         deleteDirectory(Paths.get(studentFoldersDirectory));
+        deleteDirectory(Paths.get(testResourcesDirectory));
+        deleteDirectory(Paths.get(mainResourcesDirectory));
     }
 }

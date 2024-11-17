@@ -104,8 +104,11 @@ public class PDFGenerator {
             {"Chatbot", String.valueOf(getScore(behaviour, signature, attribute, "ChatBot"))},
             {"ChatbotPlatform", String.valueOf(getScore(behaviour, signature, attribute, "ChatBotPlatform"))},
             {"ChatbotSimulation", String.valueOf(getScore(behaviour, signature, attribute, "ChatBotSimulation"))},
-            {"Bonuses", String.valueOf(behaviour.getOrDefault("Compilation Bonus", new TestResultLeaf(0, "")).getScore())},
-            {"TOTAL", String.valueOf(total + behaviour.getOrDefault("Compilation Bonus", new TestResultLeaf(0, "")).getScore())}
+            {"Bonuses", 
+                 + behaviour.getOrDefault("Compilation Bonus", new TestResultLeaf(0, "")).getScore() + ", " +
+                 + behaviour.getOrDefault("Run Bonus", new TestResultLeaf(0, "")).getScore()
+            },
+            {"TOTAL", String.valueOf(total + behaviour.getOrDefault("Compilation Bonus", new TestResultLeaf(0, "")).getScore() + behaviour.getOrDefault("Run Bonus", new TestResultLeaf(0, "")).getScore())}
         };
 
         for (int i = 0; i < 2; i++) {
