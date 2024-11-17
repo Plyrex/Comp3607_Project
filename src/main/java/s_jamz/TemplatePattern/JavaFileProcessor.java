@@ -81,7 +81,19 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
         // If compilation is successful, attempt to run the program
         if (success) {
-            runMainClass(outputDir.toString(), "ChatBotSimulation");  
+            runMainClass(outputDir.toString(), "ChatBotSimulation");
+        } else {
+            // Delete the bin directory if compilation failed
+            try {
+                Files.walk(outputDir)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                System.out.println("Deleted bin directory due to compilation failure: " + outputDir);
+            } catch (IOException e) {
+                System.err.println("Failed to delete bin directory: " + outputDir);
+                e.printStackTrace();
+            }
         }
     }
 

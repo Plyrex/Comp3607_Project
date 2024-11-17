@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.*;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +21,7 @@ public class AttributeTypeTest {
     private static int totalScore;
     private static int chatBotScore = 0;
     private static int chatBotPlatformScore = 0;
+    private static StringBuilder feedback = new StringBuilder();
 
     private HashMap<String, Field[]> attributeTest;
     private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
@@ -33,8 +33,8 @@ public class AttributeTypeTest {
     @BeforeEach
     public void setup(){
         try{
-        loadAttributeNames("ChatBot");
-        loadAttributeNames("ChatBotPlatform");
+            loadAttributeNames("ChatBot");
+            loadAttributeNames("ChatBotPlatform");
         }
         catch(Exception e){
             System.err.println("Could not load attribute names for class: " + e.getMessage());
@@ -64,7 +64,14 @@ public class AttributeTypeTest {
         }
     }
 
-    private Class<?> loadClass(String className) throws Exception {
+    private Class<?> loadClass(String className, URL studentBinDir) throws Exception {
+        URL[] urls = {studentBinDir};
+        try (IsolatedClassLoader loader = new IsolatedClassLoader(urls)) {
+            return Class.forName(className, true, loader);
+        }
+    }
+
+    public void loadAttributeNames(String className) throws Exception {
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
@@ -74,32 +81,16 @@ public class AttributeTypeTest {
             if (studentDir.isDirectory()) {
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    URL[] urls = {binDir.toURI().toURL()};
-                    URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+                    URL studentBinDir = binDir.toURI().toURL();
+                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
-                        return Class.forName(className, true, urlClassLoader);
+                        Class<?> class1 = loadClass(className, studentBinDir);
+                        attributeTest.put(className, getClassFields(class1));
                     } catch (ClassNotFoundException e) {
                         // Continue searching in other student folders
                     }
                 }
             }
-        }
-
-        throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
-    }
-
-    public void loadAttributeNames(String className) throws Exception {
-        Class<?> class1 = loadClass(className);
-
-        if (class1 == null) {
-            System.out.println("Provided class is null.");
-            return;
-        }
-
-        try {
-            attributeTest.put(className, getClassFields(class1));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
         }
     }
 
@@ -109,7 +100,6 @@ public class AttributeTypeTest {
         System.out.println("ChatBot Test. \n");
         Field[] chatBotAttributes = attributeTest.get("ChatBot");
         int score = 0;
-        StringBuilder feedback = new StringBuilder();
         HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
 
         expectedAttributes.put("chatBotName", String.class);
@@ -122,12 +112,29 @@ public class AttributeTypeTest {
                 if (expectedAttributes.containsKey(field.getName())) {
                     feedback.append("Class contains: ").append(field.getName()).append(". ");
                 }
+                else{
+                    feedback.append("Class contains: ").append(". Required one of: ").append(expectedAttributes.keySet());
+                }
                 if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
                     feedback.append(field.getName()).append(" has correct type. \n");
                     score++;
                 } else {
                     feedback.append(field.getName()).append(" has incorrect type.\n");
                 }
+                if (expectedAttributes.containsKey(field.getName()) && 
+                    (field.getName().equals("messageLimit") || field.getName().equals("messageNumber"))
+                     && java.lang.reflect.Modifier.isStatic(field.getModifiers())){
+
+                    feedback.append(field.getName()).append(" is static. ");
+                    score++;
+                }
+
+                if (expectedAttributes.containsKey(field.getName()) && field.getName().equals("messageLimit")
+                 && java.lang.reflect.Modifier.isFinal(field.getModifiers())){
+
+                    feedback.append(field.getName()).append(" is final. ");
+                    score++;
+            }
             } catch (Exception e) {
                 feedback.append(e.getMessage()).append("\n");
             }
@@ -135,7 +142,7 @@ public class AttributeTypeTest {
 
         chatBotScore = score;
         totalScore += chatBotScore;
-        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/4\n");
+        feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/7\n");
         testResults.put("ChatBot", new TestResultLeaf(chatBotScore, feedback.toString()));
     }
 
@@ -145,7 +152,6 @@ public class AttributeTypeTest {
         System.out.println("ChatBotPlatform Test. \n");
         Field[] chatBotPlatformAttributes = attributeTest.get("ChatBotPlatform");
         int score = 0;
-        StringBuilder feedback = new StringBuilder();
         HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
 
         expectedAttributes.put("bots", ArrayList.class);
@@ -157,7 +163,7 @@ public class AttributeTypeTest {
                 }
                 if (expectedAttributes.containsKey(field.getName()) && expectedAttributes.get(field.getName()).equals(field.getType())) {
                     feedback.append(field.getName()).append(" has correct type. \n");
-                    score++;
+                    score= score+ 2;
                 } else {
                     feedback.append(field.getName()).append(" has incorrect type.\n");
                 }
@@ -168,15 +174,17 @@ public class AttributeTypeTest {
 
         chatBotPlatformScore = score;
         totalScore += chatBotPlatformScore;
-        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/1\n");
+        feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/2\n");
         testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
 
     @AfterAll
     public static void calculateTotal() {
-        System.out.println("Total Score = " + totalScore + "/5 \n");
+        feedback.append("Total Score = " + totalScore + "/9 \n");
         chatBotScore = 0;
         chatBotPlatformScore = 0;
+        totalScore = 0;
+        feedback.delete(0, feedback.length());
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {

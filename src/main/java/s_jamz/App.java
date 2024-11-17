@@ -6,14 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import s_jamz.AutoGrader.NamingConventionsTest;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
-import s_jamz.StrategyPattern.NamingConvention;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
@@ -50,12 +48,18 @@ public class App {
                     MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodBehaviour);
                     gradingContext.evaluate();
+
+                    // finalResults.add(methodBehaviour.getResults());
+
                     finalResults.add(methodBehaviour.getResults());
                     // System.out.println("\n\n\n ////////////////////////////////////");
+
                     printTestResults(MethodBehaviour.getTestResults());
                     results.putAll(MethodBehaviour.getTestResults());
                     // System.out.println("\n\n\n ////////////////////////////////////");
                     // System.out.println(Arrays.asList(MethodBehaviour.getTestResults()));
+
+
 
                     NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(namingConvention);
@@ -67,11 +71,16 @@ public class App {
                     // System.out.println(Arrays.asList(NamingConvention.getTestResults()));
                     // System.out.println("\n\n\n output should stop here");
 
+
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
                     gradingContext.evaluate();
+
+                    // finalResults.add(methodSignature.getResults());
+
                     finalResults.add(methodSignature.getResults());
                     results.putAll(MethodSignature.getTestResults());
+
                     printTestResults(MethodSignature.getTestResults());
                     // System.out.println("\n\n\n ////////////////////////////////////");
                     // System.out.println(Arrays.asList(MethodSignature.getTestResults()));
@@ -79,15 +88,38 @@ public class App {
                     AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(attributeType);
                     gradingContext.evaluate();
+
+                    // finalResults.add(attributeType.getResults());
+
                     finalResults.add(attributeType.getResults());
                     results.putAll(AttributeType.getTestResults());
                     printTestResults(AttributeType.getTestResults());
                     // System.out.println("\n\n\n ////////////////////////////////////");
                     // System.out.println(Arrays.asList(AttributeType.getTestResults()));
 
+
+                   
+
+
+                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
+                    // int totalScore = finalResults.getScore();
+                    // System.out.println("Total Score: " + totalScore + " points\n");
+
+                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
+                    // int totalScore = finalResults.getScore();
+                    // System.out.println("Total Score: " + totalScore + " points\n");
+
+                    // int totalScore = totalScoreNaming + totalScoreMethod;
+                    // System.out.println("Overall Total Score: " + totalScore + " points\n");
+
+                    // Clear the static maps after running the tests
+                    // MethodSignaturesTest.scores.clear();
+                    // MethodSignaturesTest.feedback.clear();
+                   
+
                     // System.out.println("\n\n\n ////////////////////////////////////\n supposed to have all");
                     // System.out.println(Arrays.asList(Results));
-               
+              
                 }
                 System.out.print("PDF Generating for "+studentDir.getName()+"\n");
                 PDFGenerator pdf= new PDFGenerator();
