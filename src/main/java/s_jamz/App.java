@@ -44,11 +44,11 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     TestResultComposite finalResults = new TestResultComposite();
 
-                    MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(methodBehaviour);
-                    gradingContext.evaluate();
-                    // finalResults.add(methodBehaviour.getResults());
-                    printTestResults(MethodBehaviour.getTestResults());
+                    // MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
+                    // gradingContext.setStrategy(methodBehaviour);
+                    // gradingContext.evaluate();
+                    // // finalResults.add(methodBehaviour.getResults());
+                    // printTestResults(MethodBehaviour.getTestResults());
 
                     // NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     // gradingContext.setStrategy(namingConvention);
@@ -56,11 +56,11 @@ public class App {
                     // // finalResults.add(namingConvention.getResults());
                     // printTestResults(NamingConvention.getTestResults());
 
-                    MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(methodSignature);
-                    gradingContext.evaluate();
-                    // finalResults.add(methodSignature.getResults());
-                    printTestResults(MethodSignature.getTestResults());
+                    // MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
+                    // gradingContext.setStrategy(methodSignature);
+                    // gradingContext.evaluate();
+                    // // finalResults.add(methodSignature.getResults());
+                    // printTestResults(MethodSignature.getTestResults());
 
                     AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(attributeType);

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.lang.reflect.*;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +33,8 @@ public class AttributeTypeTest {
     @BeforeEach
     public void setup(){
         try{
-        loadAttributeNames("ChatBot");
-        loadAttributeNames("ChatBotPlatform");
+            loadAttributeNames("ChatBot");
+            loadAttributeNames("ChatBotPlatform");
         }
         catch(Exception e){
             System.err.println("Could not load attribute names for class: " + e.getMessage());
@@ -65,7 +64,14 @@ public class AttributeTypeTest {
         }
     }
 
-    private Class<?> loadClass(String className) throws Exception {
+    private Class<?> loadClass(String className, URL studentBinDir) throws Exception {
+        URL[] urls = {studentBinDir};
+        try (IsolatedClassLoader loader = new IsolatedClassLoader(urls)) {
+            return Class.forName(className, true, loader);
+        }
+    }
+
+    public void loadAttributeNames(String className) throws Exception {
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
@@ -75,32 +81,16 @@ public class AttributeTypeTest {
             if (studentDir.isDirectory()) {
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    URL[] urls = {binDir.toURI().toURL()};
-                    URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+                    URL studentBinDir = binDir.toURI().toURL();
+                    System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
-                        return Class.forName(className, true, urlClassLoader);
+                        Class<?> class1 = loadClass(className, studentBinDir);
+                        attributeTest.put(className, getClassFields(class1));
                     } catch (ClassNotFoundException e) {
                         // Continue searching in other student folders
                     }
                 }
             }
-        }
-
-        throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
-    }
-
-    public void loadAttributeNames(String className) throws Exception {
-        Class<?> class1 = loadClass(className);
-
-        if (class1 == null) {
-            System.out.println("Provided class is null.");
-            return;
-        }
-
-        try {
-            attributeTest.put(className, getClassFields(class1));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
         }
     }
 
