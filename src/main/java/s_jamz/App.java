@@ -13,6 +13,7 @@ import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
+import s_jamz.StrategyPattern.Main;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
@@ -46,57 +47,46 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     TestResultComposite finalResults = new TestResultComposite();
 
+
+                    //Method Behaviour
                     MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodBehaviour);
                     gradingContext.evaluate();
 
-                    // finalResults.add(methodBehaviour.getResults());
-
                     finalResults.add(methodBehaviour.getResults());
-                    // System.out.println("\n\n\n ////////////////////////////////////");
-
                     printTestResults(MethodBehaviour.getTestResults());
                     results.putAll(MethodBehaviour.getTestResults());
-                    // System.out.println("\n\n\n ////////////////////////////////////");
-                    // System.out.println(Arrays.asList(MethodBehaviour.getTestResults()));
+            
 
+               
 
-
-                    NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(namingConvention);
-                    gradingContext.evaluate();
-                    finalResults.add(namingConvention.getResults());
-                    results.putAll(NamingConvention.getTestResults());
-                    printTestResults(NamingConvention.getTestResults());
-                    // System.out.println("\n\n\n ////////////////////////////////////");
-                    // System.out.println(Arrays.asList(NamingConvention.getTestResults()));
-                    // System.out.println("\n\n\n output should stop here");
-
-
+                    //Method Signatures
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
                     gradingContext.evaluate();
 
-                    // finalResults.add(methodSignature.getResults());
-
                     finalResults.add(methodSignature.getResults());
                     results.putAll(MethodSignature.getTestResults());
-
                     printTestResults(MethodSignature.getTestResults());
-                    // System.out.println("\n\n\n ////////////////////////////////////");
-                    // System.out.println(Arrays.asList(MethodSignature.getTestResults()));
+               
 
+                    //Attributes
                     AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(attributeType);
                     gradingContext.evaluate();
 
-                    // finalResults.add(attributeType.getResults());
-
                     finalResults.add(attributeType.getResults());
                     results.putAll(AttributeType.getTestResults());
                     printTestResults(AttributeType.getTestResults());
-                    // System.out.println("\n\n\n ////////////////////////////////////");
-                    // System.out.println(Arrays.asList(AttributeType.getTestResults()));
+               
+                    //Main
+                    Main mainTest = new Main(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(mainTest);
+                    gradingContext.evaluate();
+
+                    finalResults.add(mainTest.getResults());
+                    results.putAll(Main.getTestResults());
+                    printTestResults(Main.getTestResults());
 
 
                    
