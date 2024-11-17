@@ -71,6 +71,14 @@ public class App {
                     finalResults.add(attributeType.getResults());
                     HashMap<String, TestResultLeaf> attributeResults = AttributeType.getTestResults();
 
+                    //Main
+                    Main main = new Main(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(main);
+                    gradingContext.evaluate();
+
+                    finalResults.add(main.getResults());
+                    HashMap<String, TestResultLeaf> mainResults = Main.getTestResults();
+
                     // Add 5 marks if the assignment compiles
                     if (compilationResult.isCompilationSuccess()) {
                         TestResultLeaf bonusResult = new TestResultLeaf(3, "Assignment compiled successfully.");
@@ -87,11 +95,12 @@ public class App {
                     printTestResults(behaviourResults);
                     printTestResults(signatureResults);
                     printTestResults(attributeResults);
+                    printTestResults(mainResults);
 
                     // Generate PDF for the student
                     System.out.print("PDF Generating for " + studentDir.getName() + "\n");
                     PDFGenerator pdf = new PDFGenerator();
-                    pdf.generatePDF(studentDir, behaviourResults, signatureResults, attributeResults);
+                    pdf.generatePDF(studentDir, behaviourResults, signatureResults, attributeResults, mainResults);
                     System.out.print("\nPDF Generated");
 
                 }
