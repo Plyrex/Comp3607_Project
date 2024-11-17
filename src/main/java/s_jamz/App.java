@@ -74,7 +74,7 @@ public class App {
                     Main main = new Main(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(main);
                     gradingContext.evaluate();
-
+                    //test
                     finalResults.add(main.getResults());
                     HashMap<String, TestResultLeaf> mainResults = Main.getTestResults();
 
