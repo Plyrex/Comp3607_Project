@@ -24,14 +24,9 @@ public class PDFGenerator {
     StringBuilder feedbackBuilder;
     int score;
 
-    private String getInfo(HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> naming, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, String word){
+    private String getInfo(HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, String word){
         feedbackBuilder= new StringBuilder();
         behaviour.forEach((testName, result) -> {
-            if(testName== word){
-                feedbackBuilder.append(result.getFeedback()+"\n");
-            }
-        });
-        naming.forEach((testName, result) -> {
             if(testName== word){
                 feedbackBuilder.append(result.getFeedback()+"\n");
             }
@@ -49,14 +44,9 @@ public class PDFGenerator {
         return feedbackBuilder.toString();
     }
 
-    private int getScore(HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> naming, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, String word){
+    private int getScore(HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, String word){
         score= 0; 
         behaviour.forEach((testName, result) -> {
-            if(testName== word){
-                score+= result.getScore();
-            }
-        });
-        naming.forEach((testName, result) -> {
             if(testName== word){
                 score+= result.getScore();
             }
@@ -74,7 +64,7 @@ public class PDFGenerator {
         return score;
     }
 
-    private Table createTable(HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> naming, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, String name){
+    private Table createTable(HashMap<String, TestResultLeaf> behaviour,  HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, String name){
         float width[]={500f};
         Table infoTable= new Table(width);
         infoTable.addCell(new Cell().add(name)
@@ -83,7 +73,7 @@ public class PDFGenerator {
             .setVerticalAlignment(VerticalAlignment.BOTTOM)
             .setBorder(Border.NO_BORDER));
 
-        infoTable.addCell(new Cell().add(getInfo(behaviour, naming, signature, attribute, name))
+        infoTable.addCell(new Cell().add(getInfo(behaviour, signature, attribute, name))
             .setTextAlignment(TextAlignment.LEFT)
             .setVerticalAlignment(VerticalAlignment.BOTTOM)
             .setBorder(Border.NO_BORDER));
@@ -91,7 +81,7 @@ public class PDFGenerator {
         return infoTable;
     }
 
-    public void generatePDF(File zip, HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> naming, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute) throws FileNotFoundException{
+    public void generatePDF(File zip, HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute) throws FileNotFoundException{
         PdfWriter pdf= new PdfWriter(zip.getAbsolutePath()+"/"+zip.getName()+"_results.pdf");
 
         String[] arrStudent= zip.getName().split("_");
@@ -107,17 +97,17 @@ public class PDFGenerator {
         Table scoreTable= new Table(scoreColumnWidth);
 
         
-        int total= getScore(behaviour, naming, signature, attribute, "ChatBotGenerator")+
-                    getScore(behaviour, naming, signature, attribute, "ChatBot")+
-                    getScore(behaviour, naming, signature, attribute, "ChatBotPlatform")+
-                    getScore(behaviour, naming, signature, attribute, "ChatBotSimulation");
+        int total= getScore(behaviour, signature, attribute, "ChatBotGenerator")+
+                    getScore(behaviour,  signature, attribute, "ChatBot")+
+                    getScore(behaviour,  signature, attribute, "ChatBotPlatform")+
+                    getScore(behaviour, signature, attribute, "ChatBotSimulation");
 
         String[] headers= {"Criteria", "Mark"};
         String[][] items= {
-            {"Chatbot Generator", String.valueOf(getScore(behaviour, naming, signature, attribute, "ChatBotGenerator"))},
-            {"Chatbot", String.valueOf(getScore(behaviour, naming, signature, attribute, "ChatBot"))},
-            {"ChatbotPlatform", String.valueOf(getScore(behaviour, naming, signature, attribute, "ChatBotPlatform"))},
-            {"ChatbotSimulation", String.valueOf(getScore(behaviour, naming, signature, attribute, "ChatBotSimulation"))},
+            {"Chatbot Generator", String.valueOf(getScore(behaviour, signature, attribute, "ChatBotGenerator"))},
+            {"Chatbot", String.valueOf(getScore(behaviour, signature, attribute, "ChatBot"))},
+            {"ChatbotPlatform", String.valueOf(getScore(behaviour, signature, attribute, "ChatBotPlatform"))},
+            {"ChatbotSimulation", String.valueOf(getScore(behaviour, signature, attribute, "ChatBotSimulation"))},
             {"Bonuses", ""},
             {"TOTAL", String.valueOf(total)}
         };
@@ -137,10 +127,10 @@ public class PDFGenerator {
         }
 
 
-        Table chatBotGenTable= createTable(behaviour, naming, signature, attribute, "ChatBotGenerator");
-        Table chatBotTable= createTable(behaviour, naming, signature, attribute, "ChatBot");
-        Table chatBotPlatTable= createTable(behaviour, naming, signature, attribute, "ChatBotPlatform");
-        Table chatBotSimTable= createTable(behaviour, naming, signature, attribute, "ChatBotSimulation");
+        Table chatBotGenTable= createTable(behaviour, signature, attribute, "ChatBotGenerator");
+        Table chatBotTable= createTable(behaviour, signature, attribute, "ChatBot");
+        Table chatBotPlatTable= createTable(behaviour, signature, attribute, "ChatBotPlatform");
+        Table chatBotSimTable= createTable(behaviour, signature, attribute, "ChatBotSimulation");
 
         Document document= new Document(pdfDocument);
         pdfDocument.setDefaultPageSize(PageSize.LEGAL);

@@ -42,7 +42,7 @@ public class PDFGeneratorTest {
 
     @Test
     public void testGeneratePDF() throws FileNotFoundException {
-        pdfGenerator.generatePDF(testDir, behaviour, naming, signature, attribute);
+        pdfGenerator.generatePDF(testDir, behaviour, signature, attribute);
 
         File pdfFile = new File(testDir, "FirstName_Lastname_123456789_A1_results.pdf");
         assertTrue(pdfFile.exists(), "PDF file should be generated");
