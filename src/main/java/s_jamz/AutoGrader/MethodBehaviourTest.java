@@ -25,6 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Order;
@@ -39,7 +40,6 @@ public class MethodBehaviourTest {
 
     private static HashMap<String, Class<?>> classes;
 
-
     private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
     public static Map<String, Integer> scores = new HashMap<>();
 
@@ -53,57 +53,46 @@ public class MethodBehaviourTest {
           
     }
 
-  
-
+    // /Users/maianeptune/Documents/StudentSubmissions2.zip
+ 
     @BeforeEach
     public void resetState() {
-        classes.clear();
         try {
-            loadClassDetails("ChatBot");
-            loadClassDetails("ChatBotPlatform");
-            loadClassDetails("ChatBotGenerator");
-
-        } catch (NoSuchMethodException e) {
-            // If the resetState method does not exist, ignore the exception
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
+            classes.clear();
+            loadClass("ChatBot");
+            loadClass("ChatBotPlatform");
+            loadClass("ChatBotGenerator");
+        } 
+         catch (Exception e) {
+            System.err.println("Could not load attribute names for class: " + e.getMessage());
         }
     }
 
-    private Class<?> loadClass(String className, URL studentBinDir) throws Exception {
-        URL[] urls = {studentBinDir};
-        try (IsolatedClassLoader loader = new IsolatedClassLoader(urls)) {
-            return Class.forName(className, true, loader);
-        }
-    }
-
-    public void loadClassDetails(String className) throws Exception {
+    private void loadClass(String className) throws Exception {
+        // Use the specified path for the student folders
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
         }
 
+        // Iterate through each student folder
         for (File studentDir : studentFoldersDir.listFiles()) {
             if (studentDir.isDirectory()) {
+                // Navigate to the bin directory
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    URL studentBinDir = binDir.toURI().toURL();
-                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
+
+                    URL[] urls = {binDir.toURI().toURL()};
+                    URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
                     try {
-                        Class<?> class1 = loadClass(className, studentBinDir);
-                        if(class1!=null)
-                        System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
-                        
-                        classes.put(className, class1);
-                        
+                        classes.put(className, Class.forName(className, true, urlClassLoader));
                     } catch (ClassNotFoundException e) {
                         // Continue searching in other student folders
                     }
                 }
             }
-        }   
+        }
     }
-
 
     @Test
     @Order(1)
@@ -132,6 +121,7 @@ public class MethodBehaviourTest {
 
         // System.out.println("Testing getChatBotName method");
         try{
+            
             Object chatBotGPT = defaultConstructor.newInstance();
             Method getChatBotName = chatBotClass.getMethod("getChatBotName");
             String chatBotName = (String) getChatBotName.invoke(chatBotGPT);
@@ -139,7 +129,7 @@ public class MethodBehaviourTest {
 
             Constructor<?> llmConstructor = chatBotClass.getDeclaredConstructor(int.class);
             llmConstructor.setAccessible(true);
-             Object chatBotWith2 = llmConstructor.newInstance(2);
+            Object chatBotWith2 = llmConstructor.newInstance(2);
             if (chatBotWith2 != null) {
                 chatBotScores.put("ChatBot()", 3);
                 feedback.append("Overloaded Constructor passed. ");
@@ -399,7 +389,6 @@ public class MethodBehaviourTest {
     @Test
     @Order(3)
     public void testChatBotGeneratorBehaviour() throws Exception {
-        
         System.out.println("Running method tests for class: ChatBotGenerator");
         Class<?> chatBotGeneratorClass = classes.get("ChatBotGenerator");
         Constructor<?> defaultConstructor = chatBotGeneratorClass.getDeclaredConstructor();
@@ -409,41 +398,58 @@ public class MethodBehaviourTest {
         Object chatBotGenerator = defaultConstructor.newInstance();
         HashMap<String, Integer> chatBotGeneratorScores = new HashMap<>();
         chatBotGeneratorScores.put("generateChatBotLLM", 0);
-
+    
         // Test generateChatBotLLM method
-        // System.out.println("Testing generateChatBotLLM method");
-        try{
-            Method generateChatBotLLM = chatBotGeneratorClass.getMethod("generateChatBotLLM", int.class);
-            String llmName = (String) generateChatBotLLM.invoke(null, 1);
-            if (llmName.contains("LLaMa")) {
+        Method generateChatBotLLM = null;
+        String llmName = null;
+    
+        try {
+            // Get the method 'generateChatBotLLM'
+            generateChatBotLLM = chatBotGeneratorClass.getMethod("generateChatBotLLM", int.class);
+    
+            // Check if it's a static method
+            if (Modifier.isStatic(generateChatBotLLM.getModifiers())) {
+                // If static, invoke statically
+                llmName = (String) generateChatBotLLM.invoke(null, 1); // static method, pass null for instance
+            } else {
+                // If it's an instance method, invoke on an instance
+                llmName = (String) generateChatBotLLM.invoke(chatBotGenerator, 1); // non-static, pass the object
+            }
+    
+            // Verify the result
+            if (llmName != null && llmName.contains("LLaMa")) {
+                if(Modifier.isStatic(generateChatBotLLM.getModifiers()))
                 chatBotGeneratorScores.put("generateChatBotLLM", 6);
+
+                else{
+                    chatBotGeneratorScores.put("generateChatBotLLM", 5);
+                    feedback.append("generateChatBotLLM is not static.\n");
+                }
                 feedback.append("generateChatBotLLM method passed.\n");
             } else {
-                feedback.append("generateChatBotLLM method failed. Expected 'LLaMa', but got '").append(llmName).append("'.\n");}
+                feedback.append("generateChatBotLLM method failed. Expected 'LLaMa', but got '")
+                        .append(llmName).append("'.\n");
+            }
+        } catch (NoSuchMethodException e) {
+            feedback.append("Method 'generateChatBotLLM' with int parameter not found in ChatBotGenerator class.\n");
+        } catch (Exception e) {
+            feedback.append("Error invoking generateChatBotLLM method: ").append(e.getMessage()).append("\n");
         }
-        catch(Exception e){
-            feedback.append("Error in generateChatBotLLM method: ").append(e.getMessage()).append("\n");
-        }
-
+    
+        // Calculate the score and add feedback
         for (Map.Entry<String, Integer> entry : chatBotGeneratorScores.entrySet()) {
             score += entry.getValue();
         }
-
+    
         chatBotGeneratorScore = score;
         totalScore += chatBotGeneratorScore;
         feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/6\n");
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
-    }   
-
-    // @AfterEach
-    // public void printResults() {
-    //     // System.out.println("Method Behaviour Test Results: " + testResults);
-    // }
-    
+    }
+   
     public static HashMap<String, TestResultLeaf> getTestResults() {
         return testResults;
 
     }
    
 }
-
