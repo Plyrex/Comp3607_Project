@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import s_jamz.AutoGrader.NamingConventionsTest;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
-import s_jamz.StrategyPattern.NamingConvention;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
