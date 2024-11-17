@@ -70,6 +70,7 @@ public class App {
 
                    
 
+
                     // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
                     // int totalScore = finalResults.getScore();
                     // System.out.println("Total Score: " + totalScore + " points\n");
