@@ -17,11 +17,6 @@ public class TestResultComposite implements TestResultComponent {
     }
 
     @Override
-    public TestResultComponent getChild(int i) {
-        return results.get(i);
-    }
-
-    @Override
     public void print() {
         for (TestResultComponent result : results) {
             result.print();
@@ -46,8 +41,4 @@ public class TestResultComposite implements TestResultComponent {
         return feedback.toString();
     }
 
-    @Override
-    public List<TestResultComponent> getResults() {
-        return results;
-    }
 }
