@@ -5,6 +5,7 @@ import s_jamz.TemplatePattern.JavaFileProcessor;
 
 import java.io.*;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.lang.reflect.Method;
 
@@ -70,11 +71,26 @@ public class JavaFileCompilerTest {
         assertFalse(Files.exists(extractedFile));
     }
 
+    private void deleteDirectory(Path path) throws IOException {
+        if (Files.exists(path)) {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+    
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+
     @AfterEach
     public void tearDown() throws IOException {
-        Files.walk(temporaryDirectory)
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+        deleteDirectory(temporaryDirectory);
     }
 }
