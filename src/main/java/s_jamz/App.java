@@ -56,11 +56,11 @@ public class App {
                     // // finalResults.add(namingConvention.getResults());
                     // printTestResults(NamingConvention.getTestResults());
 
-                    // MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
-                    // gradingContext.setStrategy(methodSignature);
-                    // gradingContext.evaluate();
-                    // // finalResults.add(methodSignature.getResults());
-                    // printTestResults(MethodSignature.getTestResults());
+                    MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(methodSignature);
+                    gradingContext.evaluate();
+                    // finalResults.add(methodSignature.getResults());
+                    printTestResults(MethodSignature.getTestResults());
 
                     AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(attributeType);
