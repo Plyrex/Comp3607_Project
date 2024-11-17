@@ -93,6 +93,9 @@ public class MethodBehaviourTest {
                     // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
                         Class<?> class1 = loadClass(className, studentBinDir);
+                        if(class1!=null)
+                        System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
+                        
                         classes.put(className, class1);
                         
                     } catch (ClassNotFoundException e) {
@@ -298,6 +301,8 @@ public class MethodBehaviourTest {
     @Test
     @Order(2)
     public void testChatBotPlatformBehaviour() throws Exception {
+   
+
         System.out.println("Running method tests for class: ChatBotPlatform");
         Class<?> chatBotPlatformClass = classes.get("ChatBotPlatform");
         Constructor<?> defaultConstructor = chatBotPlatformClass.getDeclaredConstructor();
@@ -396,6 +401,7 @@ public class MethodBehaviourTest {
     @Test
     @Order(3)
     public void testChatBotGeneratorBehaviour() throws Exception {
+        
         System.out.println("Running method tests for class: ChatBotGenerator");
         Class<?> chatBotGeneratorClass = classes.get("ChatBotGenerator");
         Constructor<?> defaultConstructor = chatBotGeneratorClass.getDeclaredConstructor();
