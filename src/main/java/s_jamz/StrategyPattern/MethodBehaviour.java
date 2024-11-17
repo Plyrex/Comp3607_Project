@@ -10,7 +10,7 @@ import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.JUnitTestExecutor;
 import s_jamz.AutoGrader.MethodBehaviourTest;
-import s_jamz.AutoGrader.NamingConventionsTest;
+
 
 public class MethodBehaviour implements EvaluationStrategy {
 
