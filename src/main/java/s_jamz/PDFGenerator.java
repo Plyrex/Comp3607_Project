@@ -81,7 +81,7 @@ public class PDFGenerator {
         return infoTable;
     }
 
-    public void generatePDF(File zip, HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> naming, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute) throws FileNotFoundException{
+    public void generatePDF(File zip, HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute) throws FileNotFoundException{
         PdfWriter pdf= new PdfWriter(zip.getAbsolutePath()+"/"+zip.getName()+"_results.pdf");
 
         String[] arrStudent= zip.getName().split("_");
