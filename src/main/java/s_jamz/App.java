@@ -37,7 +37,7 @@ public class App {
             System.out.println("Processing extracted directories in: " + newDestFolder);
             for (File studentDir : extractedDir.listFiles()) {
                 if (studentDir.isDirectory() && !studentDir.getName().equalsIgnoreCase("StudentSubmissions2")) {
-                    boolean compiledSuccessfully = fileProcessor.compileDirectory(studentDir);
+                    CompilationResult compilationResult = fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
                     GradingContext gradingContext = new GradingContext();
@@ -61,19 +61,22 @@ public class App {
                     finalResults.add(attributeType.getResults());
                     HashMap<String, TestResultLeaf> attributeResults = AttributeType.getTestResults();
 
-                     // Add 5 marks if the assignment compiles
-                     if (compiledSuccessfully) {
-                        TestResultLeaf bonusResult = new TestResultLeaf( 3, "Assignment compiled successfully.");
+                    // Add 5 marks if the assignment compiles
+                    if (compilationResult.isCompilationSuccess()) {
+                        TestResultLeaf bonusResult = new TestResultLeaf(3, "Assignment compiled successfully.");
                         behaviourResults.put("Compilation Bonus", bonusResult);
                     }
 
+                    // Add 10 marks if the code runs successfully
+                    if (compilationResult.isRunSuccess()) {
+                        TestResultLeaf runBonusResult = new TestResultLeaf(10, "Code ran successfully.");
+                        behaviourResults.put("Run Bonus", runBonusResult);
+                    }
 
-        
                     // Print test results
                     printTestResults(behaviourResults);
                     printTestResults(signatureResults);
                     printTestResults(attributeResults);
-            
 
                     // Generate PDF for the student
                     System.out.print("PDF Generating for " + studentDir.getName() + "\n");

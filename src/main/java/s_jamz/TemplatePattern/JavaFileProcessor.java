@@ -4,6 +4,8 @@ import javax.tools.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+
+import s_jamz.CompilationResult;
 import s_jamz.FileExtractor;
 
 public class JavaFileProcessor extends FileProcessorTemplate {
@@ -19,16 +21,16 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     }
 
     @Override
-    protected boolean compileFile(File file) { // Changed to return boolean
+    protected CompilationResult compileFile(File file) { // Changed to return CompilationResult
         if (file == null || !file.isDirectory()) {
             System.out.println("Error...Invalid directory: " + file);
-            return false;
+            return new CompilationResult(false, false);
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             System.out.println("Java compiler not available.");
-            return false;
+            return new CompilationResult(false, false);
         }
 
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -39,7 +41,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
         if (javaFiles.isEmpty()) {
             System.out.println("No Java files found in directory: " + file);
-            return false;
+            return new CompilationResult(false, false);
         }
 
         Path outputDir = file.toPath().resolve("bin");
@@ -51,7 +53,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         } catch (IOException e) {
             System.err.println("Failed to create bin directory: " + outputDir);
             e.printStackTrace();
-            return false;
+            return new CompilationResult(false, false);
         }
 
         List<String> compileOptions = new ArrayList<>();
@@ -63,11 +65,11 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         PrintWriter writer = new PrintWriter(outputStream);
         JavaCompiler.CompilationTask task = compiler.getTask(writer, fileManager, diagnostics, compileOptions, null, compilationUnits);
 
-        boolean success = task.call();
+        boolean compilationSuccess = task.call();
         writer.flush();
         String compilerOutput = outputStream.toString();
-        System.out.println(success ? "Compilation successful for files in " + file.getName() : "Compilation failed for files in " + file.getName());
-        if (!success) {
+        System.out.println(compilationSuccess ? "Compilation successful for files in " + file.getName() : "Compilation failed for files in " + file.getName());
+        if (!compilationSuccess) {
             System.out.println(compilerOutput);
         }
 
@@ -79,9 +81,10 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
         storeResults(file, diagnostics, compilerOutput);
 
+        boolean runSuccess = false;
         // If compilation is successful, attempt to run the program
-        if (success) {
-            runMainClass(outputDir.toString(), "ChatBotSimulation");
+        if (compilationSuccess) {
+            runSuccess = runMainClass(outputDir.toString(), "ChatBotSimulation");
         } else {
             // Delete the bin directory if compilation failed
             try {
@@ -96,10 +99,10 @@ public class JavaFileProcessor extends FileProcessorTemplate {
             }
         }
 
-        return success;
+        return new CompilationResult(compilationSuccess, runSuccess);
     }
 
-    private void runMainClass(String binDirectory, String mainClassName) {
+    private boolean runMainClass(String binDirectory, String mainClassName) {
         ProcessBuilder processBuilder = new ProcessBuilder("java", "-cp", binDirectory, mainClassName);
         processBuilder.redirectErrorStream(true);  // Combine stderr and stdout
 
@@ -122,10 +125,12 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
             int exitCode = process.waitFor();
             System.out.println("Program exited with code: " + exitCode);
+            return exitCode == 0;
 
         } catch (IOException | InterruptedException e) {
             System.err.println("Failed to run the program for class " + mainClassName);
             e.printStackTrace();
+            return false;
         }
     }
 

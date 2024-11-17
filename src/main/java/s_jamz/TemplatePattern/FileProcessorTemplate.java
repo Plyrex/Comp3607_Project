@@ -4,9 +4,11 @@ import java.io.File;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
+import s_jamz.CompilationResult;
+
 public abstract class FileProcessorTemplate {
     protected abstract void extractFile(File zipFile);
-    protected abstract boolean compileFile(File file);
+    protected abstract CompilationResult compileFile(File file); // Changed to return CompilationResult
     protected abstract void storeResults(File file, DiagnosticCollector<JavaFileObject> diagnostics, String compilerOutput);
 
     public void processFile(File file) {
@@ -14,7 +16,7 @@ public abstract class FileProcessorTemplate {
         // Compilation will be handled separately
     }
 
-    public boolean compileDirectory(File directory) {
-        return compileFile(directory);
+    public CompilationResult compileDirectory(File directory) {
+        return compileFile(directory); // Return the CompilationResult
     }
 }
