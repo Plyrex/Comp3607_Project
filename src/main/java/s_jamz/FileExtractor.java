@@ -1,46 +1,99 @@
 package s_jamz;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.regex.Pattern;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
-    public void extractZip(File zipFile, File destDir) {
-        File dir = destDir;
-        // create output directory if it doesn't exist
-        if(!dir.exists()) dir.mkdirs();
-        FileInputStream fis;
-        //buffer for read and write data to file
-        byte[] buffer = new byte[1024];
-        try {
-            fis = new FileInputStream(zipFile);
-            ZipInputStream zis = new ZipInputStream(fis);
-            ZipEntry ze = zis.getNextEntry();
-            while(ze != null){
-                String fileName = ze.getName();
-                File newFile = new File(destDir + File.separator + fileName);
-                System.out.println("Unzipping to "+newFile.getAbsolutePath());
-                //create directories for sub directories in zip
-                new File(newFile.getParent()).mkdirs();
-                FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
-                }
-                fos.close();
-                //close this ZipEntry
-                zis.closeEntry();
-                ze = zis.getNextEntry();
-            }
-            //close last ZipEntry
-            zis.closeEntry();
-            zis.close();
-            fis.close();
-        } catch (IOException e) {
+    
+    private static final Pattern STUDENT_SUBMISSION_PATTERN = Pattern.compile("^[A-Za-z]+_[A-Za-z]+_\\d+(_A1)?\\.zip$");
+
+    public void extractZip(File zipFile, String destFolder) throws IOException {
+        String submissionsFolder = System.getProperty("user.dir") + "/src/main/resources/ZippedSubmissions/";
+        String studentFoldersDir = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
+
+        createDirectoryIfNotExists(submissionsFolder);
+        createDirectoryIfNotExists(studentFoldersDir);
+
+        extractMainZipFile(zipFile, submissionsFolder);
+
+        File[] submissionFiles = getSubmissionFiles(submissionsFolder);
+        if (submissionFiles == null) {
+            System.out.println("Submissions directory is empty or not accessible.");
+            return;
+        }
+
+        extractStudentSubmissions(submissionFiles, studentFoldersDir);
+
+        deleteDirectoryIfEmpty(new File(submissionsFolder));
+    }
+
+    private void createDirectoryIfNotExists(String directoryPath) {
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+    }
+
+    private void extractMainZipFile(File zipFile, String submissionsFolder) throws IOException {
+        try (ZipFile zip = new ZipFile(zipFile)) {
+            zip.extractAll(submissionsFolder);
+            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully");
+        } catch (ZipException e) {
+            System.out.println("Error unzipping main file " + zipFile.getName());
             e.printStackTrace();
+        }
+    }
+
+    private File[] getSubmissionFiles(String submissionsFolder) {
+        File submissionsDir = new File(submissionsFolder);
+        File[] submissionFiles = submissionsDir.listFiles();
+        if (submissionFiles != null) {
+            System.out.println("Files in Submissions directory:");
+            for (File file : submissionFiles) {
+                System.out.println(file.getName());
+            }
+            System.out.println();
+        }
+        return submissionFiles;
+    }
+
+    private void extractStudentSubmissions(File[] submissionFiles, String studentFoldersDir) throws IOException {
+        for (File submission : submissionFiles) {
+            if (submission.isFile() && STUDENT_SUBMISSION_PATTERN.matcher(submission.getName()).matches()) {
+                String studentFolder = studentFoldersDir + "/" + submission.getName().replace(".zip", "");
+                File studentFolderFile = new File(studentFolder);
+                if (studentFolderFile.exists()) {
+                    System.out.println("Student folder already exists: " + studentFolder);
+                    continue;
+                }
+
+                extractStudentZipFile(submission, studentFolder);
+            } else {
+                System.out.println("Skipping file " + submission.getName() + " as it does not follow the naming convention.");
+            }
+        }
+    }
+
+    private void extractStudentZipFile(File studentSubmission, String studentFolder) throws IOException {
+        try (ZipFile studentZip = new ZipFile(studentSubmission)) {
+            studentZip.extractAll(studentFolder);
+            System.out.println("Student zip file " + studentSubmission.getName() + " unzipped successfully");
+        } catch (ZipException e) {
+            System.out.println("Error unzipping student file " + studentSubmission.getName());
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteDirectoryIfEmpty(File directory) {
+        if (directory.isDirectory() && directory.list().length == 0) {
+            if (directory.delete()) {
+                System.out.println("Deleted empty directory: " + directory.getAbsolutePath());
+            } else {
+                System.out.println("Failed to delete empty directory: " + directory.getAbsolutePath());
+            }
         }
     }
 }
