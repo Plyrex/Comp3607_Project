@@ -2,7 +2,6 @@ package s_jamz;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -87,29 +86,6 @@ public class App {
                     finalResults.add(mainTest.getResults());
                     results.putAll(Main.getTestResults());
                     printTestResults(Main.getTestResults());
-
-
-                   
-
-
-                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    // int totalScore = finalResults.getScore();
-                    // System.out.println("Total Score: " + totalScore + " points\n");
-
-                    // System.out.println("Final Test Results for student in folder: " + studentDir.getName());
-                    // int totalScore = finalResults.getScore();
-                    // System.out.println("Total Score: " + totalScore + " points\n");
-
-                    // int totalScore = totalScoreNaming + totalScoreMethod;
-                    // System.out.println("Overall Total Score: " + totalScore + " points\n");
-
-                    // Clear the static maps after running the tests
-                    // MethodSignaturesTest.scores.clear();
-                    // MethodSignaturesTest.feedback.clear();
-                   
-
-                    // System.out.println("\n\n\n ////////////////////////////////////\n supposed to have all");
-                    // System.out.println(Arrays.asList(Results));
               
                 }
                 System.out.print("PDF Generating for "+studentDir.getName()+"\n");

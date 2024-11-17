@@ -1,28 +1,18 @@
 package s_jamz.AutoGrader;
 
-import org.junit.After;
-import org.junit.jupiter.api.AfterAll;
-// import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import s_jamz.CompositePattern.TestResultLeaf;
 
-// import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Array;
+
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
+
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
