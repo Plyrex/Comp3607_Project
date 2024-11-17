@@ -25,13 +25,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -51,24 +46,27 @@ public class MethodBehaviourTest {
     
 
     public MethodBehaviourTest() {
+        classes = new HashMap<>(); 
         scores.put("ChatBot", 0);
         scores.put("ChatBotPlatform", 0);
         scores.put("ChatBotGenerator", 0);   
-        classes = new HashMap<>();     
+          
     }
 
   
 
     @BeforeEach
-    public void setup(){
+    public void resetState() {
         classes.clear();
-        try{
-        loadClassDetails("ChatBot");
-        loadClassDetails("ChatBotPlatform");
-        loadClassDetails("ChatBotGenerator");
-        }
-        catch(Exception e){
-            System.err.println("Exception: " + e.getMessage());
+        try {
+            loadClassDetails("ChatBot");
+            loadClassDetails("ChatBotPlatform");
+            loadClassDetails("ChatBotGenerator");
+
+        } catch (NoSuchMethodException e) {
+            // If the resetState method does not exist, ignore the exception
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
         }
     }
 
@@ -437,10 +435,10 @@ public class MethodBehaviourTest {
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }   
 
-    @AfterEach
-    public void printResults() {
-        // System.out.println("Method Behaviour Test Results: " + testResults);
-    }
+    // @AfterEach
+    // public void printResults() {
+    //     // System.out.println("Method Behaviour Test Results: " + testResults);
+    // }
     
     public static HashMap<String, TestResultLeaf> getTestResults() {
         return testResults;
