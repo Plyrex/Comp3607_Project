@@ -1,7 +1,9 @@
 package s_jamz.StrategyPattern;
 
-import java.io.File;
+// import java.io.File;
+import s_jamz.CompositePattern.TestResultComponent;
 
 public interface EvaluationStrategy {
-    public void evaluate(File javaFile);
+    void evaluate();
+    TestResultComponent getResults();
 }

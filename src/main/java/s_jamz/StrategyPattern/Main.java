@@ -9,16 +9,16 @@ import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
 import s_jamz.JUnitTestExecutor;
-import s_jamz.AutoGrader.MethodBehaviourTest;
+import s_jamz.AutoGrader.MainTest;
 
 
-public class MethodBehaviour implements EvaluationStrategy {
+public class Main implements EvaluationStrategy {
 
     private TestResultComponent results;
     private String studentFolderPath;
     private List<String> feedback;
 
-    public MethodBehaviour(String studentFolderPath) {
+    public Main(String studentFolderPath) {
         this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
         this.feedback = new ArrayList<>();
@@ -27,14 +27,14 @@ public class MethodBehaviour implements EvaluationStrategy {
     @Override
     public void evaluate() {
         try {
-            MethodBehaviourTest testClass = new MethodBehaviourTest();
+            MainTest testClass = new MainTest();
 
             System.out.println("Running tests for class: " + testClass.getClass().getName());
 
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();
 
-            results = runMethodBehaviourTests(testClass.getClass());
+            results = runMainTest(testClass.getClass());
 
             // Process the summary to extract scores and feedback
             summary.getFailures().forEach(failure -> {
@@ -42,8 +42,8 @@ public class MethodBehaviour implements EvaluationStrategy {
                 results.add(new TestResultLeaf(0, failure.getException().getMessage()));
             });
 
-             // Retrieve and store the results from MethodBehaviourTest
-            HashMap<String, TestResultLeaf> testResults = MethodBehaviourTest.getTestResults();
+             // Retrieve and store the results from MainBehaviourTest
+            HashMap<String, TestResultLeaf> testResults = MainTest.getTestResults();
             testResults.forEach((testName, result) -> {
                 results.add(result);
             });
@@ -59,10 +59,10 @@ public class MethodBehaviour implements EvaluationStrategy {
         return results;
     }
 
-    private TestResultComponent runMethodBehaviourTests(Class<?> testClass) {
+    private TestResultComponent runMainTest(Class<?> testClass) {
         TestResultComposite composite = new TestResultComposite();
         try {
-            composite.add(new TestResultLeaf(0, "Method signature test passed"));
+            composite.add(new TestResultLeaf(0, "Main test passed"));
         } catch (Exception e) {
             e.printStackTrace();
             composite.add(new TestResultLeaf(0, "Failed to load test class: " + e.getMessage()));
@@ -71,6 +71,6 @@ public class MethodBehaviour implements EvaluationStrategy {
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {
-        return MethodBehaviourTest.getTestResults();
+        return MainTest.getTestResults();
     }
 }
