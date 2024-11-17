@@ -1,14 +1,18 @@
 package s_jamz.AutoGrader;
 
+import org.junit.After;
+import org.junit.jupiter.api.AfterAll;
 // import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import s_jamz.CompositePattern.TestResultLeaf;
 
 // import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +30,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MethodBehaviourTest {
 
     private static int totalScore;
@@ -34,83 +42,82 @@ public class MethodBehaviourTest {
     private static int chatBotPlatformScore = 0;
     private static int chatBotGeneratorScore = 0;
 
+    private static HashMap<String, Class<?>> classes;
+
+
     private static HashMap<String, TestResultLeaf> testResults = new HashMap<>();
-    private static int chatBotScores = 0;
-    private static int chatBotPlatformScores = 0;
-    private static int chatBotGeneratorScores = 0;
     public static Map<String, Integer> scores = new HashMap<>();
-    private static Map<String, Method[]> methodTest = new HashMap<String, Method[]>();
-    private HashMap<String, Field[]> attributeTest = new HashMap<String, Field[]>();
+
+    
 
     public MethodBehaviourTest() {
         scores.put("ChatBot", 0);
         scores.put("ChatBotPlatform", 0);
-        scores.put("ChatBotGenerator", 0);        
+        scores.put("ChatBotGenerator", 0);   
+        classes = new HashMap<>();     
     }
 
-    @BeforeAll
-    public static void init() {
-        System.out.println("Running Method Behaviour Tests");
-        chatBotGeneratorScores = 0;
-        chatBotPlatformScores = 0;
-        chatBotScores = 0;
-    }
+  
 
     @BeforeEach
-    public void resetState() {
-        try {
-            Class<?> chatBotClass = loadClass("ChatBot");
-            Method resetMethod = chatBotClass.getMethod("resetState");
-            resetMethod.invoke(null);
-
-            Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
-            resetMethod = chatBotPlatformClass.getMethod("resetState");
-            resetMethod.invoke(null);
-        } catch (NoSuchMethodException e) {
-            // If the resetState method does not exist, ignore the exception
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
+    public void setup(){
+        classes.clear();
+        try{
+        loadClassDetails("ChatBot");
+        loadClassDetails("ChatBotPlatform");
+        loadClassDetails("ChatBotGenerator");
+        }
+        catch(Exception e){
+            System.err.println("Exception: " + e.getMessage());
         }
     }
 
-    private Class<?> loadClass(String className) throws Exception {
-        // Use the specified path for the student folders
+    private Class<?> loadClass(String className, URL studentBinDir) throws Exception {
+        URL[] urls = {studentBinDir};
+        try (IsolatedClassLoader loader = new IsolatedClassLoader(urls)) {
+            return Class.forName(className, true, loader);
+        }
+    }
+
+    public void loadClassDetails(String className) throws Exception {
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
         }
 
-        // Iterate through each student folder
         for (File studentDir : studentFoldersDir.listFiles()) {
             if (studentDir.isDirectory()) {
-                // Navigate to the bin directory
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    // Dynamically add the bin directory to the classpath
-                    URL[] urls = {binDir.toURI().toURL()};
-                    URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+                    URL studentBinDir = binDir.toURI().toURL();
+                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
-                        return Class.forName(className, true, urlClassLoader);
+                        Class<?> class1 = loadClass(className, studentBinDir);
+                        classes.put(className, class1);
+                        
                     } catch (ClassNotFoundException e) {
                         // Continue searching in other student folders
                     }
                 }
             }
-        }
-
-        throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
+        }   
     }
 
+
     @Test
+    @Order(1)
     public void testChatBotBehaviour() throws Exception {
+
         System.out.println("Running method tests for class: Chatbot");
-        Class<?> chatBotClass = loadClass("ChatBot");
+        Class<?> chatBotClass = classes.get("ChatBot");
         Constructor<?> defaultConstructor = chatBotClass.getDeclaredConstructor();
         int score = 0;
         StringBuilder feedback = new StringBuilder();
         defaultConstructor.setAccessible(true);
         Object chatBot = defaultConstructor.newInstance();
+
         HashMap<String, Integer> chatBotScores = new HashMap<>();
+
         chatBotScores.put("getChatBotName", 0);
         chatBotScores.put("generateResponse", 0);
         chatBotScores.put("getNumResponsesGenerated", 0);
@@ -134,7 +141,7 @@ public class MethodBehaviourTest {
              Object chatBotWith2 = llmConstructor.newInstance(2);
             if (chatBotWith2 != null) {
                 chatBotScores.put("ChatBot()", 3);
-                feedback.append("Overloaded COnstructor passed. ");
+                feedback.append("Overloaded Constructor passed. ");
             } else {
                 feedback.append("Overloaded Constructor not passed. ");}
 
@@ -289,9 +296,10 @@ public class MethodBehaviourTest {
 
 
     @Test
+    @Order(2)
     public void testChatBotPlatformBehaviour() throws Exception {
         System.out.println("Running method tests for class: ChatBotPlatform");
-        Class<?> chatBotPlatformClass = loadClass("ChatBotPlatform");
+        Class<?> chatBotPlatformClass = classes.get("ChatBotPlatform");
         Constructor<?> defaultConstructor = chatBotPlatformClass.getDeclaredConstructor();
         int score = 0;
         StringBuilder feedback = new StringBuilder();
@@ -386,9 +394,10 @@ public class MethodBehaviourTest {
 
 
     @Test
+    @Order(3)
     public void testChatBotGeneratorBehaviour() throws Exception {
         System.out.println("Running method tests for class: ChatBotGenerator");
-        Class<?> chatBotGeneratorClass = loadClass("ChatBotGenerator");
+        Class<?> chatBotGeneratorClass = classes.get("ChatBotGenerator");
         Constructor<?> defaultConstructor = chatBotGeneratorClass.getDeclaredConstructor();
         int score = 0;
         StringBuilder feedback = new StringBuilder();
@@ -420,9 +429,7 @@ public class MethodBehaviourTest {
         totalScore += chatBotGeneratorScore;
         feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/6\n");
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
-    }
-    
-   
+    }   
 
     @AfterEach
     public void printResults() {
@@ -433,5 +440,6 @@ public class MethodBehaviourTest {
         return testResults;
 
     }
+   
 }
 
