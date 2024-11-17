@@ -85,8 +85,6 @@ public class MethodBehaviourTest {
     @Test
     @Order(1)
     public void testChatBotBehaviour() throws Exception {
-
-        System.out.println("Running method tests for class: Chatbot");
         Class<?> chatBotClass = classes.get("ChatBot");
         Constructor<?> defaultConstructor = chatBotClass.getDeclaredConstructor();
         int score = 0;
@@ -104,10 +102,6 @@ public class MethodBehaviourTest {
         chatBotScores.put("limitReached", 0);
         chatBotScores.put("prompt", 0);
         chatBotScores.put("toString", 0);
-
-
-
-        // System.out.println("Testing getChatBotName method");
         try{
             
             Object chatBotGPT = defaultConstructor.newInstance();
@@ -141,9 +135,7 @@ public class MethodBehaviourTest {
             feedback.append("Error in getChatBotName method: ").append(e.getMessage()).append("\n");
         }
 
-
         // //Test generateResponse method
-        // System.out.println("Testing generateResponse method");
         try{
             int generateResponseScore = 0;
             Method generateResponse = chatBotClass.getDeclaredMethod("generateResponse");
@@ -163,7 +155,6 @@ public class MethodBehaviourTest {
         }
 
         // Test getNumResponsesGenerated method
-        // System.out.println("Testing getNumResponsesGenerated method");
         try{
             Method getNumResponsesGenerated = chatBotClass.getMethod("getNumResponsesGenerated");
             int numResponsesGenerated = (int) getNumResponsesGenerated.invoke(chatBot);
@@ -179,7 +170,6 @@ public class MethodBehaviourTest {
         }
 
         // Test getTotalNumResponsesGenerated method
-        // System.out.println("Testing getTotalNumResponsesGenerated method");
         try{
             int getTotalNumResponsesGeneratedScore = 0;
             Method getTotalNumResponsesGenerated = chatBotClass.getMethod("getTotalNumResponsesGenerated");
@@ -198,7 +188,6 @@ public class MethodBehaviourTest {
         }
 
         // Test getTotalNumMessagesRemaining method
-        // System.out.println("Testing getTotalNumMessagesRemaining method");
         try{
             int getTotalNumMessagesRemainingScore = 0;
             Method getTotalNumMessagesRemaining = chatBotClass.getMethod("getTotalNumMessagesRemaining");
@@ -216,7 +205,6 @@ public class MethodBehaviourTest {
         }
 
         // Test limitReached method
-        // System.out.println("Testing limitReached method");
         try{
             int limitReachedScore = 0;
             Method limitReached = chatBotClass.getMethod("limitReached");
@@ -234,7 +222,6 @@ public class MethodBehaviourTest {
         }
 
         // Test prompt method
-        // System.out.println("Testing prompt method");
         try{
             Method prompt = chatBotClass.getMethod("prompt", String.class);
             String promptResponse = (String) prompt.invoke(chatBot, "Hello");
@@ -249,7 +236,6 @@ public class MethodBehaviourTest {
         }
 
         // Test toString method
-        // System.out.println("Testing toString method");
         try{
             Method toStringMethod = chatBotClass.getMethod("toString");
             String toStringResponse = (String) toStringMethod.invoke(chatBot);
@@ -277,9 +263,6 @@ public class MethodBehaviourTest {
     @Test
     @Order(2)
     public void testChatBotPlatformBehaviour() throws Exception {
-   
-
-        System.out.println("Running method tests for class: ChatBotPlatform");
         Class<?> chatBotPlatformClass = classes.get("ChatBotPlatform");
         Constructor<?> defaultConstructor = chatBotPlatformClass.getDeclaredConstructor();
         int score = 0;
@@ -292,7 +275,6 @@ public class MethodBehaviourTest {
         chatBotPlatformScores.put("getChatBotList", 0);
 
         // Test addChatBot method
-        // System.out.println("Testing addChatBot method");
         try{
             if(chatBotPlatform!=null){
                 chatBotPlatformScores.put("ChatBotPlatform", 2);
@@ -320,7 +302,6 @@ public class MethodBehaviourTest {
         }
 
         // Test interactWithBot method
-        // System.out.println("Testing interactWithBot method");
         try{
             int interactWithBotScore= 0;
             Method interactWithBot = chatBotPlatformClass.getMethod("interactWithBot", int.class, String.class);
@@ -349,7 +330,6 @@ public class MethodBehaviourTest {
         }
 
         // Test getChatBotList method
-        // System.out.println("Testing getChatBotList method");
         try{
             Method getChatBotList = chatBotPlatformClass.getMethod("getChatBotList");
             String chatBotList = (String) getChatBotList.invoke(chatBotPlatform);
@@ -377,7 +357,6 @@ public class MethodBehaviourTest {
     @Test
     @Order(3)
     public void testChatBotGeneratorBehaviour() throws Exception {
-        System.out.println("Running method tests for class: ChatBotGenerator");
         Class<?> chatBotGeneratorClass = classes.get("ChatBotGenerator");
         Constructor<?> defaultConstructor = chatBotGeneratorClass.getDeclaredConstructor();
         int score = 0;

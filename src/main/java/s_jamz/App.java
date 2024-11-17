@@ -11,7 +11,6 @@ import s_jamz.StrategyPattern.AttributeType;
 import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
-import s_jamz.StrategyPattern.NamingConvention;
 
 import s_jamz.StrategyPattern.Main;
 import s_jamz.TemplatePattern.FileProcessorTemplate;

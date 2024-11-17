@@ -41,7 +41,6 @@ public class MethodSignaturesTest {
     public Method[] getMethods(Class<?> class1) {
         try {
             if (class1 == null) {
-                System.err.println("Provided class is null.");
                 return new Method[0];
             }
             return class1.getDeclaredMethods();
@@ -69,7 +68,6 @@ public class MethodSignaturesTest {
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
                     URL studentBinDir = binDir.toURI().toURL();
-                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
                         Class<?> class1 = loadClass(className, studentBinDir);
                         methodTest.put(className, getMethods(class1));
@@ -95,7 +93,7 @@ public class MethodSignaturesTest {
 
     @Test
     public void chatBotMethodSignaturesTest() {
-        System.out.println("ChatBot Method Signatures Test. \n");
+
         Method[] chatBotMethods = methodTest.get("ChatBot");
         int score = 0;
         StringBuilder feedback = new StringBuilder();
@@ -180,7 +178,6 @@ public class MethodSignaturesTest {
 
     @Test
     public void chatBotPlatformMethodSignaturesTest() {
-        System.out.println("ChatBotPlatform Method Signatures Test. \n");
         Method[] chatBotPlatformMethods = methodTest.get("ChatBotPlatform");
         int score = 0;
         StringBuilder feedback = new StringBuilder();
@@ -219,7 +216,6 @@ public class MethodSignaturesTest {
 
     @Test
     public void chatBotGeneratorMethodSignaturesTest() {
-        System.out.println("ChatBotGenerator Method Signatures Test. \n");
         Method[] chatBotGeneratorMethods = methodTest.get("ChatBotGenerator");
         int score = 0;
         StringBuilder feedback = new StringBuilder();
@@ -256,7 +252,6 @@ public class MethodSignaturesTest {
 
     @AfterAll
     public static void calculateTotal() {
-        System.out.println("Total Score = " + totalScore + "/12 \n");
         chatBotGeneratorScore = 0;
         chatBotPlatformScore = 0;
         chatBotScore = 0;
