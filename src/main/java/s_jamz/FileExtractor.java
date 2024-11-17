@@ -2,31 +2,38 @@ package s_jamz;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
     public void extractZip(File zipFile, String destFolder) throws IOException {
-        String submissionsFolder = System.getProperty("user.dir") + "/src/main/resources/StudentSubmissions2/";
+        String submissionsFolder = System.getProperty("user.dir") + "/src/main/resources/ZippedSubmissions/";
         String studentFoldersDir = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
 
-        Path submissionsPath = Paths.get(submissionsFolder);
-        Path studentFoldersPath = Paths.get(studentFoldersDir);
+        createDirectoryIfNotExists(submissionsFolder);
+        createDirectoryIfNotExists(studentFoldersDir);
 
-        // Create Submissions directory if it doesn't exist
-        File submissionsDir = submissionsPath.toFile();
-        if (!submissionsDir.exists()) {
-            submissionsDir.mkdirs();
+        extractMainZipFile(zipFile, submissionsFolder);
+
+        File[] submissionFiles = getSubmissionFiles(submissionsFolder);
+        if (submissionFiles == null) {
+            System.out.println("Submissions directory is empty or not accessible.");
+            return;
         }
 
-        // Create StudentFolders directory if it doesn't exist
-        File studentFoldersDirectory = studentFoldersPath.toFile();
-        if (!studentFoldersDirectory.exists()) {
-            studentFoldersDirectory.mkdirs();
-        }
+        extractStudentSubmissions(submissionFiles, studentFoldersDir);
 
-        // Extract the main zip file
+        deleteDirectoryIfEmpty(new File(submissionsFolder));
+    }
+
+    private void createDirectoryIfNotExists(String directoryPath) {
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+    }
+
+    private void extractMainZipFile(File zipFile, String submissionsFolder) throws IOException {
         try (ZipFile zip = new ZipFile(zipFile)) {
             zip.extractAll(submissionsFolder);
             System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully to " + submissionsFolder + "\n");
@@ -34,52 +41,43 @@ public class FileExtractor {
             System.out.println("Error unzipping main file " + zipFile.getName() + "\n");
             e.printStackTrace();
         }
+    }
 
-        // Verify the contents of the Submissions directory
+    private File[] getSubmissionFiles(String submissionsFolder) {
+        File submissionsDir = new File(submissionsFolder);
         File[] submissionFiles = submissionsDir.listFiles();
         if (submissionFiles != null) {
             System.out.println("Files in Submissions directory:");
             for (File file : submissionFiles) {
                 System.out.println(file.getName());
             }
-        } else {
-            System.out.println("Submissions directory is empty or not accessible.");
-            return;
         }
+        return submissionFiles;
+    }
 
-        // Extract individual student submissions
-        if (submissionFiles != null) {
-            for (File submission : submissionFiles) {
-                if (submission.isFile() && submission.getName().endsWith(".zip")) {
-                    // Skip unwanted zip files
-                    if (submission.getName().equalsIgnoreCase("compressed.zip")) {
-                        System.out.println("Skipping unwanted zip file: " + submission.getName());
-                        continue;
-                    }
-
-                    String studentFolder = studentFoldersDir + "/" + submission.getName().replace(".zip", "");
-                    File studentFolderFile = new File(studentFolder);
-                    if (studentFolderFile.exists()) {
-                        System.out.println("Student folder already exists: " + studentFolder);
-                        continue;
-                    }
-                    try {
-                        try (ZipFile studentZip = new ZipFile(submission)) {
-                            studentZip.extractAll(studentFolder);
-                            System.out.println("Student zip file " + submission.getName() + " unzipped successfully to " + studentFolder + "\n");
-                        }
-                    } catch (ZipException e) {
-                        System.out.println("Error unzipping student file " + submission.getName() + "\n");
-                        e.printStackTrace();
-                    }
-
-                    // Extract only .java files from the student folder
+    private void extractStudentSubmissions(File[] submissionFiles, String studentFoldersDir)throws IOException {
+        for (File submission : submissionFiles) {
+            if (submission.isFile() && submission.getName().endsWith(".zip")) {
+                String studentFolder = studentFoldersDir + "/" + submission.getName().replace(".zip", "");
+                File studentFolderFile = new File(studentFolder);
+                if (studentFolderFile.exists()) {
+                    System.out.println("Student folder already exists: " + studentFolder);
+                    continue;
                 }
+
+                extractStudentZipFile(submission, studentFolder);
             }
         }
+    }
 
-        // Delete the extracted master file directory if it is empty
-        deleteDirectoryIfEmpty(submissionsDir);
+    private void extractStudentZipFile(File studentSubmission, String studentFolder) throws IOException {
+        try (ZipFile studentZip = new ZipFile(studentSubmission)) {
+            studentZip.extractAll(studentFolder);
+            System.out.println("Student zip file " + studentSubmission.getName() + " unzipped successfully to " + studentFolder + "\n");
+        } catch (ZipException e) {
+            System.out.println("Error unzipping student file " + studentSubmission.getName() + "\n");
+            e.printStackTrace();
+        }
     }
 
     private void deleteDirectoryIfEmpty(File directory) {
