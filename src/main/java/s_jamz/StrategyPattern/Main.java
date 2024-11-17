@@ -15,11 +15,9 @@ import s_jamz.AutoGrader.MainTest;
 public class Main implements EvaluationStrategy {
 
     private TestResultComponent results;
-    private String studentFolderPath;
     private List<String> feedback;
 
     public Main(String studentFolderPath) {
-        this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
         this.feedback = new ArrayList<>();
     }

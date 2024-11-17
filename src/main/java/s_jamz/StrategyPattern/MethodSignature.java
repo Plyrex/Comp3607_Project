@@ -12,10 +12,8 @@ import java.util.HashMap;
 public class MethodSignature implements EvaluationStrategy {
 
     private TestResultComponent results;
-    private String studentFolderPath;
 
     public MethodSignature(String studentFolderPath) {
-        this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
     }
 

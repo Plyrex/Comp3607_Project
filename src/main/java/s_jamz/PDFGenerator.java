@@ -15,7 +15,6 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 
-import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultLeaf;
 
 public class PDFGenerator {
@@ -158,7 +157,4 @@ public class PDFGenerator {
         document.close();
     }
 
-    public void generatePDF(TestResultComponent results, Student student) {
-        throw new UnsupportedOperationException("Unimplemented method 'generatePDF'");
-    }
 }

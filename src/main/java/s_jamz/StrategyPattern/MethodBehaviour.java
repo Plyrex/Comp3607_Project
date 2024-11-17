@@ -15,11 +15,9 @@ import s_jamz.AutoGrader.MethodBehaviourTest;
 public class MethodBehaviour implements EvaluationStrategy {
 
     private TestResultComponent results;
-    private String studentFolderPath;
     private List<String> feedback;
 
     public MethodBehaviour(String studentFolderPath) {
-        this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
         this.feedback = new ArrayList<>();
     }

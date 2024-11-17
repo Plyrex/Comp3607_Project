@@ -14,7 +14,6 @@ import s_jamz.CompositePattern.TestResultLeaf;
 
 public class MethodSignaturesTest {
 
-    private static int totalScore;
     private static int chatBotScore = 0;
     private static int chatBotPlatformScore = 0;
     private static int chatBotGeneratorScore = 0;
@@ -77,18 +76,6 @@ public class MethodSignaturesTest {
                 }
             }
         }
-    }
-
-    private boolean checkMethodSignature(Method method, String expectedReturnType, String expectedMethodName, List<String> expectedParameterTypes) {
-        if (!method.getReturnType().getSimpleName().equals(expectedReturnType)) return false;
-        if (!method.getName().equals(expectedMethodName)) return false;
-
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length != expectedParameterTypes.size()) return false;
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (!parameterTypes[i].getSimpleName().equals(expectedParameterTypes.get(i))) return false;
-        }
-        return true;
     }
 
     @Test
@@ -160,7 +147,6 @@ public class MethodSignaturesTest {
                 }
             }
 
-
             if (expectedSignatures.contains(methodSignature)) {
                 score += 1;
                 feedback.append("Method signature '").append(methodSignature).append("' matches expected signature.\n");
@@ -171,7 +157,6 @@ public class MethodSignaturesTest {
         }
 
         chatBotScore = score;
-        totalScore += chatBotScore;
         feedback.append("ChatBot Class Score: ").append(chatBotScore).append("/8\n");
         testResults.put("ChatBot", new TestResultLeaf(chatBotScore, feedback.toString()));
     }
@@ -209,7 +194,6 @@ public class MethodSignaturesTest {
         }
 
         chatBotPlatformScore = score;
-        totalScore += chatBotPlatformScore;
         feedback.append("ChatBotPlatform Class Score: ").append(chatBotPlatformScore).append("/3\n");
         testResults.put("ChatBotPlatform", new TestResultLeaf(chatBotPlatformScore, feedback.toString()));
     }
@@ -245,17 +229,15 @@ public class MethodSignaturesTest {
         }
 
         chatBotGeneratorScore = score;
-        totalScore += chatBotGeneratorScore;
         feedback.append("ChatBotGenerator Class Score: ").append(chatBotGeneratorScore).append("/1\n");
         testResults.put("ChatBotGenerator", new TestResultLeaf(chatBotGeneratorScore, feedback.toString()));
     }
 
     @AfterAll
-    public static void calculateTotal() {
+    public static void resetScores() {
         chatBotGeneratorScore = 0;
         chatBotPlatformScore = 0;
         chatBotScore = 0;
-        totalScore = 0;
     }
 
     public static HashMap<String, TestResultLeaf> getTestResults() {

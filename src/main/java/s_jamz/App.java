@@ -90,12 +90,6 @@ public class App {
                         behaviourResults.put("Run Bonus", runBonusResult);
                     }
 
-                    // Print test results
-                    // printTestResults(behaviourResults);
-                    // printTestResults(signatureResults);
-                    // printTestResults(attributeResults);
-                    // printTestResults(mainResults);
-
                     // Generate PDF for the student
                     System.out.print("PDF Generating for " + studentDir.getName() + "\n");
                     PDFGenerator pdf = new PDFGenerator();
@@ -105,15 +99,5 @@ public class App {
                 }
             }
         }
-    }
-
-    // Test method to print the contents of the map
-    private static void printTestResults(HashMap<String, TestResultLeaf> testResults) {
-        testResults.forEach((testName, result) -> {
-            System.out.println("Test Name: " + testName);
-            System.out.println("Score: " + result.getScore());
-            System.out.println("Feedback: " + result.getFeedback());
-            System.out.println();
-        });
     }
 }

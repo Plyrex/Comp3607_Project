@@ -11,10 +11,8 @@ import java.util.HashMap;
 
 public class AttributeType implements EvaluationStrategy {
     private TestResultComponent results;
-    private String studentFolderPath;
 
     public AttributeType(String studentFolderPath) {
-        this.studentFolderPath = studentFolderPath;
         this.results = new TestResultComposite();
     }
 
