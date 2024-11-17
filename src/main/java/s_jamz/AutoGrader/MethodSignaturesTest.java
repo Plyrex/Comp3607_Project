@@ -7,7 +7,6 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +52,14 @@ public class MethodSignaturesTest {
         }
     }
 
-    private Class<?> loadClass(String className) throws Exception {
+    private Class<?> loadClass(String className, URL studentBinDir) throws Exception {
+        URL[] urls = {studentBinDir};
+        try (IsolatedClassLoader loader = new IsolatedClassLoader(urls)) {
+            return Class.forName(className, true, loader);
+        }
+    }
+
+    public void loadClassDetails(String className) throws Exception {
         File studentFoldersDir = new File(System.getProperty("user.dir") + "/src/main/resources/StudentFolders/");
         if (!studentFoldersDir.exists() || !studentFoldersDir.isDirectory()) {
             throw new IllegalArgumentException("Invalid student folders path: " + studentFoldersDir.getAbsolutePath());
@@ -63,32 +69,16 @@ public class MethodSignaturesTest {
             if (studentDir.isDirectory()) {
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
-                    URL[] urls = {binDir.toURI().toURL()};
-                    URLClassLoader urlClassLoader = new URLClassLoader(urls, this.getClass().getClassLoader());
+                    URL studentBinDir = binDir.toURI().toURL();
+                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
-                        return Class.forName(className, true, urlClassLoader);
+                        Class<?> class1 = loadClass(className, studentBinDir);
+                        methodTest.put(className, getMethods(class1));
                     } catch (ClassNotFoundException e) {
-                        // Continue to the next student folder
+                        // Continue searching in other student folders
                     }
                 }
             }
-        }
-
-        throw new ClassNotFoundException("Class " + className + " not found in any student folder.");
-    }
-
-    public void loadClassDetails(String className) throws Exception {
-        Class<?> class1 = loadClass(className);
-
-        if (class1 == null) {
-            System.out.println("Provided class is null.");
-            return;
-        }
-
-        try {
-            methodTest.put(className, getMethods(class1));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
         }
     }
 

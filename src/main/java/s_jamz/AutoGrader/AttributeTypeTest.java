@@ -82,7 +82,7 @@ public class AttributeTypeTest {
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
                     URL studentBinDir = binDir.toURI().toURL();
-                    System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
+                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
                         Class<?> class1 = loadClass(className, studentBinDir);
                         attributeTest.put(className, getClassFields(class1));
