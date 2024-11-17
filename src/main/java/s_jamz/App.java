@@ -44,11 +44,11 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     TestResultComposite finalResults = new TestResultComposite();
 
-                    // MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
-                    // gradingContext.setStrategy(methodBehaviour);
-                    // gradingContext.evaluate();
-                    // // finalResults.add(methodBehaviour.getResults());
-                    // printTestResults(MethodBehaviour.getTestResults());
+                    MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
+                    gradingContext.setStrategy(methodBehaviour);
+                    gradingContext.evaluate();
+                    // finalResults.add(methodBehaviour.getResults());
+                    printTestResults(MethodBehaviour.getTestResults());
 
                     // NamingConvention namingConvention = new NamingConvention(studentDir.getAbsolutePath());
                     // gradingContext.setStrategy(namingConvention);
