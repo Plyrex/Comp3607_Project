@@ -37,7 +37,7 @@ public class App {
             System.out.println("Processing extracted directories in: " + newDestFolder);
             for (File studentDir : extractedDir.listFiles()) {
                 if (studentDir.isDirectory() && !studentDir.getName().equalsIgnoreCase("StudentSubmissions2")) {
-                    fileProcessor.compileDirectory(studentDir);
+                    boolean compiledSuccessfully = fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
                     GradingContext gradingContext = new GradingContext();
@@ -60,6 +60,13 @@ public class App {
                     gradingContext.evaluate();
                     finalResults.add(attributeType.getResults());
                     HashMap<String, TestResultLeaf> attributeResults = AttributeType.getTestResults();
+
+                     // Add 5 marks if the assignment compiles
+                     if (compiledSuccessfully) {
+                        TestResultLeaf bonusResult = new TestResultLeaf( 3, "Assignment compiled successfully.");
+                        behaviourResults.put("Compilation Bonus", bonusResult);
+                    }
+
 
         
                     // Print test results
