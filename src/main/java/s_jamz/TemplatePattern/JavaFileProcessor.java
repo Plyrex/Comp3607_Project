@@ -19,16 +19,16 @@ public class JavaFileProcessor extends FileProcessorTemplate {
     }
 
     @Override
-    protected void compileFile(File file) {
+    protected boolean compileFile(File file) { // Changed to return boolean
         if (file == null || !file.isDirectory()) {
             System.out.println("Error...Invalid directory: " + file);
-            return;
+            return false;
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             System.out.println("Java compiler not available.");
-            return;
+            return false;
         }
 
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -39,7 +39,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
         if (javaFiles.isEmpty()) {
             System.out.println("No Java files found in directory: " + file);
-            return;
+            return false;
         }
 
         Path outputDir = file.toPath().resolve("bin");
@@ -51,7 +51,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         } catch (IOException e) {
             System.err.println("Failed to create bin directory: " + outputDir);
             e.printStackTrace();
-            return;
+            return false;
         }
 
         List<String> compileOptions = new ArrayList<>();
@@ -95,6 +95,8 @@ public class JavaFileProcessor extends FileProcessorTemplate {
                 e.printStackTrace();
             }
         }
+
+        return success;
     }
 
     private void runMainClass(String binDirectory, String mainClassName) {
