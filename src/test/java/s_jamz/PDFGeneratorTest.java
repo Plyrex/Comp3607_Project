@@ -19,6 +19,7 @@ public class PDFGeneratorTest {
     private HashMap<String, TestResultLeaf> naming;
     private HashMap<String, TestResultLeaf> signature;
     private HashMap<String, TestResultLeaf> attribute;
+    private HashMap<String, TestResultLeaf> main;
 
     @BeforeEach
     public void setUp() {
@@ -32,17 +33,19 @@ public class PDFGeneratorTest {
         naming = new HashMap<>();
         signature = new HashMap<>();
         attribute = new HashMap<>();
+        main = new HashMap<>();
 
         // putting the dummy test results
         behaviour.put("ChatBot", new TestResultLeaf(23, "ChatBot behaviour test feedback"));
         naming.put("ChatBot", new TestResultLeaf(5, "ChatBot naming test feedback"));
         signature.put("ChatBot", new TestResultLeaf(8, "ChatBot signature test feedback"));
         attribute.put("ChatBot", new TestResultLeaf(10, "ChatBot attribute test feedback"));
+        main.put("ChatBot", new TestResultLeaf(15, "ChatBot main test feedback"));
     }
 
     @Test
     public void testGeneratePDF() throws FileNotFoundException {
-        pdfGenerator.generatePDF(testDir, behaviour, signature, attribute);
+        pdfGenerator.generatePDF(testDir, behaviour, signature, attribute, main);
 
         File pdfFile = new File(testDir, "FirstName_Lastname_123456789_A1_results.pdf");
         assertTrue(pdfFile.exists(), "PDF file should be generated");
