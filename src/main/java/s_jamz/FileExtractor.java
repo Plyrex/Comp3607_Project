@@ -40,7 +40,7 @@ public class FileExtractor {
     private void extractMainZipFile(File zipFile, String submissionsFolder) throws IOException {
         try (ZipFile zip = new ZipFile(zipFile)) {
             zip.extractAll(submissionsFolder);
-            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully to " + submissionsFolder);
+            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully");
         } catch (ZipException e) {
             System.out.println("Error unzipping main file " + zipFile.getName());
             e.printStackTrace();
@@ -55,6 +55,7 @@ public class FileExtractor {
             for (File file : submissionFiles) {
                 System.out.println(file.getName());
             }
+            System.out.println();
         }
         return submissionFiles;
     }
@@ -79,7 +80,7 @@ public class FileExtractor {
     private void extractStudentZipFile(File studentSubmission, String studentFolder) throws IOException {
         try (ZipFile studentZip = new ZipFile(studentSubmission)) {
             studentZip.extractAll(studentFolder);
-            System.out.println("Student zip file " + studentSubmission.getName() + " unzipped successfully to " + studentFolder);
+            System.out.println("Student zip file " + studentSubmission.getName() + " unzipped successfully");
         } catch (ZipException e) {
             System.out.println("Error unzipping student file " + studentSubmission.getName());
             e.printStackTrace();

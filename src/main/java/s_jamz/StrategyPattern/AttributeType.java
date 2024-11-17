@@ -23,7 +23,7 @@ public class AttributeType implements EvaluationStrategy {
         try {
             AttributeTypeTest testClass = new AttributeTypeTest();
 
-            System.out.println("Running tests for class: " + testClass.getClass().getName());
+            // System.out.println("Running tests for class: " + testClass.getClass().getName());
 
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();
