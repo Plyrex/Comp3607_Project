@@ -92,8 +92,17 @@ public class PDFGenerator {
     public void generatePDF(File zip, HashMap<String, TestResultLeaf> behaviour, HashMap<String, TestResultLeaf> signature, HashMap<String, TestResultLeaf> attribute, HashMap<String, TestResultLeaf> main) throws FileNotFoundException {
         PdfWriter pdf = new PdfWriter(zip.getAbsolutePath() + "/" + zip.getName() + "_results.pdf");
 
+        int total = getScore(behaviour, signature, attribute, main, "ChatBotGenerator") +
+                    getScore(behaviour, signature, attribute, main, "ChatBot") +
+                    getScore(behaviour, signature, attribute, main, "ChatBotPlatform") +
+                    getScore(behaviour, signature, attribute, main, "ChatBotSimulation") +
+                    behaviour.getOrDefault("Compilation Bonus", new TestResultLeaf(0, "")).getScore() +
+                    behaviour.getOrDefault("Run Bonus", new TestResultLeaf(0, "")).getScore();
+
+        float percent= ((float)total/90)*100;
+
         String[] arrStudent = zip.getName().split("_");
-        String info = arrStudent[0] + " " + arrStudent[1] + "\n" + arrStudent[2];
+        String info = arrStudent[0] + " " + arrStudent[1] + "\n" + arrStudent[2] + "\n" + (int)percent+"%";
 
         Paragraph para = new Paragraph(info).setTextAlignment(TextAlignment.CENTER);
 
@@ -102,13 +111,6 @@ public class PDFGenerator {
 
         float[] scoreColumnWidth = {250f, 250f};
         Table scoreTable = new Table(scoreColumnWidth);
-
-        int total = getScore(behaviour, signature, attribute, main, "ChatBotGenerator") +
-                    getScore(behaviour, signature, attribute, main, "ChatBot") +
-                    getScore(behaviour, signature, attribute, main, "ChatBotPlatform") +
-                    getScore(behaviour, signature, attribute, main, "ChatBotSimulation") +
-                    behaviour.getOrDefault("Compilation Bonus", new TestResultLeaf(0, "")).getScore() +
-                    behaviour.getOrDefault("Run Bonus", new TestResultLeaf(0, "")).getScore();
 
         String[] headers = {"Criteria", "Mark"};
         String[][] items = {
