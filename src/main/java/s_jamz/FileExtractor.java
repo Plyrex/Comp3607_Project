@@ -2,10 +2,14 @@ package s_jamz;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 public class FileExtractor {
+    
+    private static final Pattern STUDENT_SUBMISSION_PATTERN = Pattern.compile("^[A-Za-z]+_[A-Za-z]+_\\d+(_A1)?\\.zip$");
+
     public void extractZip(File zipFile, String destFolder) throws IOException {
         String submissionsFolder = System.getProperty("user.dir") + "/src/main/resources/ZippedSubmissions/";
         String studentFoldersDir = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
@@ -36,9 +40,9 @@ public class FileExtractor {
     private void extractMainZipFile(File zipFile, String submissionsFolder) throws IOException {
         try (ZipFile zip = new ZipFile(zipFile)) {
             zip.extractAll(submissionsFolder);
-            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully to " + submissionsFolder + "\n");
+            System.out.println("Main zip file " + zipFile.getName() + " unzipped successfully to " + submissionsFolder);
         } catch (ZipException e) {
-            System.out.println("Error unzipping main file " + zipFile.getName() + "\n");
+            System.out.println("Error unzipping main file " + zipFile.getName());
             e.printStackTrace();
         }
     }
@@ -55,9 +59,9 @@ public class FileExtractor {
         return submissionFiles;
     }
 
-    private void extractStudentSubmissions(File[] submissionFiles, String studentFoldersDir)throws IOException {
+    private void extractStudentSubmissions(File[] submissionFiles, String studentFoldersDir) throws IOException {
         for (File submission : submissionFiles) {
-            if (submission.isFile() && submission.getName().endsWith(".zip")) {
+            if (submission.isFile() && STUDENT_SUBMISSION_PATTERN.matcher(submission.getName()).matches()) {
                 String studentFolder = studentFoldersDir + "/" + submission.getName().replace(".zip", "");
                 File studentFolderFile = new File(studentFolder);
                 if (studentFolderFile.exists()) {
@@ -66,6 +70,8 @@ public class FileExtractor {
                 }
 
                 extractStudentZipFile(submission, studentFolder);
+            } else {
+                System.out.println("Skipping file " + submission.getName() + " as it does not follow the naming convention.");
             }
         }
     }
@@ -73,9 +79,9 @@ public class FileExtractor {
     private void extractStudentZipFile(File studentSubmission, String studentFolder) throws IOException {
         try (ZipFile studentZip = new ZipFile(studentSubmission)) {
             studentZip.extractAll(studentFolder);
-            System.out.println("Student zip file " + studentSubmission.getName() + " unzipped successfully to " + studentFolder + "\n");
+            System.out.println("Student zip file " + studentSubmission.getName() + " unzipped successfully to " + studentFolder);
         } catch (ZipException e) {
-            System.out.println("Error unzipping student file " + studentSubmission.getName() + "\n");
+            System.out.println("Error unzipping student file " + studentSubmission.getName());
             e.printStackTrace();
         }
     }
