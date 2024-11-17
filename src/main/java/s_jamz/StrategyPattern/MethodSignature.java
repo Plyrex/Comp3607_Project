@@ -24,7 +24,7 @@ public class MethodSignature implements EvaluationStrategy {
         try {
             MethodSignaturesTest testClass = new MethodSignaturesTest();
 
-            System.out.println("Running tests for class: " + testClass.getClass().getName());
+            // System.out.println("Running tests for class: " + testClass.getClass().getName());
 
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();

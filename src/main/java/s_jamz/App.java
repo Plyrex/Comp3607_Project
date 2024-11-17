@@ -35,7 +35,7 @@ public class App {
         String newDestFolder = System.getProperty("user.dir") + "/src/main/resources/StudentFolders/";
         File extractedDir = new File(newDestFolder);
         if (extractedDir.exists() && extractedDir.isDirectory()) {
-            System.out.println("Processing extracted directories in: " + newDestFolder);
+            System.out.println("Processing extracted directories in: " + extractedDir.getName() +"\n");
             for (File studentDir : extractedDir.listFiles()) {
                 if (studentDir.isDirectory() && !studentDir.getName().equalsIgnoreCase("StudentSubmissions2")) {
                     CompilationResult compilationResult = fileProcessor.compileDirectory(studentDir);
@@ -91,16 +91,16 @@ public class App {
                     }
 
                     // Print test results
-                    printTestResults(behaviourResults);
-                    printTestResults(signatureResults);
-                    printTestResults(attributeResults);
-                    printTestResults(mainResults);
+                    // printTestResults(behaviourResults);
+                    // printTestResults(signatureResults);
+                    // printTestResults(attributeResults);
+                    // printTestResults(mainResults);
 
                     // Generate PDF for the student
                     System.out.print("PDF Generating for " + studentDir.getName() + "\n");
                     PDFGenerator pdf = new PDFGenerator();
                     pdf.generatePDF(studentDir, behaviourResults, signatureResults, attributeResults, mainResults);
-                    System.out.print("\nPDF Generated");
+                    System.out.print("PDF Generated\n");
 
                 }
             }

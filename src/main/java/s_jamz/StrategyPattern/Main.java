@@ -29,7 +29,7 @@ public class Main implements EvaluationStrategy {
         try {
             MainTest testClass = new MainTest();
 
-            System.out.println("Running tests for class: " + testClass.getClass().getName());
+            // System.out.println("Running tests for class: " + testClass.getClass().getName());
 
             SummaryGeneratingListener listener = JUnitTestExecutor.executeTests(testClass.getClass());
             TestExecutionSummary summary = listener.getSummary();

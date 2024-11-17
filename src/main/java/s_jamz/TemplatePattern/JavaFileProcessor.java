@@ -48,7 +48,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         try {
             if (!Files.exists(outputDir)) {
                 Files.createDirectories(outputDir);
-                System.out.println("Created bin directory: " + outputDir);
+                // System.out.println("Created bin directory" + outputDir);
             }
         } catch (IOException e) {
             System.err.println("Failed to create bin directory: " + outputDir);
@@ -68,7 +68,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         boolean compilationSuccess = task.call();
         writer.flush();
         String compilerOutput = outputStream.toString();
-        System.out.println(compilationSuccess ? "Compilation successful for files in " + file.getName() : "Compilation failed for files in " + file.getName());
+        System.out.println(compilationSuccess ? "\nCompilation successful for files in " + file.getName() : "Compilation failed for files in " + file.getName());
         if (!compilationSuccess) {
             System.out.println(compilerOutput);
         }
@@ -120,7 +120,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
 
                 // Save output to a log file
                 Files.write(outputLog, outputLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                System.out.println("Stored program output in: " + outputLog);
+                // System.out.println("Stored program output in: " + outputLog);
             }
 
             int exitCode = process.waitFor();
@@ -153,7 +153,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
         try {
             if (!Files.exists(resultDir)) {
                 Files.createDirectories(resultDir);
-                System.out.println("Created bin directory for results: " + resultDir);
+                // System.out.println("Created bin directory for results: " + resultDir);
             }
             Path resultFile = resultDir.resolve("Test.log");
             List<String> logLines = new ArrayList<>();
@@ -174,7 +174,7 @@ public class JavaFileProcessor extends FileProcessorTemplate {
             logLines.add(compilerOutput.trim().isEmpty() ? "No output from compiler." : compilerOutput);
 
             Files.write(resultFile, logLines);
-            System.out.println("Stored compilation results in: " + resultFile);
+            // System.out.println("Stored compilation results in: " + resultFile);
         } catch (IOException e) {
             System.err.println("Failed to store compilation results in: " + resultDir);
             e.printStackTrace();
