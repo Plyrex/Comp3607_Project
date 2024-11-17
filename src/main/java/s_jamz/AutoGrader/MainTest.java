@@ -29,7 +29,6 @@ public class MainTest {
 
     @BeforeEach
     public void setUp() {
-        // Redirecting System.out to capture the printed output
         try{
             loadClass("ChatBotSimulation");
         }

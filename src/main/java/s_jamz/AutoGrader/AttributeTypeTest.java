@@ -44,23 +44,11 @@ public class AttributeTypeTest {
     public Field[] getClassFields(Class<?> class1) {
         try {
             if (class1 == null) {
-                System.err.println("Provided class is null.");
                 return new Field[0];
             }
             return class1.getDeclaredFields();
         } catch (Exception e) {
-            System.err.println("An error occurred while retrieving fields: " + e.getMessage());
             return new Field[0];
-        }
-    }
-
-    public void printMap() {
-        for (Map.Entry<String, Field[]> entry : attributeTest.entrySet()) {
-            System.out.println("Class: " + entry.getKey());
-            Field[] fields = entry.getValue();
-            for (Field field : fields) {
-                System.out.println("  Field: " + field.getName() + ", Type: " + field.getType().getSimpleName());
-            }
         }
     }
 
@@ -82,7 +70,6 @@ public class AttributeTypeTest {
                 File binDir = new File(studentDir, "bin");
                 if (binDir.exists() && binDir.isDirectory()) {
                     URL studentBinDir = binDir.toURI().toURL();
-                    // System.out.println("Loading class: " + className + " from student folder: " + studentDir.getName());
                     try {
                         Class<?> class1 = loadClass(className, studentBinDir);
                         attributeTest.put(className, getClassFields(class1));
@@ -97,7 +84,6 @@ public class AttributeTypeTest {
     @Test
     @Order(1)
     public void chatBotAttributeTest() {
-        System.out.println("ChatBot Test. \n");
         Field[] chatBotAttributes = attributeTest.get("ChatBot");
         int score = 0;
         HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
@@ -149,7 +135,6 @@ public class AttributeTypeTest {
     @Test
     @Order(2)
     public void chatBotPlatformAttributeTest() {
-        System.out.println("ChatBotPlatform Test. \n");
         Field[] chatBotPlatformAttributes = attributeTest.get("ChatBotPlatform");
         int score = 0;
         HashMap<String, Class<?>> expectedAttributes = new HashMap<>();
