@@ -12,6 +12,8 @@ import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
+
+import s_jamz.StrategyPattern.Main;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
@@ -43,21 +45,29 @@ public class App {
                     GradingContext gradingContext = new GradingContext();
                     TestResultComposite finalResults = new TestResultComposite();
 
+
+                    //Method Behaviour
                     MethodBehaviour methodBehaviour = new MethodBehaviour(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodBehaviour);
                     gradingContext.evaluate();
+
                     finalResults.add(methodBehaviour.getResults());
                     HashMap<String, TestResultLeaf> behaviourResults = MethodBehaviour.getTestResults();
 
+                    //Method Signatures
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
                     gradingContext.evaluate();
+    
                     finalResults.add(methodSignature.getResults());
                     HashMap<String, TestResultLeaf> signatureResults = MethodSignature.getTestResults();
 
+
+                    //Attributes
                     AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(attributeType);
                     gradingContext.evaluate();
+
                     finalResults.add(attributeType.getResults());
                     HashMap<String, TestResultLeaf> attributeResults = AttributeType.getTestResults();
 
@@ -83,6 +93,7 @@ public class App {
                     PDFGenerator pdf = new PDFGenerator();
                     pdf.generatePDF(studentDir, behaviourResults, signatureResults, attributeResults);
                     System.out.print("\nPDF Generated");
+
                 }
             }
         }
