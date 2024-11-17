@@ -12,14 +12,13 @@ import s_jamz.StrategyPattern.GradingContext;
 import s_jamz.StrategyPattern.MethodBehaviour;
 import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.NamingConvention;
+
 import s_jamz.StrategyPattern.Main;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        HashMap<String, TestResultLeaf> results= new HashMap<String, TestResultLeaf>();
-
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please input the directory path of the zip file");
         String zipFilePath = scanner.nextLine();
@@ -40,7 +39,7 @@ public class App {
             System.out.println("Processing extracted directories in: " + newDestFolder);
             for (File studentDir : extractedDir.listFiles()) {
                 if (studentDir.isDirectory() && !studentDir.getName().equalsIgnoreCase("StudentSubmissions2")) {
-                    fileProcessor.compileDirectory(studentDir);
+                    CompilationResult compilationResult = fileProcessor.compileDirectory(studentDir);
 
                     // Run tests using the NamingConvention strategy
                     GradingContext gradingContext = new GradingContext();
@@ -53,21 +52,16 @@ public class App {
                     gradingContext.evaluate();
 
                     finalResults.add(methodBehaviour.getResults());
-                    printTestResults(MethodBehaviour.getTestResults());
-                    results.putAll(MethodBehaviour.getTestResults());
-            
-
-               
+                    HashMap<String, TestResultLeaf> behaviourResults = MethodBehaviour.getTestResults();
 
                     //Method Signatures
                     MethodSignature methodSignature = new MethodSignature(studentDir.getAbsolutePath());
                     gradingContext.setStrategy(methodSignature);
                     gradingContext.evaluate();
-
+    
                     finalResults.add(methodSignature.getResults());
-                    results.putAll(MethodSignature.getTestResults());
-                    printTestResults(MethodSignature.getTestResults());
-               
+                    HashMap<String, TestResultLeaf> signatureResults = MethodSignature.getTestResults();
+
 
                     //Attributes
                     AttributeType attributeType = new AttributeType(studentDir.getAbsolutePath());
@@ -75,28 +69,37 @@ public class App {
                     gradingContext.evaluate();
 
                     finalResults.add(attributeType.getResults());
-                    results.putAll(AttributeType.getTestResults());
-                    printTestResults(AttributeType.getTestResults());
-               
-                    //Main
-                    Main mainTest = new Main(studentDir.getAbsolutePath());
-                    gradingContext.setStrategy(mainTest);
-                    gradingContext.evaluate();
+                    HashMap<String, TestResultLeaf> attributeResults = AttributeType.getTestResults();
 
-                    finalResults.add(mainTest.getResults());
-                    results.putAll(Main.getTestResults());
-                    printTestResults(Main.getTestResults());
-              
+                    // Add 5 marks if the assignment compiles
+                    if (compilationResult.isCompilationSuccess()) {
+                        TestResultLeaf bonusResult = new TestResultLeaf(3, "Assignment compiled successfully.");
+                        behaviourResults.put("Compilation Bonus", bonusResult);
+                    }
+
+                    // Add 10 marks if the code runs successfully
+                    if (compilationResult.isRunSuccess()) {
+                        TestResultLeaf runBonusResult = new TestResultLeaf(10, "Code ran successfully.");
+                        behaviourResults.put("Run Bonus", runBonusResult);
+                    }
+
+                    // Print test results
+                    printTestResults(behaviourResults);
+                    printTestResults(signatureResults);
+                    printTestResults(attributeResults);
+
+                    // Generate PDF for the student
+                    System.out.print("PDF Generating for " + studentDir.getName() + "\n");
+                    PDFGenerator pdf = new PDFGenerator();
+                    pdf.generatePDF(studentDir, behaviourResults, signatureResults, attributeResults);
+                    System.out.print("\nPDF Generated");
+
                 }
-                System.out.print("PDF Generating for "+studentDir.getName()+"\n");
-                PDFGenerator pdf= new PDFGenerator();
-                pdf.generatePDF(studentDir, MethodBehaviour.getTestResults(), NamingConvention.getTestResults(), MethodSignature.getTestResults(), AttributeType.getTestResults());
-                System.out.print("\nPDF Generated");
             }
         }
     }
 
-    //test method to print the contents of the map
+    // Test method to print the contents of the map
     private static void printTestResults(HashMap<String, TestResultLeaf> testResults) {
         testResults.forEach((testName, result) -> {
             System.out.println("Test Name: " + testName);
@@ -105,5 +108,4 @@ public class App {
             System.out.println();
         });
     }
-
 }

@@ -42,7 +42,7 @@ public class PDFGeneratorTest {
 
     @Test
     public void testGeneratePDF() throws FileNotFoundException {
-        pdfGenerator.generatePDF(testDir, behaviour, naming, signature, attribute);
+        pdfGenerator.generatePDF(testDir, behaviour, signature, attribute);
 
         File pdfFile = new File(testDir, "FirstName_Lastname_123456789_A1_results.pdf");
         assertTrue(pdfFile.exists(), "PDF file should be generated");
@@ -50,11 +50,20 @@ public class PDFGeneratorTest {
 
     @AfterEach
     public void tearDown() {
-        
-        File pdfFile = new File(testDir, "FirstName_LastName_123456789_A1_results.pdf");
-        if (pdfFile.exists()) {
-            pdfFile.delete();
+        deleteDirectory(new File("src/test/resources/StudentFolders"));
+        deleteDirectory(new File("src/test/resources"));
+    }
+
+    private void deleteDirectory(File directory) {
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    deleteDirectory(file);
+                }
+            }
         }
+        directory.delete();
     }
 
     
