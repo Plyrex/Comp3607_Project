@@ -52,8 +52,6 @@ public class MethodBehaviourTest {
         scores.put("ChatBotGenerator", 0);   
           
     }
-
-    // /Users/maianeptune/Documents/StudentSubmissions2.zip
  
     @BeforeEach
     public void resetState() {
