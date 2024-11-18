@@ -18,12 +18,14 @@ StudentSubmissions.zip|
                       —–FirstName_LastName2_ID.zip
                       —–FirstName_LastName3_ID.zip
 
-**Failure to comply with the indicated format above may result in skewed results for students**
+**Failure to comply with the indicated format Above or Below may result in skewed results for students**
 
 **Step #1 Clean workspace**
 
 ![alt text](image.png)
 
 **Step #2 Build All**
+![alt text](<Screenshot (81).png>)
 
 **Step #3 Run Java**
+![alt text](image-1.png)
