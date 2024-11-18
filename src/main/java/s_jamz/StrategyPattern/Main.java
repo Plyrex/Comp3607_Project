@@ -8,7 +8,7 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import s_jamz.CompositePattern.TestResultComponent;
 import s_jamz.CompositePattern.TestResultComposite;
 import s_jamz.CompositePattern.TestResultLeaf;
-import s_jamz.JUnitTestExecutor;
+import s_jamz.Utilities.JUnitTestExecutor;
 import s_jamz.AutoGrader.MainTest;
 
 

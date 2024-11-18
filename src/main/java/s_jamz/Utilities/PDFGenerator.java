@@ -1,4 +1,4 @@
-package s_jamz;
+package s_jamz.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;

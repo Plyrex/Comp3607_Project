@@ -1,12 +1,13 @@
 package s_jamz.TemplatePattern;
 
 import javax.tools.*;
+
+import s_jamz.Utilities.CompilationResult;
+import s_jamz.Utilities.FileExtractor;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-
-import s_jamz.CompilationResult;
-import s_jamz.FileExtractor;
 
 public class JavaFileProcessor extends FileProcessorTemplate {
 

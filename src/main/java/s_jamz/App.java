@@ -15,6 +15,8 @@ import s_jamz.StrategyPattern.MethodSignature;
 import s_jamz.StrategyPattern.Main;
 import s_jamz.TemplatePattern.FileProcessorTemplate;
 import s_jamz.TemplatePattern.JavaFileProcessor;
+import s_jamz.Utilities.CompilationResult;
+import s_jamz.Utilities.PDFGenerator;
 
 public class App {
     public static void main(String[] args) throws IOException {

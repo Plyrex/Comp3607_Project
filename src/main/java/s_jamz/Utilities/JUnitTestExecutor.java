@@ -1,4 +1,4 @@
-package s_jamz;
+package s_jamz.Utilities;
 
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.Launcher;

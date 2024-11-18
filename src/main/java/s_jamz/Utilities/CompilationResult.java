@@ -1,4 +1,4 @@
-package s_jamz;
+package s_jamz.Utilities;
 
 public class CompilationResult {
     private boolean compilationSuccess;

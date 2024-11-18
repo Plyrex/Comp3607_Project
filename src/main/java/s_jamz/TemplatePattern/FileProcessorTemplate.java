@@ -4,7 +4,7 @@ import java.io.File;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
-import s_jamz.CompilationResult;
+import s_jamz.Utilities.CompilationResult;
 
 public abstract class FileProcessorTemplate {
     protected abstract void extractFile(File zipFile);
