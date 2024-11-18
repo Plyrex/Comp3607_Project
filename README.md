@@ -1,11 +1,13 @@
 # Comp3607_Project`
 Group Contributors
 
-Zidane Timothy - Group 8
-Maia Neptune - Group 8
-Jonathan Swamber - Group 8
-Saeed Khan - Group 8
-April Edwards - Group 8
+# GROUP 8
+
+Zidane Timothy 
+Maia Neptune
+Jonathan Swamber
+Saeed Khan
+April Edwards
 
 **Precursor:**
 Please ensure that the .zip files are not folders inside of a zip file 
