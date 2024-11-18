@@ -1,7 +1,7 @@
 # Comp3607_Project`
 Group Contributors
 
-# GROUP 8
+## GROUP 8
 
 Zidane Timothy 
 Maia Neptune
@@ -31,3 +31,6 @@ StudentSubmissions.zip|
 
 **Step #3 Run Java**
 ![alt text](image-1.png)
+
+### Test Data
+*Copy the path of the "SuppliedTestSubmissions.zip" file and place into the terminal when requested*
